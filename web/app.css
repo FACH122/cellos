@@ -31,10 +31,13 @@
   --ink: #1b1b19;
   --ink-soft: #6a6a64;
   --ink-faint: #9b9b93;
-  --page: #fbfaf8;
+  /* The page sits a little below white so that the things you can act on --
+     cards, chips, forms, buttons -- read as objects resting on it. Surface
+     means "this is a thing"; space alone separates sections. */
+  --page: #f4f1ec;
   --surface: #ffffff;
-  --surface-sunk: #f4f2ee;
-  --hairline: #eae7e1;
+  --surface-sunk: #eceae4;
+  --hairline: #e2ded7;
   --accent: #3d6b5c;
   --accent-soft: #edf3f1;
   --warn: #8a5a2b;
@@ -500,3 +503,19 @@ td.num { font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) {
   .map-scroll { scroll-behavior: auto; }
 }
+
+/*
+  The one section that is tinted, and the only one that should be.
+
+  A surface here is not decoration and not grouping: every other section says
+  the same thing to everybody in the cell, and this one is about the person
+  reading it. The tint is the colour already used for the option you voted
+  for, so "yours" looks the same wherever it appears.
+*/
+#app > section.mine {
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+  padding: var(--s4) var(--s5) var(--s5);
+}
+#app > section.mine h2 { margin-top: 0; }
+#app > section.mine .carried + .carried { border-top-color: var(--hairline); }

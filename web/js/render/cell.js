@@ -315,7 +315,7 @@ function yours(v) {
   if (y.moving.length)
     lines.push(row('', `${plural(y.moving.length, 'thing')} moving`));
 
-  return `<section><h2>Yours</h2>
+  return `<section class="mine"><h2>Yours</h2>
     ${lines.join('')}
     ${y.yours.length
       ? y.yours.map((t) => taskRow(v, t)).join('') +
