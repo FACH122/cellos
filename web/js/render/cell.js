@@ -14,7 +14,17 @@ import { card } from './decision.js';
 import { mapMount, mapCaption } from './structure.js';
 import { health } from './health.js';
 
-const MEMBERS_SHOWN = 24;
+/*
+  How many names to show before the list stops being a list.
+
+  Below COMFORTABLE, a cell is a group whose members you know, and the names
+  are worth reading -- so all of them appear and there is nothing to expand.
+  Above it, "who are these people" stops being a question anybody asks; the
+  ones that matter are whoever leads, and the rest is a number. The server
+  already sorts leaders first, so showing the front of the list shows them.
+*/
+const COMFORTABLE = 8;
+const AT_A_GLANCE = 5;
 
 export function cellPage(v) {
   return [
@@ -94,16 +104,19 @@ function budgetForm(v) {
 /* ---------------------------------------------------------------- people */
 
 function people(v) {
-  const all = showing('people');
-  const shown = all ? v.members : v.members.slice(0, MEMBERS_SHOWN);
+  const small = v.members.length <= COMFORTABLE;
+  const all = small || showing('people');
+  const shown = all ? v.members : v.members.slice(0, AT_A_GLANCE);
   const hidden = v.members.length - shown.length;
 
   return `<section><h2>People</h2>
     <div class="people">
       ${shown.map((m) => `<span class="chip${m.id === S.user.id ? ' you' : ''}">${esc(m.name)}${
         m.role === 'leader' ? '<span class="tag">leads</span>' : ''}</span>`).join('')}
-      ${hidden ? `<button class="quiet faint" data-act="form" data-form="people">and ${hidden} more</button>` : ''}
-      ${all && v.members.length > MEMBERS_SHOWN
+      ${hidden
+        ? `<button class="quiet faint" data-act="form" data-form="people">and ${hidden} more</button>`
+        : ''}
+      ${!small && showing('people')
         ? '<button class="quiet faint" data-act="unform" data-form="people">show fewer</button>' : ''}
     </div>
     ${showing('member')
