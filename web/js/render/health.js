@@ -15,12 +15,18 @@ import { HEALTH_WORD, MOMENTUM_WORD } from '../labels.js';
 import { showing } from '../store.js';
 
 const SCALE = 100;
+/* At rest, the two things most in the way. "Why" shows the bars and the rest. */
+const AT_REST = 2;
 
 export function health(v) {
   const h = v.health;
   if (!h) return '';
 
-  return `<section><h2>Health</h2>
+  const open = showing('health');
+  const said = open ? h.attention : h.attention.slice(0, AT_REST);
+  const rest = h.attention_count - said.length;
+
+  return `<section class="aside"><h2>Health</h2>
     <div class="verdict ${esc(h.health.replace(' ', '-'))}">
       <b>${esc(HEALTH_WORD[h.health] || h.health)}</b>
       <span class="xs faint">${esc(MOMENTUM_WORD[h.momentum] || '')}</span>
@@ -31,12 +37,11 @@ export function health(v) {
 
     ${showing('health') ? bars(h) : ''}
 
-    ${h.attention.length
+    ${said.length
       ? `<div class="attention">
-           ${h.attention.map((a) => `<div>${esc(a)}</div>`).join('')}
-           ${h.attention_count > h.attention.length
-             ? `<div class="xs faint">and ${plural(
-                  h.attention_count - h.attention.length, 'other thing')}</div>` : ''}
+           ${said.map((a) => `<div>${esc(a)}</div>`).join('')}
+           ${rest > 0
+             ? `<div class="xs faint">and ${plural(rest, 'other thing')}</div>` : ''}
          </div>`
       : '<p class="xs faint">Nothing needs attention.</p>'}
   </section>`;

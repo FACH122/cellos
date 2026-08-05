@@ -537,3 +537,55 @@ td.num { font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) {
   .map-scroll { scroll-behavior: auto; }
 }
+
+/* ------------------------------------------------- context, not action
+
+   Four of the sections say how things stand or what has already happened:
+   health, people, answered questions, and the record. The others are where
+   a person acts. Weighting them the same made the page read as a flat list
+   of equals, so these step back -- less air above them, a quieter heading,
+   and content one size down -- without changing a single colour or losing
+   anything.
+*/
+
+#app > section.aside { margin-top: var(--s5); }
+#app > section.aside > h2 { margin-bottom: var(--s3); opacity: .8; }
+#app > section.aside > * + * { margin-top: var(--s3); }
+
+#app > section.aside .chip { font-size: var(--t-xs); padding: 2px var(--s3); }
+#app > section.aside .chip .tag { font-size: 0.68rem; }
+
+#app > section.aside .card { padding: var(--s3) var(--s4); }
+#app > section.aside .card .head .q { font-size: var(--t-sm); font-weight: 500; }
+#app > section.aside .card .head { gap: var(--s3); }
+
+#app > section.aside .log { font-size: var(--t-xs); }
+#app > section.aside .log div { padding: 1px 0; }
+
+#app > section.aside .know .q { font-size: var(--t-sm); }
+
+/* The verdict stays the loudest thing in its section, but no longer competes
+   with the goal at the top of the page. */
+#app > section.aside .verdict b { font-size: var(--t-md); }
+#app > section.aside .attention > div { font-size: var(--t-xs); padding: 1px 0; }
+#app > section.aside .bars { gap: var(--s1); }
+#app > section.aside .bar-row { grid-template-columns: 4.75rem 7rem 1fr; }
+#app > section.aside .bar-label { font-size: var(--t-xs); }
+
+/*
+  Settled questions are history. A card says "this is a thing you can pick
+  up"; these are things already put down, so in the quiet sections a card
+  becomes a row -- still expanding to the whole question when asked, but
+  costing a line at rest rather than a panel.
+*/
+#app > section.aside .card {
+  background: none;
+  padding: var(--s2) 0;
+  border-radius: 0;
+}
+#app > section.aside .card + .card {
+  margin-top: 0;
+  border-top: 1px solid var(--hairline);
+}
+#app > section.aside .card .body { margin-top: var(--s3); }
+#app > section.aside .rail { margin-top: var(--s1); }

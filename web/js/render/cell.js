@@ -24,6 +24,7 @@ import { health } from './health.js';
   already sorts leaders first, so showing the front of the list shows them.
 */
 const COMFORTABLE = 8;
+const ANSWERED_AT_REST = 3;
 const AT_A_GLANCE = 5;
 
 export function cellPage(v) {
@@ -109,7 +110,7 @@ function people(v) {
   const shown = all ? v.members : v.members.slice(0, AT_A_GLANCE);
   const hidden = v.members.length - shown.length;
 
-  return `<section><h2>People</h2>
+  return `<section class="aside"><h2>People</h2>
     <div class="people">
       ${shown.map((m) => `<span class="chip${m.id === S.user.id ? ' you' : ''}">${esc(m.name)}${
         m.role === 'leader' ? '<span class="tag">leads</span>' : ''}</span>`).join('')}
@@ -118,6 +119,9 @@ function people(v) {
         : ''}
       ${!small && showing('people')
         ? '<button class="quiet faint" data-act="unform" data-form="people">show fewer</button>' : ''}
+      ${v.you.can_admit && !showing('member')
+        ? '<button class="quiet faint" data-act="form" data-form="member">bring someone in</button>'
+        : ''}
     </div>
     ${showing('member')
       ? `<form class="panel" data-form="member">
@@ -129,8 +133,7 @@ function people(v) {
            <div class="actions"><button class="primary" type="submit">Add</button>
              <button type="button" class="quiet" data-act="unform" data-form="member">cancel</button>
            </div></form>`
-      : (v.you.can_admit
-          ? '<p><button data-act="form" data-form="member">Bring someone in</button></p>' : '')}
+      : ''}
   </section>`;
 }
 
@@ -449,8 +452,19 @@ function analytics(v) {
 
 function settled(v) {
   if (!v.settled_decisions.length) return '';
-  return `<section><h2>Answered</h2>
-    ${v.settled_decisions.map((d) => card(v, d)).join('')}</section>`;
+  const all = showing('answered');
+  const shown = all ? v.settled_decisions : v.settled_decisions.slice(0, ANSWERED_AT_REST);
+  const hidden = v.settled_decisions.length - shown.length;
+
+  return `<section class="aside"><h2>Answered</h2>
+    ${shown.map((d) => card(v, d)).join('')}
+    ${hidden
+      ? `<p><button class="quiet faint" data-act="form" data-form="answered">${
+          plural(hidden, 'earlier question')}</button></p>`
+      : (all && v.settled_decisions.length > ANSWERED_AT_REST
+          ? '<p><button class="quiet faint" data-act="unform" data-form="answered">show fewer</button></p>'
+          : '')}
+  </section>`;
 }
 
 function knowledge(v) {
@@ -466,7 +480,7 @@ function knowledge(v) {
 }
 
 function record(v) {
-  return `<section><h2>What has happened here</h2>
+  return `<section class="aside"><h2>What has happened here</h2>
     ${S.log
       ? `<div class="log">${S.log.map((e) => `
           <div><time>${esc(when(e.occurred_at))}</time><span>${esc(happened(e))}</span></div>`
