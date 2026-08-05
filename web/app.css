@@ -463,23 +463,91 @@ td.num { font-variant-numeric: tabular-nums; }
 .map .node.here .name { font-weight: 550; }
 .map .node:hover .name { fill: var(--accent); }
 
-/* ------------------------------------------------------------ health */
+/* ------------------------------------------------------------ health
 
-.verdict { display: flex; align-items: baseline; gap: var(--s3); }
-.verdict b { font-size: var(--t-lg); font-weight: 550; letter-spacing: -.01em; }
-.verdict.excellent b, .verdict.good b { color: var(--accent); }
-.verdict.moderate b { color: var(--ink); }
-.verdict.at-risk b, .verdict.critical b { color: var(--warn); }
+   How a cell is doing is a glance, not a section. It lives as one dot beside
+   the goal, coloured by the verdict, and says the whole of itself only when
+   somebody reaches for it -- which is what a diagnosis deserves: instantly
+   available, never in the way. Reaching means hovering, or focusing it from
+   the keyboard, or tapping it, which is why the panel opens three ways.  */
+
+.pip {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  height: calc(var(--t-xl) * 1.2);       /* the h1's first line, so the dot centres on it */
+  padding: 0 var(--s2) 0 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.pip .dot {
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+.pip.excellent .dot, .pip.good .dot { background: var(--accent); }
+.pip.moderate .dot { background: var(--ink-faint); }
+.pip.at-risk .dot, .pip.critical .dot { background: var(--warn); }
+.pip:hover .dot, .pip:focus-visible .dot, .pip.open .dot { transform: scale(1.25); }
+.pip:focus-visible { outline: none; }
+.pip:focus-visible .dot { box-shadow: 0 0 0 3px var(--hairline); }
+
+.pip .reading {
+  position: absolute;
+  top: calc(50% + 12px);
+  left: -8px;
+  z-index: 20;
+  display: grid;
+  gap: var(--s3);
+  width: max-content;
+  max-width: min(26rem, 78vw);
+  padding: var(--s3) var(--s4);
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .09), 0 1px 2px rgba(0, 0, 0, .05);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-3px);
+  transition: opacity 140ms ease, transform 140ms ease, visibility 140ms;
+}
+.pip:hover .reading, .pip:focus-visible .reading, .pip.open .reading {
+  opacity: 1; visibility: visible; transform: translateY(0);
+}
+
+.verdict-line { display: flex; align-items: baseline; gap: var(--s3); }
+.verdict-line b { font-size: var(--t-lg); font-weight: 550; letter-spacing: -.01em; }
+.pip.excellent .verdict-line b, .pip.good .verdict-line b { color: var(--accent); }
+.pip.moderate .verdict-line b { color: var(--ink); }
+.pip.at-risk .verdict-line b, .pip.critical .verdict-line b { color: var(--warn); }
 
 .bars { display: grid; gap: var(--s2); }
-.bar-row { display: grid; grid-template-columns: 5.5rem 9rem 1fr; align-items: center; gap: var(--s3); }
-.bar-label { font-size: var(--t-sm); color: var(--ink-soft); }
-.bar { height: 6px; border-radius: 3px; background: var(--hairline); overflow: hidden; }
+.bar-row { display: grid; grid-template-columns: 4.75rem 6rem 1fr; align-items: center; gap: var(--s3); }
+.bar-label { font-size: var(--t-xs); color: var(--ink-soft); }
+.bar { height: 5px; border-radius: 3px; background: var(--hairline); overflow: hidden; }
 .bar > i { display: block; height: 100%; background: var(--accent); }
 .bar.warm > i { background: var(--warn); }
 
-.attention > div { font-size: var(--t-sm); color: var(--ink-soft); padding: var(--s1) 0; }
-.attention > div::before { content: "· "; color: var(--warn); }
+/* On a narrow panel the hint has nowhere to go and wraps to three lines,
+   which reads worse than not saying it. The label carries the meaning. */
+@media (max-width: 520px) {
+  .bar-row { grid-template-columns: 4.75rem 1fr; }
+  .bar-row > .xs { display: none; }
+}
+
+.attention { display: grid; }
+.attention > span {
+  font-size: var(--t-sm);
+  line-height: 1.45;
+  color: var(--ink-soft);
+  padding: var(--s1) 0;
+}
+.attention > span::before { content: "· "; color: var(--warn); }
+.attention > span.faint::before { content: none; }
 
 .map .flag.at-risk, .map .flag.critical { fill: var(--warn); }
 .map .flag.moderate { fill: var(--ink-faint); }
@@ -540,9 +608,9 @@ td.num { font-variant-numeric: tabular-nums; }
 
 /* ------------------------------------------------- context, not action
 
-   Four of the sections say how things stand or what has already happened:
-   health, people, answered questions, and the record. The others are where
-   a person acts. Weighting them the same made the page read as a flat list
+   Three of the sections say how things stand or what has already happened:
+   people, answered questions, and the record. The others are where a
+   person acts. Weighting them the same made the page read as a flat list
    of equals, so these step back -- less air above them, a quieter heading,
    and content one size down -- without changing a single colour or losing
    anything.
@@ -563,14 +631,6 @@ td.num { font-variant-numeric: tabular-nums; }
 #app > section.aside .log div { padding: 1px 0; }
 
 #app > section.aside .know .q { font-size: var(--t-sm); }
-
-/* The verdict stays the loudest thing in its section, but no longer competes
-   with the goal at the top of the page. */
-#app > section.aside .verdict b { font-size: var(--t-md); }
-#app > section.aside .attention > div { font-size: var(--t-xs); padding: 1px 0; }
-#app > section.aside .bars { gap: var(--s1); }
-#app > section.aside .bar-row { grid-template-columns: 4.75rem 7rem 1fr; }
-#app > section.aside .bar-label { font-size: var(--t-xs); }
 
 /*
   Settled questions are history. A card says "this is a thing you can pick

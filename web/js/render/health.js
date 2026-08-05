@@ -1,10 +1,11 @@
 /*
-  Health.
+  Health, as one circle beside the goal.
 
-  A word, and the two or three things currently in the way. The bars are
-  behind a click because most of the time the word and the attention list are
-  the whole answer -- and because a person who cannot change a number should
-  not be shown one.
+  A cell's health is a diagnosis, not work: it is worth a glance and almost
+  never worth a section. So it sits next to the title as a single dot coloured
+  by how the cell is doing, and everything behind that judgement -- what is in
+  the way, whether it is improving, and the three bars it was derived from --
+  appears when you reach for it.
 
   Nothing here computes anything. Potential, friction, capacity and momentum
   all arrived from the server, derived from facts nobody typed in.
@@ -15,51 +16,49 @@ import { HEALTH_WORD, MOMENTUM_WORD } from '../labels.js';
 import { showing } from '../store.js';
 
 const SCALE = 100;
-/* At rest, the two things most in the way. "Why" shows the bars and the rest. */
-const AT_REST = 2;
 
-export function health(v) {
+export function pip(v) {
   const h = v.health;
   if (!h) return '';
 
+  const band = h.health.replace(' ', '-');
   const open = showing('health');
-  const said = open ? h.attention : h.attention.slice(0, AT_REST);
-  const rest = h.attention_count - said.length;
+  const word = HEALTH_WORD[h.health] || h.health;
 
-  return `<section class="aside"><h2>Health</h2>
-    <div class="verdict ${esc(h.health.replace(' ', '-'))}">
-      <b>${esc(HEALTH_WORD[h.health] || h.health)}</b>
-      <span class="xs faint">${esc(MOMENTUM_WORD[h.momentum] || '')}</span>
-      ${showing('health')
-        ? '<button class="quiet faint" data-act="unform" data-form="health">less</button>'
-        : '<button class="quiet faint" data-act="form" data-form="health">why</button>'}
-    </div>
-
-    ${showing('health') ? bars(h) : ''}
-
-    ${said.length
-      ? `<div class="attention">
-           ${said.map((a) => `<div>${esc(a)}</div>`).join('')}
-           ${rest > 0
-             ? `<div class="xs faint">and ${plural(rest, 'other thing')}</div>` : ''}
-         </div>`
-      : '<p class="xs faint">Nothing needs attention.</p>'}
-  </section>`;
+  return `<button class="pip ${band}${open ? ' open' : ''}"
+    data-act="${open ? 'unform' : 'form'}" data-form="health"
+    aria-label="Health: ${esc(word)}. ${esc(h.attention_count
+      ? plural(h.attention_count, 'thing') + ' need attention' : 'Nothing needs attention')}.">
+    <span class="dot"></span>
+    <span class="reading">
+      <span class="verdict-line">
+        <b>${esc(word)}</b>
+        <span class="xs faint">${esc(MOMENTUM_WORD[h.momentum] || '')}</span>
+      </span>
+      ${h.attention.length
+        ? `<span class="attention">${h.attention.map((a) => `<span>${esc(a)}</span>`).join('')}${
+            h.attention_count > h.attention.length
+              ? `<span class="xs faint">and ${plural(
+                   h.attention_count - h.attention.length, 'other thing')}</span>` : ''}</span>`
+        : '<span class="xs faint">Nothing needs attention.</span>'}
+      ${bars(h)}
+    </span>
+  </button>`;
 }
 
 function bars(h) {
-  return `<div class="bars">
+  return `<span class="bars">
     ${bar('Potential', h.potential, 'what this cell could do')}
     ${bar('Friction', h.friction, 'what is in the way', true)}
-    ${bar('Capacity', h.capacity, 'what it can actually do right now')}
-  </div>`;
+    ${bar('Capacity', h.capacity, 'what it can do right now')}
+  </span>`;
 }
 
 function bar(label, value, hint, warm) {
   const width = Math.round((Math.max(0, Math.min(SCALE, value)) / SCALE) * 100);
-  return `<div class="bar-row">
+  return `<span class="bar-row">
     <span class="bar-label">${esc(label)}</span>
     <span class="bar${warm ? ' warm' : ''}"><i style="width:${width}%"></i></span>
     <span class="xs faint">${esc(hint)}</span>
-  </div>`;
+  </span>`;
 }
