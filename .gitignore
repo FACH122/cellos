@@ -1,0 +1,6 @@
+# The database is generated, never authored. Every state it can hold comes
+# back from `run.py seed`, `run.py demo` or `run.py students`.
+data/
+
+__pycache__/
+*.py[cod]
