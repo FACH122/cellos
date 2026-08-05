@@ -441,17 +441,9 @@ td.num { font-variant-numeric: tabular-nums; }
 .map .node:focus { outline: none; }
 .map .node:focus .dish, .map .node:hover .dish { stroke: var(--ink-faint); }
 
-/* A cell is a hexagon, point up: the shape cells take when they pack. Rounded
-   joins keep the six corners from reading as sharp at this size. */
-.map .dish {
-  fill: var(--surface); stroke: var(--hairline); stroke-width: 2;
-  stroke-linejoin: round;
-}
-.map .fill {
-  fill: none; stroke: var(--accent); stroke-width: 2.5;
-  stroke-linecap: round; stroke-linejoin: round;
-}
-.map .flag { fill: var(--warn); stroke: var(--page); stroke-width: 1.5; }
+.map .dish { fill: var(--surface); stroke: var(--hairline); stroke-width: 2; }
+.map .fill { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; }
+.map .flag { fill: var(--warn); }
 
 .map .pc {
   text-anchor: middle; font-size: 11px; fill: var(--ink-soft);

@@ -1,9 +1,9 @@
 /*
   The structural map.
 
-  Every hexagon is a cell. The outline drawn round it is how far along it is;
-  a dot on the rim means something in there needs attention, coloured by how
-  the cell is doing. That is two things encoded, deliberately.
+  Every circle is a cell. The ring around it is how far along it is; a dot on
+  the rim means something in there needs attention, coloured by how the cell
+  is doing. That is two things encoded, deliberately.
 
   Three things make this different from the rest of the interface, and all
   three follow from one requirement: **there is no maximum depth.**
@@ -28,41 +28,12 @@
 import { api } from '../api.js';
 import { esc, plural } from '../dom.js';
 
-/*
-  Distance from a node's centre to its corners. 19 rather than the 17 a circle
-  used: a hexagon drawn inside the same circle covers 83% of it, so matching
-  the radius would have made every cell quietly smaller than it was.
-*/
-const R = 19;
+const R = 17;            // node radius
 const ROW = 96;          // vertical distance between levels
 const GAP = 132;         // horizontal room per leaf
 const PAD = 28;
 const MS = 340;          // how long a rearrangement takes
 const SVG_NS = 'http://www.w3.org/2000/svg';
-
-/*
-  A cell is drawn as a hexagon, point up.
-
-  Not decoration: it is the shape cells take when they pack together, and the
-  only shape that tiles a plane with every neighbour sharing a whole edge --
-  which is exactly what this map is about. A circle says "one thing". A
-  hexagon says "one thing that belongs to a structure of these".
-
-  Six corners on a circle of radius R, starting at the top and going
-  clockwise, so a progress stroke drawn along the outline starts at twelve
-  o'clock the way the old ring did. Every side is R long, so the perimeter is
-  6R with no integration required.
-*/
-const CORNERS = [-90, -30, 30, 90, 150, 210].map((deg) => {
-  const a = (deg * Math.PI) / 180;
-  return [R * Math.cos(a), R * Math.sin(a)];
-});
-const OUTLINE = CORNERS.map(([x, y], i) =>
-  `${i ? 'L' : 'M'}${x.toFixed(2)} ${y.toFixed(2)}`).join('') + 'Z';
-const PERIMETER = 6 * R;
-
-const HALF_WIDTH = R * Math.cos(Math.PI / 6);   // how far the sides reach at y = 0
-const KNOB_X = HALF_WIDTH + 11;                 // clear of the side, not of the corners
 
 let view = null;         // the one live map, kept across page re-renders
 let onOpen = () => {};
@@ -325,17 +296,11 @@ function refresh(g, node) {
 }
 
 function nodeMarkup(node) {
-  const filled = (Math.max(0, Math.min(100, node.percent)) / 100) * PERIMETER;
+  const c = 2 * Math.PI * R;
+  const filled = (Math.max(0, Math.min(100, node.percent)) / 100) * c;
   const label = node.goal.length > 22 ? node.goal.slice(0, 20).trimEnd() + '…' : node.goal;
   const open = view.expanded.has(node.id);
   const inside = node.child_count && !open ? ` · ${node.child_count} inside` : '';
-  /*
-    The flag sits just outside the upper-right corner. Outside, because the
-    progress stroke runs along the outline and a dot centred on it reads as a
-    kink in the line rather than a mark on the cell; it keeps a ring of the
-    page colour around it for the same reason.
-  */
-  const flagAt = CORNERS[1].map((n) => (n * (R + 3)) / R);
 
   /*
     A transparent rectangle over the whole node, drawn first so it sits
@@ -345,16 +310,17 @@ function nodeMarkup(node) {
   return `<title>${esc(tooltip(node))}</title>
     <rect class="hit" x="${-GAP / 2 + 6}" y="${-R - 6}"
           width="${GAP - 12}" height="${R * 2 + 44}" />
-    <path class="dish" d="${OUTLINE}" />
-    <path class="fill" d="${OUTLINE}"
-          stroke-dasharray="${filled.toFixed(1)} ${PERIMETER.toFixed(1)}" />
+    <circle class="dish" r="${R}" />
+    <circle class="fill" r="${R}"
+            stroke-dasharray="${filled.toFixed(1)} ${c.toFixed(1)}"
+            transform="rotate(-90)" />
     ${node.attention
       ? `<circle class="flag ${esc((node.health || '').replace(' ', '-'))}"
-                cx="${flagAt[0].toFixed(2)}" cy="${flagAt[1].toFixed(2)}" r="3.5" />` : ''}
+                cx="${R - 3}" cy="${-R + 3}" r="3.5" />` : ''}
     <text class="pc" y="4">${node.percent}</text>
     ${node.child_count ? `<g class="knob">
-        <circle class="knob-hit" cx="${KNOB_X}" cy="0" r="9" />
-        <text class="knob-mark" x="${KNOB_X}" y="4">${open ? '−' : '+'}</text>
+        <circle class="knob-hit" cx="${R + 11}" cy="0" r="9" />
+        <text class="knob-mark" x="${R + 11}" y="4">${open ? '−' : '+'}</text>
       </g>` : ''}
     <text class="name" y="${R + 17}">${esc(label)}</text>
     <text class="sub" y="${R + 31}">${
