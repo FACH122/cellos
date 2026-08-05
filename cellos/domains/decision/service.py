@@ -201,5 +201,11 @@ def record(actor_id, decision_id):
         "lifecycle_length": len(flow.states) - 1,
         "your_vote": model.vote_of(decision_id, actor_id),
         "actions": actions(actor_id, d),
+        # Casting a vote is not a state change -- the question stays in
+        # voting -- so it is not a transition and never appeared in `actions`.
+        # That left the commonest thing a member ever does as the one thing
+        # the server did not offer, and a reader had to know it from
+        # somewhere else. It says so here instead.
+        "can_vote": rules.may_vote(d["state"], permission.is_member(actor_id, d["cell_id"])),
     })
     return d

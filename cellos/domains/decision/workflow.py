@@ -90,7 +90,8 @@ def _accept_by_vote(ctx, _current):
     result = _count(ctx)
     if not result["winner"]:
         raise DomainError("The cell is tied. This needs someone to decide it.")
-    return {"option_id": result["winner"], "how": rules.BY_VOTE, "note": ""}
+    return {"option_id": result["winner"], "how": rules.BY_VOTE,
+            "note": rules.vote_reason(result)}
 
 
 def _accept_by_leader(ctx, _current):

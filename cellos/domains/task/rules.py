@@ -43,6 +43,30 @@ def state_of(owner_id, progress, expanded_into=None):
     return ACTIVE if owner_id else OPEN
 
 
+def check_assignment(holder_name, holder_id, actor_id, owner_id, actor_leads):
+    """
+    Who may move a piece of work between hands.
+
+    Picking up something nobody holds needs no permission -- that is the whole
+    point of leaving work unowned, and asking to be allowed would defeat it.
+    Everything else touches a commitment somebody has already made: handing
+    work to a third person, taking it out of the hands it is in, or putting
+    down something you are not holding.
+
+    Those are a leader's call, or the holder's own. Without that rule a person
+    can silently lose work they still believe is theirs, and the cell ends up
+    with two people each certain they are doing it and one of them wrong --
+    which is the exact failure the whole system exists to prevent.
+    """
+    if actor_leads:
+        return None
+    if owner_id and owner_id != actor_id:
+        return "Only a leader can hand work to someone else."
+    if holder_id and holder_id != actor_id:
+        return "%s has that. Ask them, or ask a leader to move it." % (holder_name or "Somebody")
+    return None
+
+
 def check_can_expand(state):
     """
     Only work that is still one person's to do. Finished work has nothing left

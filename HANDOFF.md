@@ -329,7 +329,9 @@ advance_execution(actor_id, decision_id, step)  called by the task domain
 ### task — work
 ```
 create(actor_id, cell_id, title, owner_id=None)
-assign(actor_id, task_id, owner_id)
+assign(actor_id, task_id, owner_id)             unheld work is free to take;
+                                                work already in someone's hands
+                                                moves only by a leader
 report_progress(actor_id, task_id, progress)   0–100
 promote(actor_id, task_id, goal=None)          "too large" → becomes a cell
 may_promote(actor_id, task_id) -> bool

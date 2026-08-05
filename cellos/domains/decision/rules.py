@@ -64,6 +64,26 @@ def tally(counts):
     }
 
 
+def may_vote(state, is_member):
+    """
+    Whether this person can cast a vote on this question right now. A vote can
+    be changed while the question is still open, so having voted already is
+    not a reason to stop offering it.
+    """
+    return bool(is_member) and state == "voting"
+
+
+def vote_reason(result):
+    """
+    Ratifying the cell's own vote still has a reason, and the reason is the
+    count. Recording it means a settled question reads as something decided
+    rather than something that merely stopped -- the same standard a leader
+    is held to when they decide alone.
+    """
+    top = result["counts"].get(result["winner"], 0)
+    return "The cell chose this, %d of %d votes." % (top, result["total"])
+
+
 def how_decided(result, option_id, note):
     """
     Whether accepting this option confirms the cell or overrules it.

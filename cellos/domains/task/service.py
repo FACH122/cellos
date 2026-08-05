@@ -16,7 +16,7 @@ workflow.
 """
 
 from ...kernel import events, relationships
-from ...kernel.errors import DomainError, NotFound
+from ...kernel.errors import DomainError, NotAllowed, NotFound
 from .. import permission
 from ..cell import service as cell_service
 from ..decision import service as decision
@@ -60,11 +60,16 @@ def assign(actor_id, task_id, owner_id):
     """Taking work, or handing it over. Either way the cell can see who holds it."""
     task = get(task_id)
     permission.require_member(actor_id, task["cell_id"])
-    if owner_id:
-        if not member_model.membership(owner_id, task["cell_id"]):
-            raise DomainError("That person is not in this cell.")
-        if owner_id != actor_id and not permission.is_leader(actor_id, task["cell_id"]):
-            raise DomainError("Only a leader can hand work to someone else.")
+    if owner_id and not member_model.membership(owner_id, task["cell_id"]):
+        raise DomainError("That person is not in this cell.")
+
+    holder = task.get("owner_id")
+    refusal = rules.check_assignment(
+        member_model.names([holder]).get(holder), holder, actor_id, owner_id,
+        permission.is_leader(actor_id, task["cell_id"]))
+    if refusal:
+        raise NotAllowed(refusal)
+
     events.append("TaskAssigned", actor_id=actor_id, cell_id=task["cell_id"],
                   subject_id=task_id, owner_id=owner_id)
     return get(task_id)

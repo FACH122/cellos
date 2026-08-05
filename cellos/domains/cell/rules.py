@@ -10,7 +10,13 @@ def clean_goal(goal):
     if not goal:
         raise DomainError("A cell needs a goal.")
     if len(goal) > MAX_GOAL:
-        raise DomainError("A goal should be one sentence, not an essay.")
+        # Say the rule that is actually being applied. The old wording talked
+        # about sentences while the check counted characters, so a goal that
+        # was plainly one sentence could be refused for being one -- which
+        # tells a person nothing about how to fix it.
+        raise DomainError("A goal should be short enough to hold in one line: "
+                          "that is %d characters, and the limit is %d."
+                          % (len(goal), MAX_GOAL))
     return goal
 
 
