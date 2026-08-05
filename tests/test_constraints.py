@@ -185,3 +185,85 @@ class FeedsHealth(unittest.TestCase):
         task.assign(boss["id"], t["id"], boss["id"])
         task.record_cost(boss["id"], t["id"], 99999)      # allowed
         self.assertTrue(constraints.budget_of(c["id"])["over"])
+
+
+class CellDeadlines(unittest.TestCase):
+    """A cell may commit to a date too. Optional, and nothing is enforced."""
+
+    def test_a_cell_with_no_date_is_not_asked_about_one(self):
+        _boss, c, _crew = a_cell()
+        self.assertIsNone(constraints.deadline_of(c["id"]))
+
+    def test_a_leader_may_commit_the_cell_and_drop_it_again(self):
+        boss, c, _crew = a_cell()
+        cell_service.set_deadline(boss["id"], c["id"], "2026-12-05")
+        self.assertEqual(constraints.deadline_of(c["id"])["due_on"], "2026-12-05")
+        cell_service.set_deadline(boss["id"], c["id"], None)
+        self.assertIsNone(constraints.deadline_of(c["id"]))
+
+    def test_only_a_leader_commits_the_cell_to_a_date(self):
+        boss, c, crew = a_cell()
+        with self.assertRaises(NotAllowed):
+            cell_service.set_deadline(crew[0]["id"], c["id"], "2026-12-05")
+
+    def test_a_budget_and_a_date_are_independent(self):
+        boss, c, _crew = a_cell()
+        cell_service.set_budget(boss["id"], c["id"], 500, "EUR")
+        cell_service.set_deadline(boss["id"], c["id"], "2026-12-05")
+        cell_service.set_deadline(boss["id"], c["id"], None)
+        self.assertIsNotNone(constraints.budget_of(c["id"]))
+
+    def test_a_passed_date_with_work_outstanding_is_said_plainly(self):
+        said = rules.cell_deadline_friction("Move house", "2026-06-05", TODAY, percent=40)
+        self.assertEqual(len(said), 1)
+        self.assertIn("5 days ago", said[0][1])
+        self.assertIn("40%", said[0][1])
+
+    def test_a_finished_cell_is_never_late(self):
+        self.assertEqual(
+            rules.cell_deadline_friction("Move house", "2020-01-01", TODAY, percent=100), [])
+
+    def test_a_cell_costs_more_when_late_than_one_piece_of_work_does(self):
+        cell_late = rules.cell_deadline_friction("X", "2026-06-05", TODAY, 40)
+        work_late = rules.deadline_friction("X", "2026-06-05", TODAY, 40)
+        self.assertGreater(cell_late[0][0], work_late[0][0])
+
+
+class Contradictions(unittest.TestCase):
+    """
+    Two dates that cannot both be true. CellOS refuses nothing -- it says so,
+    which is the only thing software is in a position to do about it.
+    """
+
+    def test_something_due_after_the_whole_is_noticed(self):
+        said = rules.inconsistent_deadline("the cell", "Venue", "2026-09-01", "2026-08-01")
+        self.assertEqual(len(said), 1)
+        self.assertIn("due after this cell is", said[0][1])
+
+    def test_consistent_dates_say_nothing(self):
+        self.assertEqual(
+            rules.inconsistent_deadline("the cell", "Venue", "2026-07-01", "2026-08-01"), [])
+        self.assertEqual(
+            rules.inconsistent_deadline("the cell", "Venue", "2026-08-01", "2026-08-01"), [])
+
+    def test_a_missing_date_on_either_side_says_nothing(self):
+        self.assertEqual(rules.inconsistent_deadline("the cell", "V", None, "2026-08-01"), [])
+        self.assertEqual(rules.inconsistent_deadline("the cell", "V", "2026-08-01", None), [])
+
+    def test_work_promised_for_later_than_its_cell_shows_up(self):
+        boss, c, _crew = a_cell()
+        cell_service.set_deadline(boss["id"], c["id"], "2026-08-01")
+        t = task.create(boss["id"], c["id"], "Sign the lease")
+        task.assign(boss["id"], t["id"], boss["id"])
+        task.set_deadline(boss["id"], t["id"], "2026-09-15")
+
+        said = [r for _p, r in constraints.friction(c["id"])]
+        self.assertTrue(any("Sign the lease" in r and "after this cell" in r for r in said), said)
+
+    def test_nothing_is_refused_only_noticed(self):
+        boss, c, _crew = a_cell()
+        cell_service.set_deadline(boss["id"], c["id"], "2026-08-01")
+        t = task.create(boss["id"], c["id"], "Way too late")
+        task.assign(boss["id"], t["id"], boss["id"])
+        task.set_deadline(boss["id"], t["id"], "2099-01-01")     # allowed
+        self.assertEqual(task.get(t["id"])["due_on"], "2099-01-01")

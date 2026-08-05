@@ -47,6 +47,7 @@ export const api = {
 
   updateTask: (id, patch) => request('PATCH', '/api/tasks/' + id, patch),
   splitOffTask: (id, goal) => request('POST', `/api/tasks/${id}/cell`, { goal }),
-  setBudget: (id, amount, currency) => request('PUT', `/api/cells/${id}/budget`, { amount, currency }),
+  /* What a cell holds itself to: a budget, a date, either or neither. */
+  setCommitments: (id, body) => request('PUT', `/api/cells/${id}/commitments`, body),
   attachEvidence: (payload) => request('POST', '/api/evidence', payload),
 };

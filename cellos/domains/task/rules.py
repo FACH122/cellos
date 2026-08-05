@@ -103,15 +103,10 @@ MAX_COST = 1e12
 
 
 def clean_deadline(due_on):
-    """A date, or nothing. Optional everywhere, like evidence."""
-    import datetime
+    """A date, or nothing. The rule lives with the other constraints."""
+    from ..constraints.rules import clean_deadline as shared
 
-    if due_on in (None, ""):
-        return None
-    try:
-        return datetime.date.fromisoformat(str(due_on)[:10]).isoformat()
-    except ValueError:
-        raise DomainError("A deadline is a date, like 2026-12-05.")
+    return shared(due_on)
 
 
 def clean_cost(cost):

@@ -30,11 +30,17 @@ def refine(actor, body, cell_id):
     return views.cell(actor["id"], cell_id)
 
 
-@route("PUT", "/api/cells/<cell_id>/budget")
-def budget(actor, body, cell_id):
-    """Set or clear the cell's spending limit. Optional; absent by default."""
+@route("PUT", "/api/cells/<cell_id>/commitments")
+def commitments(actor, body, cell_id):
+    """
+    What this cell has committed to: a budget, a date, either or neither.
+    Both optional and absent by default; passing nothing for one clears it.
+    """
     from ...app import views
-    service.set_budget(actor["id"], cell_id, body.get("amount"), body.get("currency"))
+    if "amount" in body or "currency" in body:
+        service.set_budget(actor["id"], cell_id, body.get("amount"), body.get("currency"))
+    if "due_on" in body:
+        service.set_deadline(actor["id"], cell_id, body.get("due_on"))
     return views.cell(actor["id"], cell_id)
 
 

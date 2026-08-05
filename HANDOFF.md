@@ -173,7 +173,7 @@ DecisionAccepted  LeaderOverride  DecisionReturned  DecisionRejected
 ExecutionStarted  ExecutionCompleted  ExecutionResumed  KnowledgeRecorded
 TaskCreated  TaskGenerated  TaskAssigned  ProgressUpdated
 TaskCompleted  TaskReopened  TaskExpanded
-BudgetSet  DeadlineSet  CostRecorded
+BudgetSet  CellDeadlineSet  DeadlineSet  CostRecorded
 EvidenceAttached  RelationshipFormed
 ```
 
@@ -392,7 +392,7 @@ POST   /api/decisions/<id>/steps/<step>   THE state-change endpoint
 
 POST   /api/cells/<id>/tasks              {title, owner_id?}
 PATCH  /api/tasks/<id>                    {owner_id?, progress?, due_on?, cost?}
-PUT    /api/cells/<id>/budget             {amount, currency} — null amount clears it
+PUT    /api/cells/<id>/commitments        {amount?, currency?, due_on?} — empty clears one
 POST   /api/tasks/<id>/cell               {goal?}  — split off too-large work
 
 POST   /api/evidence                      {subject_kind, subject_id, kind, label, ref?}
@@ -511,9 +511,9 @@ steering it.
 
 ## 10c. Constraints — optional commitments
 
-A cell may commit to a **budget**; a task may commit to a **date** and record a
-**cost**. All three are optional everywhere and required nowhere, like
-evidence. A cell that never set a budget is not a cell at 0% spent — it is a
+A cell may commit to a **budget** and a **date**; a task may commit to a
+**date** and record a **cost**. All of them are optional everywhere and
+required nowhere, like evidence. A cell that never set a budget is not a cell at 0% spent — it is a
 cell the question does not apply to, and `constraints` is absent from its
 payload entirely.
 
@@ -523,8 +523,11 @@ payload entirely.
   task. It notices, and says so, and the organisation decides — which is why
   these feed `health` as ordinary friction and get no special treatment for
   having been chosen deliberately.
-- **Clearing is not zero.** Passing a null amount drops the commitment; the
+- **Clearing is not zero.** Passing an empty value drops that commitment; the
   log still records that the cell once had one.
+- **Contradictions are said, not blocked.** A task or child cell promised for
+  later than the cell it sits inside is a pair of dates that cannot both hold.
+  CellOS notices and says so; it refuses nothing.
 
 ## 11. Invariants — break these and the design is gone
 

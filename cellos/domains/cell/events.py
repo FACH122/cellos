@@ -34,3 +34,9 @@ def _budget(conn, event):
     p = event["payload"]
     conn.execute("UPDATE cells SET budget = ?, currency = ? WHERE id = ?",
                  (p.get("amount"), p.get("currency"), event["subject_id"]))
+
+
+@events.projector("CellDeadlineSet")
+def _deadline(conn, event):
+    conn.execute("UPDATE cells SET due_on = ? WHERE id = ?",
+                 (event["payload"].get("due_on"), event["subject_id"]))

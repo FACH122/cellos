@@ -17,7 +17,10 @@ CREATE TABLE cells (
     -- Optional, and null until somebody chooses to commit to one. A cell
     -- with no budget is not a cell with a budget of zero.
     budget     REAL,
-    currency   TEXT
+    currency   TEXT,
+    -- When the cell is wanted by. Optional, like the budget: null until
+    -- somebody chooses to commit, and clearing it is not the same as missing it.
+    due_on     TEXT
 );
 """
 

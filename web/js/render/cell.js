@@ -69,33 +69,42 @@ function goal(v) {
       ${v.constraints && v.constraints.budget
         ? `<span class="${v.constraints.budget.over ? 'over' : 'faint'}">${
             esc(v.constraints.budget.reads)}</span>` : ''}
+      ${v.constraints && v.constraints.due
+        ? dueMarker(v.constraints.due.due_on, v.constraints.due.days_left) : ''}
       ${v.you.is_leader
         ? `<button class="quiet faint" data-act="form" data-form="budget">${
-            v.constraints && v.constraints.budget ? 'change the budget' : 'set a budget'}</button>`
+            committed(v) ? 'change' : 'add a budget or a date'}</button>`
         : ''}
     </div>
-    ${showing('budget') ? budgetForm(v) : ''}
+    ${showing('budget') ? commitmentForm(v) : ''}
   </section>`;
 }
 
+const committed = (v) => !!(v.constraints && (v.constraints.budget || v.constraints.due));
+
 /*
-  A budget is optional, so this only ever appears because a leader went
-  looking for it. Clearing the field drops the commitment entirely -- which
-  is not the same as committing to zero.
+  Both commitments in one form, because they are one thought: what this cell
+  has said it will hold itself to. Neither is required, and emptying a field
+  drops that commitment -- which is a different thing from committing to zero,
+  or from having missed a date.
 */
-function budgetForm(v) {
+function commitmentForm(v) {
   const b = (v.constraints && v.constraints.budget) || {};
+  const d = (v.constraints && v.constraints.due) || {};
   return `<form class="panel" data-form="budget">
     <div class="row">
       <label class="field grow"><span>What is this cell willing to spend?</span>
         <input name="amount" inputmode="decimal" autofocus
                value="${b.amount === undefined ? '' : b.amount}"
                placeholder="leave empty for no budget"></label>
-      <label class="field" style="width:7rem"><span>Currency</span>
+      <label class="field" style="width:6rem"><span>Currency</span>
         <input name="currency" value="${esc(b.currency || 'EUR')}"></label>
+      <label class="field grow"><span>Wanted by</span>
+        <input name="due_on" type="date" value="${esc(d.due_on || '')}"></label>
     </div>
-    <p class="xs faint">Spending is the sum of what the work cost, rolled up from
-      the cells inside. Nothing is enforced — CellOS will say when it is close.</p>
+    <p class="xs faint">Both optional. Spending is the sum of what the work cost,
+      rolled up from the cells inside. Nothing is enforced — CellOS will say when
+      the money is close or the date has passed, and leave the rest to you.</p>
     <div class="actions"><button class="primary" type="submit">Save</button>
       <button type="button" class="quiet" data-act="unform" data-form="budget">cancel</button>
     </div></form>`;
@@ -215,8 +224,12 @@ const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov
 
 function due(t) {
   if (!t.due_on || t.state === 'done' || t.state === 'expanded') return '';
-  const left = t.days_left;
-  const [tone, said] = dueWords(left, t.due_on);
+  return dueMarker(t.due_on, t.days_left);
+}
+
+/* The same quiet marker wherever a date appears: on a task, or on the cell. */
+function dueMarker(iso, daysLeft) {
+  const [tone, said] = dueWords(daysLeft, iso);
   return `<span class="due ${tone}">${tone === 'calm' ? CALENDAR : '<i></i>'}${esc(said)}</span>`;
 }
 

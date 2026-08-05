@@ -47,6 +47,15 @@ def budget_of(cell_id, scope=None):
     }
 
 
+def deadline_of(cell_id):
+    """When this cell is wanted by, or nothing at all."""
+    cell = cell_model.get(cell_id)
+    if cell is None or not cell.get("due_on"):
+        return None
+    left = rules.days_between(cell["due_on"], today())
+    return {"due_on": cell["due_on"], "days_left": left, "late": left < 0}
+
+
 def deadlines_in(scope, when=None):
     """Dated work, sorted by how much it matters: late first, then imminent."""
     when = when or today()
@@ -78,6 +87,32 @@ def friction(cell_id, scope=None, when=None):
         remaining = len(task_model.in_cells(scope, unfinished_only=True))
         signals += rules.budget_friction(
             money["spent"], money["amount"], money["currency"], remaining)
+
+    signals += _own_deadline(cell_id, when)
+    return signals
+
+
+def _own_deadline(cell_id, when):
+    """
+    The cell's own date, and anything inside it promised for later than the
+    whole. Nothing is blocked or refused -- the contradiction is simply said
+    out loud, which is the only thing software is in a position to do about it.
+    """
+    from ..progress import service as progress
+
+    cell = cell_model.get(cell_id)
+    if cell is None or not cell.get("due_on"):
+        return []
+
+    mine = cell["due_on"]
+    signals = rules.cell_deadline_friction(
+        cell["goal"], mine, when, progress.of_cell(cell_id)["percent"])
+
+    for t in task_model.due_in([cell_id]):
+        signals += rules.inconsistent_deadline("the work", t["title"], t["due_on"], mine)
+    for child in hierarchy.children(cell_id):
+        signals += rules.inconsistent_deadline("the cell", child["goal"],
+                                               child.get("due_on"), mine)
     return signals
 
 
@@ -86,6 +121,7 @@ def of_cell(cell_id):
     scope = hierarchy.subtree_ids(cell_id)
     money = budget_of(cell_id, scope)
     dates = deadlines_in(scope)
-    if not money and not (dates["late"] or dates["soon"] or dates["ahead"]):
+    own = deadline_of(cell_id)
+    if not money and not own and not (dates["late"] or dates["soon"] or dates["ahead"]):
         return None
-    return {"budget": money, "deadlines": dates}
+    return {"budget": money, "due": own, "deadlines": dates}

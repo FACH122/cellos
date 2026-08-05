@@ -107,6 +107,20 @@ def set_budget(actor_id, cell_id, amount, currency=None):
     return model.get(cell_id)
 
 
+def set_deadline(actor_id, cell_id, due_on):
+    """
+    Commit the cell to a date, or drop the commitment by passing nothing.
+    Nothing is enforced: CellOS will say when the date is close or past, and
+    the cell decides what that means.
+    """
+    permission.require_leader(actor_id, cell_id, "set a date for this cell")
+    from ..constraints import rules as constraint_rules
+    due_on = constraint_rules.clean_deadline(due_on)
+    events.append("CellDeadlineSet", actor_id=actor_id, cell_id=cell_id,
+                  subject_id=cell_id, due_on=due_on)
+    return model.get(cell_id)
+
+
 def refine_goal(actor_id, cell_id, goal):
     permission.require_leader(actor_id, cell_id, "change the goal")
     goal = rules.clean_goal(goal)

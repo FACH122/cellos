@@ -18,7 +18,55 @@ SOON_DAYS = 3      # a deadline this close counts as imminent
 OVERDUE_COST = 7   # the date has passed and the work is not done
 SOON_COST = 3      # close, and not started
 OVER_BUDGET_COST = 8
+CONTRADICTION_COST = 6   # something inside is due later than the whole
 TIGHT_BUDGET_COST = 4
+
+
+def clean_deadline(due_on):
+    """
+    A date, or nothing. Optional on a cell and on a task alike -- committing
+    to one is a choice, and clearing it is a different thing from having
+    missed it.
+    """
+    import datetime
+
+    from ...kernel.errors import DomainError
+
+    if due_on in (None, ""):
+        return None
+    try:
+        return datetime.date.fromisoformat(str(due_on)[:10]).isoformat()
+    except ValueError:
+        raise DomainError("A deadline is a date, like 2026-12-05.")
+
+
+def cell_deadline_friction(goal, due_on, today, percent):
+    """
+    The cell's own date. Work still outstanding past the day it was wanted is
+    worth saying plainly; a cell that finished is not late whatever the
+    calendar says.
+    """
+    if percent >= 100:
+        return []
+    left = days_between(due_on, today)
+    if left < 0:
+        return [(OVERDUE_COST + 2, "this cell was due %s and is at %d%%" % (_ago(-left), percent))]
+    if left <= SOON_DAYS:
+        return [(SOON_COST, "this cell is due %s and is at %d%%" % (_within(left), percent))]
+    return []
+
+
+def inconsistent_deadline(what, name, inner_due, outer_due):
+    """
+    Something inside a cell is due after the cell itself. Not a rule anybody
+    broke -- CellOS enforces nothing -- but a contradiction the two dates make
+    that nobody may have noticed, and exactly the kind of thing the system can
+    see and a person cannot.
+    """
+    if not inner_due or not outer_due or inner_due <= outer_due:
+        return []
+    return [(CONTRADICTION_COST,
+             "%s “%s” is due after this cell is" % (what, name))]
 
 
 def share(spent, budget):

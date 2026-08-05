@@ -105,7 +105,8 @@ export function wireForms(root) {
           return run(() => api.addTask(S.cellId, d.title));
         case 'budget':
           closeForm('budget');
-          return run(() => api.setBudget(S.cellId, d.amount, d.currency), 'Noted.');
+          return run(() => api.setCommitments(S.cellId,
+            { amount: d.amount, currency: d.currency, due_on: d.due_on }), 'Noted.');
         case 'due':
           closeForm('due:' + id);
           return run(() => api.updateTask(id, { due_on: d.due_on, cost: d.cost }), 'Noted.');
