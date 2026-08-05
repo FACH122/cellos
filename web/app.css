@@ -488,10 +488,21 @@ td.num { font-variant-numeric: tabular-nums; }
 /* --------------------------------------------------- optional constraints */
 
 .over { color: var(--warn); }
-.when {
-  display: flex; align-items: baseline; gap: var(--s3);
-  font-size: var(--t-xs); padding: 0 0 var(--s2);
+/*
+  The date, the cost, and the way in to setting them: one control at the end
+  of the task row rather than a line beneath it. Silent until there is
+  something to say, and never more than a few characters wide.
+*/
+.marks {
+  display: inline-flex; align-items: center; gap: var(--s2);
+  background: none; border-color: transparent;
+  padding: 0 var(--s1); min-height: 1.5rem;
 }
+.marks:hover { border-color: transparent; }
+.marks .ellipsis { color: var(--ink-faint); opacity: .55; letter-spacing: .08em; line-height: 1; }
+.marks:hover .ellipsis, .marks:focus-visible .ellipsis { color: var(--ink-soft); opacity: 1; }
+.marks:hover .due { color: var(--ink); }
+.marks:hover .due.near, .marks:hover .due.late { color: var(--warn); }
 
 /* ------------------------------------------------------- dates on the work */
 

@@ -205,8 +205,8 @@ function taskRow(v, t) {
            data-act="progress" data-id="${t.id}">`
       : meter(t.progress)}
     <span class="pct">${t.progress}%</span>
-    ${due(t)}
-  </div>${extras(t)}${showing(key) ? splitForm(t, key) : ''}${
+    ${marks(t)}
+  </div>${showing(key) ? splitForm(t, key) : ''}${
     showing('due:' + t.id) ? dueForm(t) : ''}`;
 }
 
@@ -222,9 +222,23 @@ const CALENDAR = `<svg class="cal" viewBox="0 0 12 12" aria-hidden="true">
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-function due(t) {
-  if (!t.due_on || t.state === 'done' || t.state === 'expanded') return '';
-  return dueMarker(t.due_on, t.days_left);
+/*
+  What a task has committed to, and the way in to changing it -- all on the
+  row itself. A date and a cost each take the space they need and no more,
+  and when there are neither, the whole affordance is one faint character at
+  the end of the line rather than a line of its own.
+*/
+function marks(t) {
+  if (t.state === 'expanded') return '';
+  const key = 'due:' + t.id;
+  const bits = [];
+  if (t.due_on && t.state !== 'done') bits.push(dueMarker(t.due_on, t.days_left));
+  if (t.cost) bits.push(`<span class="due calm">${esc(String(t.cost))}</span>`);
+  if (!t.can_time) return bits.join('');
+
+  return `<button class="marks" data-act="form" data-form="${key}"
+    title="${bits.length ? 'Change the date or cost' : 'Add a date or a cost'}"
+    >${bits.length ? bits.join('') : '<span class="ellipsis">···</span>'}</button>`;
 }
 
 /* The same quiet marker wherever a date appears: on a task, or on the cell. */
@@ -247,25 +261,15 @@ function shortDate(iso) {
   return `${MONTHS[m - 1]} ${d}`;
 }
 
-/* The cost, and the way in to setting either. Kept off the main row. */
-function extras(t) {
-  const bits = [];
-  if (t.cost) bits.push(`<span class="faint">cost ${esc(String(t.cost))}</span>`);
-  if (!bits.length && !t.can_time) return '';
-  return `<div class="when">${bits.join(' · ')}
-    ${t.can_time && !showing('due:' + t.id)
-      ? `<button class="quiet faint" data-act="form" data-form="due:${t.id}">${
-          t.due_on || t.cost ? 'change the date or cost' : 'add a date or a cost'}</button>` : ''}
-  </div>`;
-}
-
+/* Opened from the row's own control, and closed again the moment it is saved. */
 function dueForm(t) {
   return `<form class="panel" data-form="due" data-id="${t.id}">
     <div class="row">
       <label class="field grow"><span>Wanted by</span>
         <input name="due_on" type="date" value="${esc(t.due_on || '')}" autofocus></label>
       <label class="field grow"><span>What it cost</span>
-        <input name="cost" inputmode="decimal" value="${t.cost === null || t.cost === undefined ? '' : t.cost}"></label>
+        <input name="cost" inputmode="decimal"
+               value="${t.cost === null || t.cost === undefined ? '' : t.cost}"></label>
     </div>
     <p class="xs faint">Both optional. Leave either empty to drop it.</p>
     <div class="actions"><button class="primary" type="submit">Save</button>
