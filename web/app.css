@@ -489,20 +489,38 @@ td.num { font-variant-numeric: tabular-nums; }
 
 .over { color: var(--warn); }
 /*
-  The date, the cost, and the way in to setting them: one control at the end
-  of the task row rather than a line beneath it. Silent until there is
-  something to say, and never more than a few characters wide.
+  What something has committed to, and the way in to changing it. One control,
+  used on a task row and on the cell's own line alike: silent until there is
+  something to say, three characters wide when there is not, and it tells you
+  what it does the moment you reach for it.
 */
 .marks {
+  position: relative;
   display: inline-flex; align-items: center; gap: var(--s2);
   background: none; border-color: transparent;
-  padding: 0 var(--s1); min-height: 1.5rem;
+  padding: var(--s1) var(--s2); min-height: 1.5rem;
+  border-radius: var(--radius-sm);
 }
-.marks:hover { border-color: transparent; }
-.marks .ellipsis { color: var(--ink-faint); opacity: .55; letter-spacing: .08em; line-height: 1; }
-.marks:hover .ellipsis, .marks:focus-visible .ellipsis { color: var(--ink-soft); opacity: 1; }
-.marks:hover .due { color: var(--ink); }
-.marks:hover .due.near, .marks:hover .due.late { color: var(--warn); }
+.marks:hover, .marks:focus-visible { background: var(--surface-sunk); border-color: transparent; }
+.marks .ellipsis { color: var(--ink-faint); letter-spacing: .1em; line-height: 1; }
+.marks:hover .ellipsis, .marks:focus-visible .ellipsis { color: var(--ink-soft); }
+.marks:hover .due.calm { color: var(--ink-soft); }
+
+/* The label sits over the page rather than in the flow, so nothing moves. */
+.marks .says {
+  position: absolute; top: calc(100% + 2px); right: 0;
+  white-space: nowrap;
+  font-size: var(--t-xs); color: var(--ink-soft);
+  background: var(--surface); border-radius: var(--radius-sm);
+  padding: var(--s1) var(--s2);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .10);
+  opacity: 0; pointer-events: none;
+  transition: opacity .12s ease;
+  z-index: 5;
+}
+.marks:hover .says, .marks:focus-visible .says { opacity: 1; }
+
+@media (hover: none) { .marks .says { display: none; } }
 
 /* ------------------------------------------------------- dates on the work */
 

@@ -66,21 +66,12 @@ function goal(v) {
            <span class="faint">${p.remaining
              ? plural(p.remaining, 'thing') + ' left' : 'everything done'}</span>`
         : '<span class="faint">nothing being done yet</span>'}
-      ${v.constraints && v.constraints.budget
-        ? `<span class="${v.constraints.budget.over ? 'over' : 'faint'}">${
-            esc(v.constraints.budget.reads)}</span>` : ''}
-      ${v.constraints && v.constraints.due
-        ? dueMarker(v.constraints.due.due_on, v.constraints.due.days_left) : ''}
-      ${v.you.is_leader
-        ? `<button class="quiet faint" data-act="form" data-form="budget">${
-            committed(v) ? 'change' : 'add a budget or a date'}</button>`
-        : ''}
+      ${cellMarks(v)}
     </div>
     ${showing('budget') ? commitmentForm(v) : ''}
   </section>`;
 }
 
-const committed = (v) => !!(v.constraints && (v.constraints.budget || v.constraints.due));
 
 /*
   Both commitments in one form, because they are one thought: what this cell
@@ -205,7 +196,7 @@ function taskRow(v, t) {
            data-act="progress" data-id="${t.id}">`
       : meter(t.progress)}
     <span class="pct">${t.progress}%</span>
-    ${marks(t)}
+    ${taskMarks(t)}
   </div>${showing(key) ? splitForm(t, key) : ''}${
     showing('due:' + t.id) ? dueForm(t) : ''}`;
 }
@@ -223,22 +214,49 @@ const CALENDAR = `<svg class="cal" viewBox="0 0 12 12" aria-hidden="true">
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 /*
-  What a task has committed to, and the way in to changing it -- all on the
-  row itself. A date and a cost each take the space they need and no more,
-  and when there are neither, the whole affordance is one faint character at
-  the end of the line rather than a line of its own.
+  What something has committed to, and the way in to changing it -- in one
+  control, wherever it appears. On a task it holds a date and a cost; on the
+  cell it holds a budget and a date. When there is nothing yet it shrinks to
+  three faint characters rather than taking a line of its own, and it says
+  what it will do when you reach for it.
 */
-function marks(t) {
-  if (t.state === 'expanded') return '';
-  const key = 'due:' + t.id;
-  const bits = [];
-  if (t.due_on && t.state !== 'done') bits.push(dueMarker(t.due_on, t.days_left));
-  if (t.cost) bits.push(`<span class="due calm">${esc(String(t.cost))}</span>`);
-  if (!t.can_time) return bits.join('');
+function marks({ bits, form, editable, add, change }) {
+  const shown = bits.filter(Boolean);
+  if (!editable) return shown.join('');
+  const label = shown.length ? change : add;
+  return `<button class="marks" data-act="form" data-form="${form}" aria-label="${esc(label)}">
+    ${shown.length ? shown.join('') : '<span class="ellipsis">···</span>'}
+    <span class="says">${esc(label.toLowerCase())}</span>
+  </button>`;
+}
 
-  return `<button class="marks" data-act="form" data-form="${key}"
-    title="${bits.length ? 'Change the date or cost' : 'Add a date or a cost'}"
-    >${bits.length ? bits.join('') : '<span class="ellipsis">···</span>'}</button>`;
+function taskMarks(t) {
+  if (t.state === 'expanded') return '';
+  return marks({
+    bits: [
+      t.due_on && t.state !== 'done' ? dueMarker(t.due_on, t.days_left) : '',
+      t.cost ? `<span class="due calm">${esc(String(t.cost))}</span>` : '',
+    ],
+    form: 'due:' + t.id,
+    editable: t.can_time,
+    add: 'Add a date or a cost',
+    change: 'Change the date or cost',
+  });
+}
+
+function cellMarks(v) {
+  const k = v.constraints || {};
+  return marks({
+    bits: [
+      k.budget ? `<span class="due ${k.budget.over ? 'late' : 'calm'}">${
+        esc(k.budget.reads)}</span>` : '',
+      k.due ? dueMarker(k.due.due_on, k.due.days_left) : '',
+    ],
+    form: 'budget',
+    editable: v.you.is_leader,
+    add: 'Add a budget or a date',
+    change: 'Change the budget or date',
+  });
 }
 
 /* The same quiet marker wherever a date appears: on a task, or on the cell. */
