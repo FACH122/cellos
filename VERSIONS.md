@@ -38,11 +38,48 @@ precondition for the Organizational Genome ever starting.
 
 ---
 
+## v2 — the version you can live in
+
+*No new domain. The system learned to be looked at every day.*
+
+v1 proved the model. v2 is about what happens after the tenth time you open a
+cell: the page stopped weighting everything the same, learned what a cell has
+committed to, and let a person choose the light they read it in.
+
+Verified at the moment it was tagged:
+
+```
+195 unit tests          pass   (12 more than v1, all on constraints)
+ 76 end-to-end checks   pass
+1673 events             replay to byte-identical projections (12 tables)
+```
+
+What v2 added, in one line each:
+
+| | |
+|---|---|
+| **Constraints on a cell** | a cell may commit to a date as quietly as it commits to a budget — optional everywhere, enforced nowhere, and a child due after its parent is said out loud rather than blocked |
+| **One control for a commitment** | `···` wherever something has a date or a cost; it shows what is there and edits it in place, on a cell and on a task alike |
+| **Weight by whether you act** | people, answered questions and the record step back; open questions, tasks, yours and inside stay forward |
+| **Health as a dot** | one circle beside the goal, coloured by the verdict, saying all of itself on hover, focus or tap |
+| **People that scale** | eight names is a group you know; thirty is a number and whoever leads |
+| **A theme choice** | auto, light or dark, resolved before first paint, with one palette and no duplicate colours |
+
+The domain model is unchanged from v1 apart from two optional columns. Every
+number on the page is still derived and still never stored.
+
+Known gaps are unchanged and still listed at the end of `HANDOFF.md`: **a Cell
+cannot end**, and the health arithmetic is still the flawed Phase 4 version
+that `MEASUREMENT.md` was written to replace.
+
+---
+
 ## Going back
 
 ```bash
 git tag                          # every milestone
-git show v1 --stat               # what a milestone contains
+git show v2 --stat               # what a milestone contains
+git diff --stat v1 v2            # what one milestone changed from the last
 ```
 
 **To look at a version without changing anything:**
@@ -84,15 +121,21 @@ A tag is a claim that the tree was working. Earn it before making it:
 python3 run.py test              # must pass
 python3 run.py &                 # then, against it:
 python3 smoke.py                 # must pass
-python3 run.py rebuild           # projections must come back identical
+python3 run.py rebuild           # drops every projection and replays the log
 ```
+
+`rebuild` prints how many events it replayed; it does not check the result.
+To claim the projections came back identical, fingerprint them either side of
+it — hash every table's rows in a fixed order before and after, and diff the
+two. A single differing hash means a projector is not a pure function of the
+log, which is the one invariant the whole design rests on.
 
 Then:
 
 ```bash
 git add -A
 git commit -m "what changed, and why"
-git tag -a v2 -m "v2 — <the milestone in one line>
+git tag -a v3 -m "v3 — <the milestone in one line>
 
 <what it added>
 <the verification numbers at the moment of tagging>"
