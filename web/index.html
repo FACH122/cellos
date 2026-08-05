@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CellOS</title>
+<script>
+  /* Before first paint, so the wrong theme is never visible for a frame. */
+  (function () {
+    var saved = localStorage.getItem('cellos.theme');
+    var pref = ['auto', 'light', 'dark'].indexOf(saved) >= 0 ? saved : 'auto';
+    var dark = pref === 'dark' || (pref === 'auto' && window.matchMedia
+      && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  })();
+</script>
 <link rel="stylesheet" href="/app.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='9' fill='none' stroke='%23555' stroke-width='2'/><circle cx='16' cy='16' r='3' fill='%23555'/></svg>">
 </head>

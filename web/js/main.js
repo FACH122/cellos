@@ -6,6 +6,7 @@ import { S, boot, go, onChange, signOut } from './store.js';
 import { cellPage } from './render/cell.js';
 import { crumbs, entry, homePage } from './render/shell.js';
 import { forgetMap, mountMap, whenOpened } from './render/structure.js';
+import { apply as applyTheme, cycle as cycleTheme, describe, label } from './theme.js';
 
 const app = document.getElementById('app');
 const bar = document.getElementById('bar');
@@ -19,8 +20,9 @@ function render() {
   }
 
   bar.hidden = false;
-  document.getElementById('who').innerHTML =
-    esc(S.user.name) + '<button data-act="signout" class="quiet">sign out</button>';
+  document.getElementById('who').innerHTML = esc(S.user.name)
+    + `<button data-act="theme" class="quiet" title="${esc(describe())}">${esc(label())}</button>`
+    + '<button data-act="signout" class="quiet">sign out</button>';
   document.getElementById('path').innerHTML = crumbs();
 
   /* The whole page is rebuilt on every action. Holding the scroll position is
@@ -61,6 +63,10 @@ wireForms(app);
 bar.addEventListener('click', (ev) => {
   const el = ev.target.closest('[data-act]');
   if (!el) return;
+  if (el.dataset.act === 'theme') {
+    cycleTheme();
+    return render();
+  }
   if (el.dataset.act === 'home') go(null);
   if (el.dataset.act === 'open') go(el.dataset.cell);
   if (el.dataset.act === 'signout') signOut();
@@ -71,4 +77,5 @@ window.addEventListener('hashchange', () => {
   if (want !== S.cellId) go(want);
 });
 
+applyTheme();
 boot();
