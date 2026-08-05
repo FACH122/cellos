@@ -167,6 +167,7 @@ function draw(animate = true) {
   view.svg.setAttribute('viewBox', `0 0 ${Math.round(width)} ${Math.round(height)}`);
   view.svg.setAttribute('width', Math.round(width));
   view.svg.setAttribute('height', Math.round(height));
+  fit(width, height);
 
   const wanted = new Set(rows.map((r) => r.node.id));
 
@@ -199,6 +200,29 @@ function draw(animate = true) {
   });
 
   tween(animate ? MS : 0);
+}
+
+/*
+  In a section the map is capped at the column width and shrinks to fit. Given
+  a page of its own it does the opposite: it grows into the room, up to twice
+  drawn size, and past that stops growing and lets the page scroll -- because
+  a map you have to scroll is still better than a map with unreadable names.
+*/
+const MOST = 2;
+const AIR = 24;          // never let the map end flush against the window
+
+function fit(width, height) {
+  const mount = view.mount;
+  if (!mount || !mount.hasAttribute('data-roomy')) {
+    view.svg.style.width = '';
+    view.svg.style.height = '';
+    return;
+  }
+  const room = Math.min((mount.clientWidth - AIR * 2) / width,
+                        (mount.clientHeight - AIR * 2) / height);
+  const scale = Math.max(1, Math.min(MOST, room || 1));
+  view.svg.style.width = `${Math.round(width * scale)}px`;
+  view.svg.style.height = `${Math.round(height * scale)}px`;
 }
 
 function parentOf(id) {
@@ -382,8 +406,11 @@ function collapseBelow(id) {
 }
 
 /*
-  Keep what you just opened in view. The map only ever scrolls sideways, so
-  this is one smooth pan rather than a camera.
+  Keep what you just opened in view. One smooth pan rather than a camera.
+
+  How far a map unit is on screen is read off the drawn element rather than
+  assumed: in a section the map is shrunk to fit the column, on its own page
+  it may be grown to twice size, and this has to be right in both.
 */
 function follow(id) {
   const mount = view.mount;
@@ -391,31 +418,47 @@ function follow(id) {
   if (!mount || !target) return;
 
   requestAnimationFrame(() => {
-    const scale = mount.clientWidth / (view.svg.viewBox.baseVal.width || 1);
-    const centre = target.to.x * Math.min(1, scale);
-    const wanted = Math.max(0, centre - mount.clientWidth / 2);
-    if (Math.abs(wanted - mount.scrollLeft) < 24) return;
-    mount.scrollTo({ left: wanted, behavior: 'smooth' });
+    const box = view.svg.getBoundingClientRect();
+    const scale = box.width / (view.svg.viewBox.baseVal.width || 1);
+    const to = {
+      left: Math.max(0, target.to.x * scale - mount.clientWidth / 2),
+      top: Math.max(0, target.to.y * scale - mount.clientHeight / 2),
+    };
+    const moved = Math.abs(to.left - mount.scrollLeft) >= 24
+      || (mount.scrollHeight > mount.clientHeight
+          && Math.abs(to.top - mount.scrollTop) >= 24);
+    if (moved) mount.scrollTo({ ...to, behavior: 'smooth' });
   });
 }
 
 /* ---------------------------------------------------- the section wrapper */
 
-/* The page renders a mount point; the map itself is attached to it after. */
-export function mapMount() {
-  return '<div class="map-scroll" data-map></div>';
+/*
+  The page renders a mount point; the map itself is attached to it after. A
+  roomy mount is one with the window to itself, and the map grows into it --
+  see fit().
+*/
+export function mapMount(roomy = false) {
+  return `<div class="map-scroll" data-map${roomy ? ' data-roomy' : ''}></div>`;
 }
 
-export function mapCaption(root) {
+export function mapCaption(root, roomy = false) {
   const said = [];
   if (root.questions) said.push(`${plural(root.questions, 'question')} still open`);
   if (root.unowned) said.push(`${plural(root.unowned, 'thing')} nobody has taken`);
   if (root.stalled) said.push(`${plural(root.stalled, 'thing')} taken but not started`);
-  const hint = root.child_count
-    ? '<span class="xs faint">click a cell to go there · + to open what is inside</span>' : '';
+
+  const bits = [];
+  if (root.child_count) bits.push('click a cell to go there · + to open what is inside');
+  const hint = bits.length ? `<span class="xs faint">${bits.join(' · ')}</span>` : '';
+  /* The way to the map's own page sits with the other things said about the
+     map, in the same voice, and only when there is anything to look at. */
+  const roomier = root.child_count && !roomy
+    ? '<button class="quiet faint xs" data-act="map">see it with more room</button>' : '';
+
   if (!said.length) {
-    return `<p class="xs faint">Nothing stuck anywhere below. ${hint}</p>`;
+    return `<p class="xs faint">Nothing stuck anywhere below. ${hint} ${roomier}</p>`;
   }
   return `<p class="xs"><span style="color:var(--warn)">${esc(said.join(' · '))}</span>
-    ${hint ? ' · ' + hint : ''}</p>`;
+    ${hint ? ' · ' + hint : ''} ${roomier}</p>`;
 }

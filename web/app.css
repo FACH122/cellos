@@ -431,6 +431,37 @@ td.num { font-variant-numeric: tabular-nums; }
 }
 .map { display: block; max-width: 100%; height: auto; }
 
+/* ------------------------------------------------- the map on its own page
+
+   The one page that is not a column. Everything else in CellOS is text and
+   reads better narrow; a structure eight deep does not, so here the page
+   gives way to it and the map takes the window. */
+
+body[data-page="map"] main { max-width: none; padding-bottom: var(--s5); }
+body[data-page="map"] header { max-width: none; }
+
+.map-page { margin-top: var(--s5); }
+/* The measure that keeps prose readable is the wrong rule for one line of
+   heading on a page that is deliberately not a column. */
+.map-page h1 { font-size: var(--t-lg); max-width: none; }
+.map-page > * + * { margin-top: var(--s3); }
+
+.map-page .map-scroll {
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  height: calc(100vh - 13rem);
+  min-height: 20rem;
+  /* Grid, so a map smaller than the room sits in the middle of it rather than
+     in the top-left corner of it. `safe` matters: plain centring pushes the
+     start of anything larger than the room outside the scrollable area, where
+     it cannot be reached. */
+  display: grid;
+  justify-content: safe center;
+  align-content: safe center;
+}
+.map-page .map { max-width: none; }
+
 .map .edges path { fill: none; stroke: var(--hairline); stroke-width: 1.5; }
 
 .map .node { cursor: pointer; }

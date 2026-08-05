@@ -8,7 +8,9 @@
 
 import { api, token } from './api.js';
 import { say } from './dom.js';
-import { S, absorb, closeForm, go, openForm, render, signOut, toggleCard } from './store.js';
+import {
+  S, absorb, closeForm, closeMap, go, openForm, openMap, render, signOut, toggleCard,
+} from './store.js';
 
 const lines = (s) => (s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 
@@ -34,6 +36,8 @@ export function wireClicks(root) {
       case 'unform': return closeForm(form);
       case 'home': return go(null);
       case 'open': ev.preventDefault(); return go(cell);
+      case 'map': return openMap(cell || S.cellId);
+      case 'unmap': return closeMap();
       case 'expand': return toggleCard(id);
       case 'signout': return signOut();
       case 'showlog':

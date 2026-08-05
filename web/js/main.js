@@ -2,10 +2,10 @@
 
 import { wireChanges, wireClicks, wireForms } from './actions.js';
 import { esc } from './dom.js';
-import { S, boot, go, onChange, signOut } from './store.js';
+import { S, boot, go, onChange, routeOf, sameRoute, signOut } from './store.js';
 import { cellPage } from './render/cell.js';
-import { crumbs, entry, homePage } from './render/shell.js';
-import { forgetMap, mountMap, whenOpened } from './render/structure.js';
+import { crumbs, entry, homePage, mapPage } from './render/shell.js';
+import { mountMap, whenOpened } from './render/structure.js';
 import { apply as applyTheme, cycle as cycleTheme, describe, label } from './theme.js';
 
 const app = document.getElementById('app');
@@ -28,7 +28,9 @@ function render() {
   /* The whole page is rebuilt on every action. Holding the scroll position is
      what makes that feel like the page changed rather than reloaded. */
   const y = window.scrollY;
-  app.innerHTML = S.cellId ? cellPage(S.view) : homePage(S.view);
+  document.body.dataset.page = S.page;
+  app.innerHTML = S.page === 'map' ? mapPage(S.view)
+    : S.cellId ? cellPage(S.view) : homePage(S.view);
   if (S.keepPlace !== false) window.scrollTo(0, y);
   S.keepPlace = true;
 
@@ -73,8 +75,16 @@ bar.addEventListener('click', (ev) => {
 });
 
 window.addEventListener('hashchange', () => {
-  const want = location.hash.slice(1) || null;
-  if (want !== S.cellId) go(want);
+  const want = routeOf(location.hash);
+  if (!sameRoute(want, { page: S.page, cellId: S.cellId })) go(want.cellId, want.page);
+});
+
+/* The map on its own page is sized to the window, so it is re-sized with it. */
+let resizing = null;
+window.addEventListener('resize', () => {
+  if (S.page !== 'map') return;
+  clearTimeout(resizing);
+  resizing = setTimeout(render, 120);
 });
 
 applyTheme();

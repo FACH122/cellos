@@ -1,7 +1,8 @@
-/* Sign-in, the list of cells a person belongs to, and the header. */
+/* Sign-in, the list of cells a person belongs to, the map on its own, and the header. */
 
 import { esc, meter, plural, shorten } from '../dom.js';
 import { S, showing } from '../store.js';
+import { mapCaption, mapMount } from './structure.js';
 
 export function entry() {
   return `<div class="entry">
@@ -46,15 +47,50 @@ export function homePage(v) {
   </section>`;
 }
 
+/*
+  The map with the page to itself.
+
+  Nothing here is new: it is the same map object, with the same branches open,
+  moved into a mount that gives it the whole window instead of a column. A
+  cell nested eight deep is a legitimate thing to want to look at, and there
+  is no arrangement of a 62rem column that makes that comfortable.
+
+  Clicking a cell still goes to that cell -- which means leaving this page for
+  that cell's own, because going somewhere is what clicking a cell has always
+  meant here.
+*/
+export function mapPage(v) {
+  if (!v.structure) {
+    return `<section style="margin-top:var(--s7)">
+      <h1>${esc(v.cell.goal)}</h1>
+      <p class="muted">There are no cells inside this one yet, so there is no map to show.</p>
+      <p><button data-act="unmap">Back to the cell</button></p>
+    </section>`;
+  }
+  return `<section class="map-page">
+    <div class="row top">
+      <div class="grow">
+        <h1>${esc(v.cell.goal)}</h1>
+        <p class="xs faint">everything inside it</p>
+      </div>
+      <button class="quiet faint" data-act="unmap">back to the cell</button>
+    </div>
+    ${mapMount(true)}
+    ${mapCaption(v.structure, true)}
+  </section>`;
+}
+
 export function crumbs() {
   if (!S.cellId || !S.view || !S.view.path) return '<span class="here">CellOS</span>';
+  const mapping = S.page === 'map';
   const parts = ['<span class="crumb" data-act="home">CellOS</span>'];
   S.view.path.forEach((p, i) => {
-    const last = i === S.view.path.length - 1;
+    const last = i === S.view.path.length - 1 && !mapping;
     parts.push('<span class="sep">/</span>');
     parts.push(last
       ? `<span class="here">${esc(shorten(p.goal))}</span>`
       : `<span class="crumb" data-act="open" data-cell="${p.id}">${esc(shorten(p.goal))}</span>`);
   });
+  if (mapping) parts.push('<span class="sep">/</span>', '<span class="here">map</span>');
   return parts.join(' ');
 }
