@@ -37,7 +37,6 @@ export function cellPage(v) {
     yours(v),
     inside(v),
     analytics(v),
-    knowledge(v),
     more(v),
   ].filter(Boolean).join('');
 }
@@ -45,21 +44,24 @@ export function cellPage(v) {
 /*
   The line under everything a person can act on.
 
-  What is behind it is the past: questions already settled, and the log of
-  what has happened here. Both are worth keeping and neither is worth the
-  height they were taking on a page somebody opens to find out what to do
-  next. What the cell knows stays above it, because a lesson learned is the
-  one piece of history that changes what you do today.
+  Everything behind it is the past: what the cell has learned, the decisions
+  it has already made, and the log of what has happened here. All three are
+  worth keeping and none is worth the height it was taking on a page somebody
+  opens to find out what to do next.
 
-  The control does not move when it opens, so the two sections appear below
-  it rather than pushing it down the page.
+  They come out in order of how much has been made of them -- a lesson, then
+  the decisions it came from, then the raw record -- so the most digested
+  thing is the first one you meet.
+
+  The control does not move when it opens, so the sections appear below it
+  rather than pushing it down the page.
 */
 function more(v) {
   const open = showing('more');
-  const behind = open ? settled(v) + record(v) : '';
+  const behind = open ? knowledge(v) + settled(v) + record(v) : '';
   return `<section class="more">
     <button class="quiet faint" data-act="${open ? 'unform' : 'form'}" data-form="more"
-      aria-label="Decisions already made, and what has happened here"
+      aria-label="What we know, decisions already made, and what has happened here"
       aria-expanded="${open}">${open ? 'less' : 'more'}</button>
   </section>${behind}`;
 }
@@ -489,7 +491,7 @@ function settled(v) {
 
 function knowledge(v) {
   if (!v.knowledge) return '';
-  return `<section><h2>What we know</h2>
+  return `<section class="aside"><h2>What we know</h2>
     ${v.knowledge.map((k) => `<div class="know">
       <div class="q">${esc(k.question)}</div>
       <div class="sm muted">${esc(k.outcome)}</div>
