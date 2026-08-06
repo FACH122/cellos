@@ -1,0 +1,12 @@
+# CellOS has no dependencies.
+#
+# Not "few" -- none. The whole thing is the Python standard library: sqlite3
+# for storage, http.server for the server, json, uuid, datetime. The browser
+# side is ES modules with no bundler and no framework. That was a rule from
+# the first day, not an outcome.
+#
+# This file exists because build systems look for it and fail loudly when it
+# is missing, which reads like a broken project rather than a deliberate one.
+# An empty requirements file installs nothing and satisfies them.
+#
+# If a line ever appears below this comment, something has been given up.
