@@ -20,12 +20,19 @@ import { pip } from './health.js';
   Below COMFORTABLE, a cell is a group whose members you know, and the names
   are worth reading -- so all of them appear and there is nothing to expand.
   Above it, "who are these people" stops being a question anybody asks; the
-  ones that matter are whoever leads, and the rest is a number. The server
-  already sorts leaders first, so showing the front of the list shows them.
+  ones that matter are whoever leads, and the rest is a number -- and that
+  number is already in the line under the goal, so the section does not need
+  to spell it out in faces.
+
+  Taking the first five was a rough stand-in for that, and it read as an
+  arbitrary handful of colleagues. Naming exactly whoever leads and yourself
+  says something true instead, and in most cells it fits on one line.
 */
 const COMFORTABLE = 8;
 const ANSWERED_AT_REST = 3;
-const AT_A_GLANCE = 5;
+const AT_A_GLANCE = 5;      // a cell with more leaders than this still stops here
+
+const worthNaming = (m) => m.role === 'leader' || m.id === S.user.id;
 
 export function cellPage(v) {
   return [
@@ -129,7 +136,7 @@ function commitmentForm(v) {
 function people(v) {
   const small = v.members.length <= COMFORTABLE;
   const all = small || showing('people');
-  const shown = all ? v.members : v.members.slice(0, AT_A_GLANCE);
+  const shown = all ? v.members : v.members.filter(worthNaming).slice(0, AT_A_GLANCE);
   const hidden = v.members.length - shown.length;
 
   return `<section class="aside"><h2>People</h2>
