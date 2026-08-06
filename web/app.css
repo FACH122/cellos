@@ -343,6 +343,13 @@ form.panel .actions { display: flex; align-items: center; gap: var(--s2); margin
 .task { display: flex; align-items: center; gap: var(--s4); padding: var(--s2) 0; }
 .task + .task { border-top: 1px solid var(--hairline); }
 .task .title { flex: 1; min-width: 0; }
+/* The row opens the task. The controls on it do their own thing -- a click
+   finds the nearest thing that acts, and they are nearer. */
+.task[data-act="task"] { cursor: pointer; }
+.task[data-act="task"]:hover .title { color: var(--accent); }
+.task[data-act="task"] button,
+.task[data-act="task"] input { cursor: auto; }
+.task[data-act="task"] button { cursor: pointer; }
 .task.done .title { color: var(--ink-faint); text-decoration: line-through; }
 .task .from { font-size: var(--t-xs); color: var(--ink-faint); }
 .task .owner { font-size: var(--t-sm); color: var(--ink-soft); white-space: nowrap; }
@@ -512,6 +519,15 @@ td.num { font-variant-numeric: tabular-nums; }
   scroll-behavior: smooth;
 }
 .map { display: block; max-width: 100%; height: auto; }
+
+/* ------------------------------------------------ one task, on its own page */
+
+.task-page { margin-top: var(--s5); }
+.task-page h1.goal { font-size: var(--t-lg); max-width: 44ch; }
+.warn-text { color: var(--warn); }
+.doing > * + * { margin-top: var(--s4); }
+.doing input[type=range] { width: 14rem; accent-color: var(--accent); padding: 0; border: none; }
+.who-role { width: 8rem; flex: none; font-size: var(--t-xs); }
 
 /* ------------------------------------------------- the map on its own page
 

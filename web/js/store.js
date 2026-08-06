@@ -11,8 +11,10 @@ import { api, token } from './api.js';
 
 export const S = {
   user: null,
-  page: 'home',       // 'home' | 'cell' | 'map'
-  cellId: null,
+  page: 'home',       // 'home' | 'cell' | 'map' | 'task'
+  routeId: null,      // whatever the hash points at: a cell, or a task
+  cellId: null,       // the cell being shown, or the one a task lives in
+  taskId: null,
   view: null,
   open: new Set(),    // decision cards expanded
   forms: new Set(),   // inline forms showing
@@ -70,39 +72,57 @@ export function routeOf(hash) {
     const id = raw.slice(4);
     return id ? { page: 'map', cellId: id } : { page: 'home', cellId: null };
   }
+  if (raw.startsWith('task/')) {
+    const id = raw.slice(5);
+    return id ? { page: 'task', cellId: id } : { page: 'home', cellId: null };
+  }
   return { page: raw ? 'cell' : 'home', cellId: raw || null };
 }
 
-const addressOf = (page, cellId) =>
-  (page === 'map' ? `map/${cellId}` : (cellId || ''));
+const addressOf = (page, id) =>
+  (page === 'map' ? `map/${id}` : page === 'task' ? `task/${id}` : (id || ''));
 
 export const sameRoute = (a, b) => a.page === b.page && a.cellId === b.cellId;
 
-export async function go(cellId, page) {
-  page = page || (cellId ? 'cell' : 'home');
+export async function go(id, page) {
+  page = page || (id ? 'cell' : 'home');
   S.open.clear();
   S.forms.clear();
   S.log = null;
-  S.keepPlace = false;  // moving between cells is the one time the page starts over
+  S.keepPlace = false;  // moving between pages is the one time it starts over
   S.page = page;
-  S.cellId = cellId;
-  location.hash = addressOf(page, cellId);
+  S.routeId = id;
+  S.taskId = page === 'task' ? id : null;
+  S.cellId = page === 'task' ? null : id;
+  location.hash = addressOf(page, id);
 
-  if (!cellId) {
+  if (!id) {
     S.page = 'home';
     S.view = await api.home();
     return render();
   }
   try {
-    S.view = await api.cell(cellId);
+    if (page === 'task') {
+      S.view = await api.task(id);
+      S.cellId = S.view.cell.id;   // so the trail still knows where we are
+    } else {
+      S.view = await api.cell(id);
+    }
   } catch (e) {
     S.page = 'home';
-    S.cellId = null;
+    S.routeId = S.cellId = S.taskId = null;
     location.hash = '';
     S.view = await api.home();
   }
   render();
 }
+
+/* One piece of work, given the page to itself. */
+export const openTask = (taskId) => go(taskId, 'task');
+
+/* Whatever page we are on, load it again -- used after acting on a task, when
+   the reply is about the cell but the screen is about the task. */
+export const again = () => go(S.routeId, S.page);
 
 /* The same cell, given the whole page instead of a section of one. */
 export const openMap = (cellId) => go(cellId, 'map');
@@ -125,7 +145,7 @@ export async function signOut() {
   token.clear();
   S.user = null;
   S.page = 'home';
-  S.cellId = null;
+  S.routeId = S.cellId = S.taskId = null;
   S.view = null;
   location.hash = '';
   render();

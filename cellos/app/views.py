@@ -31,7 +31,7 @@ from ..domains.hierarchy import service as hierarchy
 from ..domains.member import model as member_model, service as member
 from ..domains.progress import service as progress
 from ..domains.responsibility import service as responsibility
-from ..domains.task import rules as task_rules, service as task
+from ..domains.task import rules as task_rules, service as task_service
 from ..kernel import events as event_log
 
 
@@ -86,7 +86,7 @@ def cell(user_id, cell_id):
         "open_decisions": [
             decision_service.record(user_id, d["id"]) for d in decision_service.open_in(cell_id)
         ],
-        "tasks": [_task(user_id, t, standing) for t in task.in_cells([cell_id])],
+        "tasks": [_task(user_id, t, standing) for t in task_service.in_cells([cell_id])],
         "progress": progress.of_cell(cell_id),
         # How this cell is doing, and why. Derived on read like progress:
         # nobody types any of it in, and nothing about it is stored.
@@ -190,6 +190,45 @@ def _worth_showing(carried):
         or waiting["votes"] or waiting["decisions"]
         or carried["you_are_waiting_on"]["work"]
     )
+
+
+def task(user_id, task_id):
+    """
+    One piece of work, whole.
+
+    Nothing here is new information -- it is the same task the cell page
+    already lists, plus the things a list has no room for: why it exists, what
+    has been offered in support of it, and who is expected to do what about
+    it. A cell answers "what is going on"; this answers "what am I supposed to
+    do about this one thing", which is a different question and deserves its
+    own page rather than a row that grew a panel.
+    """
+    t = task_service.get(task_id)
+    permission.require_sight(user_id, t["cell_id"])
+    standing = dict(permission.standing(user_id, t["cell_id"]))
+    cell = hierarchy.get(t["cell_id"])
+
+    t = _task(user_id, t, standing)
+    t["is_yours"] = t.get("owner_id") == user_id
+    # Picking up work nobody holds needs no permission; taking it out of
+    # somebody's hands is a leader's call. The same rule the service enforces.
+    t["can_take"] = standing["acts_here"] and not task_rules.check_assignment(
+        None, t.get("owner_id"), user_id, user_id, standing["is_leader"])
+    t["can_report"] = standing["acts_here"] and t["state"] != task_rules.EXPANDED
+
+    return {
+        "task": t,
+        "cell": {"id": cell["id"], "goal": cell["goal"]},
+        "path": [p for p in hierarchy.path(t["cell_id"])
+                 if p["id"] in permission.visible_cell_ids(user_id)],
+        "you": standing,
+        "because": responsibility._origin_decision(task_id),
+        "evidence": evidence.supporting("task", task_id),
+        "became": (
+            {"id": t["expanded_into"], "goal": hierarchy.get(t["expanded_into"])["goal"],
+             "people": hierarchy.scale(t["expanded_into"])}
+            if t.get("expanded_into") else None),
+    }
 
 
 def decision(user_id, decision_id):

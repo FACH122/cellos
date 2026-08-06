@@ -11,6 +11,13 @@ def create(actor, body, cell_id):
     return views.cell(actor["id"], cell_id)
 
 
+@route("GET", "/api/tasks/<task_id>")
+def read(actor, body, task_id):
+    """One piece of work on its own, for the page that is only about it."""
+    from ...app import views
+    return views.task(actor["id"], task_id)
+
+
 @route("POST", "/api/tasks/<task_id>/cell")
 def expand(actor, body, task_id):
     """This is bigger than one person: the work becomes a cell's mission."""

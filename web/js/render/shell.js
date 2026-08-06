@@ -83,14 +83,19 @@ export function mapPage(v) {
 export function crumbs() {
   if (!S.cellId || !S.view || !S.view.path) return '<span class="here">CellOS</span>';
   const mapping = S.page === 'map';
+  const onTask = S.page === 'task';
   const parts = ['<span class="crumb" data-act="home">CellOS</span>'];
   S.view.path.forEach((p, i) => {
-    const last = i === S.view.path.length - 1 && !mapping;
+    const last = i === S.view.path.length - 1 && !mapping && !onTask;
     parts.push('<span class="sep">/</span>');
     parts.push(last
       ? `<span class="here">${esc(shorten(p.goal))}</span>`
       : `<span class="crumb" data-act="open" data-cell="${p.id}">${esc(shorten(p.goal))}</span>`);
   });
   if (mapping) parts.push('<span class="sep">/</span>', '<span class="here">map</span>');
+  if (onTask && S.view.task) {
+    parts.push('<span class="sep">/</span>',
+               `<span class="here">${esc(shorten(S.view.task.title))}</span>`);
+  }
   return parts.join(' ');
 }

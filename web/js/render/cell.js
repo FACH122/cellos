@@ -211,7 +211,8 @@ function taskRow(v, t) {
 
   const canMove = v.you.acts_here && (t.owner_id === S.user.id || !t.owner_id || v.you.is_leader);
   const key = 'split:' + t.id;
-  return `<div class="task${t.state === 'done' ? ' done' : ''}">
+  return `<div class="task${t.state === 'done' ? ' done' : ''}"
+       data-act="task" data-id="${t.id}">
     <span class="title">${TASK_MARK}${esc(t.title)}</span>
     ${t.can_expand && !showing(key)
       ? `<button class="quiet faint" data-act="form" data-form="${key}">too large</button>` : ''}

@@ -9,15 +9,20 @@
 import { api, token } from './api.js';
 import { say } from './dom.js';
 import {
-  S, absorb, closeForm, closeMap, go, openForm, openMap, render, signOut, toggleCard,
+  S, absorb, again, closeForm, closeMap, go, openForm, openMap, openTask, render,
+  signOut, toggleCard,
 } from './store.js';
 
 const lines = (s) => (s || '').split('\n').map((x) => x.trim()).filter(Boolean);
 
 async function run(work, ok) {
   try {
-    absorb(await work());
-    render();
+    const reply = await work();
+    /* Every write answers with the whole cell it happened in, which is the
+       right subject on a cell page and the wrong one on a page about a single
+       task. There, ask for the thing the screen is actually showing. */
+    if (S.page === 'task') await again();
+    else { absorb(reply); render(); }
     if (ok) say(ok);
   } catch (e) {
     say(e.message, true);
@@ -36,6 +41,7 @@ export function wireClicks(root) {
       case 'unform': return closeForm(form);
       case 'home': return go(null);
       case 'open': ev.preventDefault(); return go(cell);
+      case 'task': ev.preventDefault(); return openTask(id);
       case 'map': return openMap(cell || S.cellId);
       case 'unmap': return closeMap();
       case 'expand': return toggleCard(id);
@@ -52,6 +58,8 @@ export function wireClicks(root) {
         return run(() => api.vote(id, option), 'Counted.').catch(() => {});
       case 'take':
         return run(() => api.updateTask(id, { owner_id: S.user.id }), 'Yours.').catch(() => {});
+      case 'drop':
+        return run(() => api.updateTask(id, { owner_id: null }), 'Handed back.').catch(() => {});
     }
   });
 }
@@ -123,7 +131,7 @@ export function wireForms(root) {
         case 'evidence':
           closeForm('ev:' + id);
           return run(() => api.attachEvidence({
-            subject_kind: 'decision', subject_id: id,
+            subject_kind: f.dataset.kind || 'decision', subject_id: id,
             kind: d.kind, label: d.label, ref: d.ref,
           }), 'Attached.');
         case 'step':

@@ -5,6 +5,7 @@ import { esc } from './dom.js';
 import { S, boot, go, onChange, routeOf, sameRoute, signOut } from './store.js';
 import { cellPage } from './render/cell.js';
 import { crumbs, entry, homePage, mapPage } from './render/shell.js';
+import { taskPage } from './render/task.js';
 import { mountMap, whenOpened } from './render/structure.js';
 import { apply as applyTheme, cycle as cycleTheme, describe, label } from './theme.js';
 
@@ -30,6 +31,7 @@ function render() {
   const y = window.scrollY;
   document.body.dataset.page = S.page;
   app.innerHTML = S.page === 'map' ? mapPage(S.view)
+    : S.page === 'task' ? taskPage(S.view)
     : S.cellId ? cellPage(S.view) : homePage(S.view);
   if (S.keepPlace !== false) window.scrollTo(0, y);
   S.keepPlace = true;
@@ -76,7 +78,7 @@ bar.addEventListener('click', (ev) => {
 
 window.addEventListener('hashchange', () => {
   const want = routeOf(location.hash);
-  if (!sameRoute(want, { page: S.page, cellId: S.cellId })) go(want.cellId, want.page);
+  if (!sameRoute(want, { page: S.page, cellId: S.routeId })) go(want.cellId, want.page);
 });
 
 /* The map on its own page is sized to the window, so it is re-sized with it. */
