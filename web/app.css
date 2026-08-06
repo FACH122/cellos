@@ -37,6 +37,7 @@
   --surface: #ffffff;
   --surface-sunk: #f4f2ee;
   --hairline: #eae7e1;
+  --edge: #d8d3ca;
   --accent: #3d6b5c;
   --accent-soft: #edf3f1;
   --warn: #8a5a2b;
@@ -59,6 +60,7 @@
   --surface: #1d1d20;
   --surface-sunk: #232326;
   --hairline: #2c2c30;
+  --edge: #3a3a40;
   --accent: #82b5a3;
   --accent-soft: #21302c;
   --warn: #d3a36d;
@@ -583,7 +585,13 @@ body[data-page="map"] header { max-width: none; }
 }
 .map-page .map { max-width: none; }
 
-.map .edges path { fill: none; stroke: var(--hairline); stroke-width: 1.5; }
+/* No stroke-width here: a stylesheet beats a presentation attribute, and the
+   width is per-edge — it thins with depth, like the circles it joins. */
+.map .edges path {
+  fill: none;
+  stroke: var(--edge);
+  stroke-linecap: round;
+}
 
 .map .node { cursor: pointer; }
 .map .node.here { cursor: default; }

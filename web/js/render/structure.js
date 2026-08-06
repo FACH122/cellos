@@ -286,21 +286,48 @@ function tween(duration) {
   view.frame = requestAnimationFrame(step);
 }
 
+/*
+  The lines between a cell and the cells inside it.
+
+  They leave the parent's rim and arrive at the child's, and since the two
+  circles are different sizes now, each end has to be measured against its own
+  radius rather than one shared number.
+
+  The line thins as it goes down, on the same rule as the circles: a branch
+  near the trunk is drawn heavier than a twig. It is a small difference and
+  nobody will name it, which is the point -- it makes the picture read as one
+  structure rather than as a set of equal wires.
+
+  The curve leaves and arrives vertically, so a line always meets a circle
+  head-on rather than glancing off it. Control points sit a little past the
+  midpoint, which straightens the middle of the run and keeps the bend where
+  it belongs, next to the nodes.
+*/
+const EDGE_W = 2.0;       // leaving the root
+const EDGE_TAPER = 0.3;   // thinner at each level down
+const EDGE_MIN = 1.05;
+
 function paintEdges() {
   const lines = [];
   view.drawn.forEach((d, id) => {
     if (d.fading) return;
+    const width = Math.max(EDGE_MIN, EDGE_W - (view.deep.get(id) || 0) * EDGE_TAPER);
     (view.kids.get(id) || []).forEach((childId) => {
       const c = view.drawn.get(childId);
       if (!c || c.fading) return;
-      const y1 = d.y + radiusOf(id), y2 = c.y - radiusOf(child), mid = (y1 + y2) / 2;
-      lines.push(`M ${d.x.toFixed(1)} ${y1.toFixed(1)}
-                  C ${d.x.toFixed(1)} ${mid.toFixed(1)},
-                    ${c.x.toFixed(1)} ${mid.toFixed(1)},
-                    ${c.x.toFixed(1)} ${y2.toFixed(1)}`);
+      const y1 = d.y + radiusOf(id);
+      const y2 = c.y - radiusOf(childId);
+      const span = y2 - y1;
+      const c1 = y1 + span * 0.55;
+      const c2 = y2 - span * 0.55;
+      lines.push({ width, d: `M ${d.x.toFixed(1)} ${y1.toFixed(1)}
+                  C ${d.x.toFixed(1)} ${c1.toFixed(1)},
+                    ${c.x.toFixed(1)} ${c2.toFixed(1)},
+                    ${c.x.toFixed(1)} ${y2.toFixed(1)}` });
     });
   });
-  view.edges.innerHTML = lines.map((d) => `<path d="${d}" />`).join('');
+  view.edges.innerHTML = lines
+    .map((l) => `<path d="${l.d}" stroke-width="${l.width.toFixed(2)}" />`).join('');
 }
 
 /* ---------------------------------------------------------------- a node */
