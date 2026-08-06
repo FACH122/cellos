@@ -6,7 +6,7 @@
   hides one -- there is simply nothing to draw.
 */
 
-import { esc, meter, plural, when } from '../dom.js';
+import { CELL_MARK, TASK_MARK, esc, meter, plural, when } from '../dom.js';
 import { happened } from '../labels.js';
 import { S, showing } from '../store.js';
 
@@ -199,7 +199,7 @@ function taskRow(v, t) {
      a group with a goal, one click away. */
   if (t.state === 'expanded') {
     return `<div class="task expanded" data-act="open" data-cell="${t.expanded_into}">
-      <span class="title">${esc(t.title)}
+      <span class="title">${CELL_MARK}${esc(t.title)}
         <div class="from">now the mission of a cell${
           t.expanded_people ? ' of ' + plural(t.expanded_people, 'person', 'people') : ''
         }</div></span>
@@ -212,7 +212,7 @@ function taskRow(v, t) {
   const canMove = v.you.acts_here && (t.owner_id === S.user.id || !t.owner_id || v.you.is_leader);
   const key = 'split:' + t.id;
   return `<div class="task${t.state === 'done' ? ' done' : ''}">
-    <span class="title">${esc(t.title)}</span>
+    <span class="title">${TASK_MARK}${esc(t.title)}</span>
     ${t.can_expand && !showing(key)
       ? `<button class="quiet faint" data-act="form" data-form="${key}">too large</button>` : ''}
     ${t.owner_id

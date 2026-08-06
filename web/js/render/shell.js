@@ -1,6 +1,6 @@
 /* Sign-in, the list of cells a person belongs to, the map on its own, and the header. */
 
-import { esc, meter, plural, shorten } from '../dom.js';
+import { CELL_MARK, esc, meter, plural, shorten } from '../dom.js';
 import { S, showing } from '../store.js';
 import { mapCaption, mapMount } from './structure.js';
 
@@ -24,7 +24,7 @@ export function homePage(v) {
     ${v.cells.length
       ? v.cells.map((c) => `
           <div class="child" data-act="open" data-cell="${c.id}">
-            <span class="goal">${esc(c.goal)}</span>
+            <span class="goal">${CELL_MARK}${esc(c.goal)}</span>
             <span class="xs faint">${c.people === 1 ? 'just you'
               : plural(c.people, 'person', 'people')}</span>
             ${c.open_decisions

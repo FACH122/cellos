@@ -334,6 +334,65 @@ form.panel .actions { display: flex; align-items: center; gap: var(--s2); margin
   width: 2.6rem; text-align: right; font-variant-numeric: tabular-nums;
 }
 
+/* ---------------------------------------------------------------- marks
+
+   A cell is ◎ in gold, a task is ○ in cool metal. Both are gradients rather
+   than flat colour, because that is the whole difference between "a yellow
+   circle" and something that reads as metal: a highlight running across it
+   at an angle. Clipped to the glyph, so nothing but the stroke is painted.
+
+   These are the only two places in the stylesheet with a colour that is not
+   a token, and that is deliberate -- they are material, not palette, and
+   nothing else should start reaching for them. */
+
+.glyph {
+  /* inline-block, so a struck-through finished task does not draw a line
+     through its mark as well. */
+  display: inline-block;
+  font-size: 0.82em;
+  line-height: 1;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* If a browser cannot clip a gradient to text, the glyph would be invisible.
+   Give it a solid colour instead. */
+@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+  .glyph { color: var(--ink-faint); }
+}
+
+/* The mark sits inside the title rather than beside it, so that when a row
+   wraps on a narrow screen it travels with the words it belongs to instead
+   of being stranded on a line of its own. */
+.glyph { margin-right: var(--s2); }
+
+.glyph.cell {
+  background-image: linear-gradient(125deg, #a9832f 0%, #e3c76a 38%, #f6e8ae 50%,
+                                            #d4ae4a 62%, #8f6d24 100%);
+}
+/* On a near-white page the highlight has to be a mid tone, not a bright one,
+   or the whole glyph washes out and the sheen reads as nothing. Metal is dark
+   on light and light on dark; only the angle stays the same. */
+.glyph.task {
+  background-image: linear-gradient(125deg, #6b7278 0%, #99a1a7 38%, #b6bec4 50%,
+                                            #7f878d 62%, #5b6266 100%);
+}
+
+/* On a dark page the same metal has to catch more light to read at all. */
+:root[data-theme="dark"] .glyph.cell {
+  background-image: linear-gradient(125deg, #b78f37 0%, #f0d47a 38%, #fbf0c4 50%,
+                                            #dcb85a 62%, #9c7a2c 100%);
+}
+:root[data-theme="dark"] .glyph.task {
+  background-image: linear-gradient(125deg, #7f858b 0%, #b8bec4 38%, #dde2e6 50%,
+                                            #9ea4aa 62%, #6f7579 100%);
+}
+
+/* The row it marks is a link into that cell, so the mark leans in with it. */
+.child:hover .glyph, .task.expanded:hover .glyph { filter: brightness(1.12); }
+.task.done .glyph { opacity: .45; }
+
 /* ------------------------------------------------------------ hierarchy */
 
 .child { display: flex; align-items: center; gap: var(--s4); padding: var(--s3) 0; cursor: pointer; }
