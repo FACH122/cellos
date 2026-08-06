@@ -21,8 +21,21 @@ import cellos  # noqa: E402
 from cellos.app import server  # noqa: E402
 from cellos.kernel import db, events, relationships, routing  # noqa: E402
 
-HOST = os.environ.get("CELLOS_HOST", "127.0.0.1")
-PORT = int(os.environ.get("CELLOS_PORT", "8420"))
+"""
+Where to listen.
+
+Locally: 127.0.0.1:8420, which is the whole point -- this thing is meant to be
+run from a folder and reached from the machine it is on.
+
+Somewhere hosted: every platform worth using (Render, Fly, Railway, and
+anything else that speaks the same convention) hands the process a port in
+$PORT and expects it on every interface. Seeing $PORT is a reliable signal
+that we are not on somebody's laptop, so the host default follows it. Both can
+still be said explicitly, and CELLOS_ wins if you do.
+"""
+_GIVEN = os.environ.get("PORT")
+HOST = os.environ.get("CELLOS_HOST") or ("0.0.0.0" if _GIVEN else "127.0.0.1")
+PORT = int(os.environ.get("CELLOS_PORT") or _GIVEN or 8420)
 
 
 def cmd_serve():
@@ -39,7 +52,18 @@ def cmd_serve():
     print("CellOS %s on http://%s:%d" % (cellos.__version__, HOST, PORT))
     print("database: %s" % db.DB_PATH)
     if not db.value("SELECT count(*) FROM events", default=0):
-        print("the log is empty -- `python3 run.py seed` if you want something to look at")
+        # A hosted demo on a disk that gets wiped comes back to an empty page,
+        # which is a worse first impression than the thing deserves. Opt in and
+        # an empty log fills itself; say nothing and local behaviour is what it
+        # always was. It only ever fires on an empty log, so it cannot trample
+        # real data on a restart.
+        if os.environ.get("CELLOS_SEED_IF_EMPTY"):
+            from seed import seed
+
+            print("empty log -- seeding, because CELLOS_SEED_IF_EMPTY is set")
+            seed()
+        else:
+            print("the log is empty -- `python3 run.py seed` if you want something to look at")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

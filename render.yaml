@@ -1,0 +1,66 @@
+# Deploying CellOS on Render.
+#
+# There is nothing to install. CellOS is Python standard library only -- no
+# requirements.txt, no build step, no bundler -- so the build command is a
+# no-op and the start command is the same one you use locally.
+#
+# READ THIS BEFORE PUTTING ANYTHING REAL IN IT
+#
+#   CellOS has no passwords. Signing in is a name and an email, and an email
+#   nobody has used creates that person. On your laptop that is a convenience.
+#   On a public URL it means anybody who finds the address can sign in as
+#   anybody, read every cell, settle any question, and take anybody's work.
+#   There is no fix for that in configuration -- it needs authentication,
+#   which does not exist yet.
+#
+#   Deploy this to show people. Do not deploy it to run an organisation.
+#
+# AND KNOW WHERE THE DATA GOES
+#
+#   A free Render service has no persistent disk. The filesystem is wiped on
+#   every deploy and every time the service spins down, which it does after
+#   15 minutes with no traffic. SQLite lives on that filesystem, so the whole
+#   log goes with it.
+#
+#   That is survivable here in a way it would not be elsewhere: everything in
+#   CellOS is a projection of the event log, so there is no partial state to
+#   recover -- it is either all there or it is a fresh empty system. The
+#   seeding below means a cold start comes back with something to look at
+#   rather than an empty page.
+#
+#   To keep data: add a Disk (paid, from $0.25/GB/mo), mount it at /data, and
+#   set CELLOS_DB=/data/cellos.db. Nothing else changes.
+
+services:
+  - type: web
+    name: cellos
+    runtime: python
+    plan: free
+    region: frankfurt          # pick the one nearest whoever is looking
+
+    # Nothing to install. This is the whole build.
+    buildCommand: "python3 --version"
+
+    # Seed only when the log is empty, so a restart with a mounted disk keeps
+    # what is there and a restart without one comes back with the demo.
+    startCommand: "python3 run.py serve"
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.13.0"        # 3.11 or newer; nothing here needs 3.14
+      - key: CELLOS_QUIET
+        value: "1"             # do not log every request to stdout
+      - key: CELLOS_SEED_IF_EMPTY
+        value: "1"             # a wiped disk comes back with the demo, not a blank page
+      # Uncomment these two together with a Disk to keep the log across deploys.
+      # - key: CELLOS_DB
+      #   value: /data/cellos.db
+
+    # A free service sleeps after 15 minutes and takes ~50s to wake. This
+    # check keeps Render's own health probe honest about that.
+    healthCheckPath: /
+
+# disk:                        # paid -- the only way to keep data on Render
+#   name: cellos-data
+#   mountPath: /data
+#   sizeGB: 1
