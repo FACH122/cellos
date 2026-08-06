@@ -1,6 +1,6 @@
 /* Wiring. The only file that touches the page's top-level elements. */
 
-import { wireChanges, wireClicks, wireForms } from './actions.js';
+import { wireChanges, wireClicks, wireForms, wireTyping } from './actions.js';
 import { esc } from './dom.js';
 import { S, boot, go, onChange, routeOf, sameRoute, signOut } from './store.js';
 import { cellPage } from './render/cell.js';
@@ -66,6 +66,7 @@ function focusFirst(scope = '') {
 onChange(render);
 wireClicks(app);
 wireChanges(app);
+wireTyping(app);
 wireForms(app);
 
 bar.addEventListener('click', (ev) => {

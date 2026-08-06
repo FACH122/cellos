@@ -9,8 +9,10 @@ export function entry() {
     <h1>CellOS</h1>
     <p>A goal, the people on it, what is still undecided, and what is being done.</p>
     <form data-form="signin">
-      <label class="field"><span>Your name</span><input name="name" required autofocus></label>
-      <label class="field"><span>Your email</span><input name="email" type="email" required></label>
+      <label class="field"><span>Your name</span>
+        <input name="name" required autofocus placeholder="Marisol Vega"></label>
+      <label class="field"><span>Your email</span>
+        <input name="email" type="email" required placeholder="marisol.vega@gmail.com"></label>
       <button class="primary" type="submit">Continue</button>
     </form>
     <p class="xs faint" style="margin-top:var(--s5)">

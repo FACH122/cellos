@@ -74,17 +74,7 @@ function more(v) {
 function goal(v) {
   const p = v.progress;
   return `<section>
-    ${showing('goal')
-      ? `<form class="panel" data-form="goal">
-           <label class="field"><span>The goal</span>
-             <input name="goal" required autofocus value="${esc(v.cell.goal)}"></label>
-           <div class="actions"><button class="primary" type="submit">Save</button>
-             <button type="button" class="quiet" data-act="unform" data-form="goal">cancel</button>
-           </div></form>`
-      : `<div class="row top titled"><h1 class="goal grow">${CELL_MARK}${esc(v.cell.goal)}</h1>
-           ${v.you.is_leader
-             ? '<button class="quiet faint" data-act="form" data-form="goal">edit</button>' : ''}
-         </div>`}
+    <div class="row top titled"><h1 class="goal grow">${CELL_MARK}${esc(v.cell.goal)}</h1></div>
     <div class="pulse">
       ${pip(v)}
       <span>${v.scale === 1 ? 'just you' : plural(v.scale, 'person', 'people')}</span>
@@ -110,9 +100,11 @@ function commitmentForm(v) {
   const b = (v.constraints && v.constraints.budget) || {};
   const d = (v.constraints && v.constraints.due) || {};
   return `<form class="panel" data-form="budget">
+    <label class="field"><span>The goal</span>
+      <input name="goal" required autofocus value="${esc(v.cell.goal)}"></label>
     <div class="row">
       <label class="field grow"><span>What is this cell willing to spend?</span>
-        <input name="amount" inputmode="decimal" autofocus
+        <input name="amount" inputmode="decimal"
                value="${b.amount === undefined ? '' : b.amount}"
                placeholder="leave empty for no budget"></label>
       <label class="field" style="width:6rem"><span>Currency</span>
@@ -288,8 +280,12 @@ function cellMarks(v) {
     ],
     form: 'budget',
     editable: v.you.is_leader,
-    add: 'Add a budget or a date',
-    change: 'Change the budget or date',
+    /* One control for everything a leader can change about the cell itself:
+       what it is for, and what it has committed to. They were two, and the
+       second one was a button sitting next to the title saying "edit" -- a
+       word that tells you nothing about what it edits. */
+    add: 'Edit this cell',
+    change: 'Edit this cell',
   });
 }
 

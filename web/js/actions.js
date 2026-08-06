@@ -63,6 +63,32 @@ export function wireClicks(root) {
   });
 }
 
+/*
+  Type a name, get an address.
+
+  The email is the identity here -- it is what decides who you are -- but on a
+  local system nobody wants to invent one every time they sign in as somebody
+  else. So the name fills it in, and stops the moment you type in the field
+  yourself, because a guess should never overwrite an answer.
+*/
+const addressFor = (name) => {
+  const slug = (name || '').trim().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // "Bergström" -> "bergstrom"
+    .replace(/[^a-z0-9]+/g, '.')
+    .replace(/^\.+|\.+$/g, '');
+  return slug ? `${slug}@gmail.com` : '';
+};
+
+export function wireTyping(root) {
+  root.addEventListener('input', (ev) => {
+    const f = ev.target.closest('form[data-form="signin"]');
+    if (!f) return;
+    if (ev.target.name === 'email') { ev.target.dataset.own = '1'; return; }
+    if (ev.target.name !== 'name' || f.email.dataset.own) return;
+    f.email.value = addressFor(ev.target.value);
+  });
+}
+
 export function wireChanges(root) {
   root.addEventListener('change', (ev) => {
     const el = ev.target.closest('[data-act="progress"]');
@@ -114,10 +140,19 @@ export function wireForms(root) {
         case 'task':
           closeForm('task');
           return run(() => api.addTask(S.cellId, d.title));
-        case 'budget':
+        case 'budget': {
           closeForm('budget');
-          return run(() => api.setCommitments(S.cellId,
-            { amount: d.amount, currency: d.currency, due_on: d.due_on }), 'Noted.');
+          /* One form, two facts. The goal is only rewritten if somebody
+             actually changed it, so opening the panel to set a date does not
+             put a GoalRefined event in the permanent record. */
+          const goal = (d.goal || '').trim();
+          const moved = goal && goal !== S.view.cell.goal;
+          return run(async () => {
+            if (moved) await api.refineGoal(S.cellId, goal);
+            return api.setCommitments(S.cellId,
+              { amount: d.amount, currency: d.currency, due_on: d.due_on });
+          }, moved ? 'Saved.' : 'Noted.');
+        }
         case 'due':
           closeForm('due:' + id);
           return run(() => api.updateTask(id, { due_on: d.due_on, cost: d.cost }), 'Noted.');
