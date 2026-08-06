@@ -396,6 +396,10 @@ a.title:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; b
    of being stranded on a line of its own. */
 .glyph { margin-right: var(--s2); }
 
+/* In a heading the same 0.82em would be a large ring competing with the
+   words. It wants to be a mark on the title, not part of it. */
+h1 .glyph { font-size: 0.5em; margin-right: var(--s3); vertical-align: 0.14em; }
+
 .glyph.cell {
   background-image: linear-gradient(125deg, #a9832f 0%, #e3c76a 38%, #f6e8ae 50%,
                                             #d4ae4a 62%, #8f6d24 100%);
@@ -599,12 +603,20 @@ body[data-page="map"] header { max-width: none; }
    available, never in the way. Reaching means hovering, or focusing it from
    the keyboard, or tapping it, which is why the panel opens three ways.  */
 
+/*
+  The health dot lives on the pulse line, with the other things that say how
+  the cell is doing. It used to sit beside the title -- until the title got a
+  ◎ of its own, and a green dot next to a gold ring read as two marks of the
+  same kind rather than an identity and a diagnosis. The ◎ says what this is;
+  the line below says how it is going, and the dot belongs to that sentence.
+*/
 .pip {
   position: relative;
   flex: none;
   display: flex;
   align-items: center;
-  height: calc(var(--t-xl) * 1.2);       /* the h1's first line, so the dot centres on it */
+  align-self: center;
+  height: 1.2em;
   padding: 0 var(--s2) 0 0;
   border: 0;
   background: none;

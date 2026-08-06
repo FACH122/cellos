@@ -10,7 +10,7 @@
   Nothing here is new information. It is the same task, read closely.
 */
 
-import { esc, meter, plural, when } from '../dom.js';
+import { TASK_MARK, esc, meter, plural, when } from '../dom.js';
 import { S, showing } from '../store.js';
 
 export function taskPage(v) {
@@ -37,7 +37,7 @@ const STATE_WORD = {
 function head(v, t) {
   return `<section class="task-page">
     <div class="row top">
-      <h1 class="grow">${esc(t.title)}</h1>
+      <h1 class="grow">${TASK_MARK}${esc(t.title)}</h1>
       <button class="quiet faint" data-act="open" data-cell="${v.cell.id}">back to the cell</button>
     </div>
     <div class="pulse">
