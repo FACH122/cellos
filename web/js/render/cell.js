@@ -85,10 +85,45 @@ function goal(v) {
         : '<span class="faint">nothing being done yet</span>'}
       ${cellMarks(v)}
     </div>
+    ${money(v)}
     ${showing('budget') ? commitmentForm(v) : ''}
   </section>`;
 }
 
+
+/*
+  Where this cell's money sits in the tree.
+
+  A budget on its own is a number a group typed in. What makes it mean
+  anything is the two facts either side of it: how much of it the cells inside
+  have already claimed, and whose money it was in the first place. Both are
+  read off the tree on every request; neither is stored.
+
+  Nothing here refuses anything. A cell whose children have promised more than
+  it holds is told so, in the same voice as a task that is late.
+*/
+function money(v) {
+  const k = v.constraints || {};
+  const b = k.budget;
+  const from = k.drawn_from;
+  const lines = [];
+
+  if (b && b.allocated) {
+    lines.push(`<span class="${b.over_allocated ? 'warn-text' : 'faint'}">${
+      b.over_allocated ? 'the cells inside have committed to more than this cell has —' : ''
+      } ${esc(String(b.allocated_to))} ${b.allocated_to === 1 ? 'cell inside holds' : 'cells inside hold'
+      } ${esc(reads(b.allocated, b.currency))} of it</span>`);
+  }
+  if (from) {
+    lines.push(`<span class="faint">${from.reads ? esc(from.reads) + ' committed by' : 'inside'}
+      <button class="quiet" data-act="open" data-cell="${from.cell_id}">${esc(from.goal)}</button>${
+      from.currencies_differ ? ' <span class="warn-text">— different currencies</span>' : ''}</span>`);
+  }
+  return lines.length ? `<p class="xs subtle-money">${lines.join(' · ')}</p>` : '';
+}
+
+const reads = (amount, currency) =>
+  `${currency || ''} ${Math.round(amount).toLocaleString('en-US')}`;
 
 /*
   Both commitments in one form, because they are one thought: what this cell
@@ -113,8 +148,14 @@ function commitmentForm(v) {
         <input name="due_on" type="date" value="${esc(d.due_on || '')}"></label>
     </div>
     <p class="xs faint">Both optional. Spending is the sum of what the work cost,
-      rolled up from the cells inside. Nothing is enforced — CellOS will say when
-      the money is close or the date has passed, and leave the rest to you.</p>
+      rolled up from the cells inside.${b.allocated
+        ? ` The cells inside this one have already committed to
+            ${esc(reads(b.allocated, b.currency))}${b.unallocated >= 0
+              ? `, leaving ${esc(reads(b.unallocated, b.currency))} of this budget unclaimed`
+              : ''}.` : ''}${(v.constraints && v.constraints.drawn_from)
+        ? ` This cell's budget is part of ${esc(v.constraints.drawn_from.goal)}'s.` : ''}
+      Nothing is enforced — CellOS will say when the money is close, when the date
+      has passed, or when the cells inside have promised more than there is.</p>
     <div class="actions"><button class="primary" type="submit">Save</button>
       <button type="button" class="quiet" data-act="unform" data-form="budget">cancel</button>
     </div></form>`;

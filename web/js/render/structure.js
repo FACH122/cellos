@@ -28,7 +28,24 @@
 import { api } from '../api.js';
 import { esc, plural } from '../dom.js';
 
-const R = 17;            // node radius
+/*
+  A cell is drawn smaller the deeper it sits.
+
+  The map is a picture of what contains what, and a flat map says that badly:
+  twelve identical circles do not tell you which one holds the others. Size is
+  the cheapest possible way to say it -- the eye reads scale as containment
+  without being told, the way it reads a bigger word as a heading.
+
+  It steps down and then stops. Past a few levels the difference would stop
+  meaning depth and start meaning "too small to read", so there is a floor,
+  and everything below it is drawn the same. A map with no depth limit needs a
+  size rule that has one.
+*/
+const R0 = 22;           // the root
+const R_STEP = 3;        // taken off at each level down
+const R_MIN = 12;        // and never smaller than this
+
+const radiusAt = (depth) => Math.max(R_MIN, R0 - depth * R_STEP);
 const ROW = 96;          // vertical distance between levels
 const GAP = 132;         // horizontal room per leaf
 const PAD = 28;
@@ -82,6 +99,7 @@ function build(root) {
   return {
     rootId: root.id, nodes, kids,
     expanded: new Set([root.id]),       // the root's own ring starts open
+    deep: new Map(),                    // id -> how far down it is drawn
     drawn: new Map(),                   // id -> {g, x, y, from, to}
     edges, svg, mount: null, frame: null, pan: null,
   };
@@ -135,14 +153,14 @@ function layout() {
     const children = view.expanded.has(id) ? (view.kids.get(id) || []) : [];
     const shown = children.filter((c) => view.nodes.has(c));
     if (!shown.length) {
-      place.set(id, { x: cursor, y: PAD + R + depth * ROW });
+      place.set(id, { x: cursor, y: PAD + radiusAt(depth) + depth * ROW });
       cursor += GAP;
       return;
     }
     shown.forEach((c) => position(c, depth + 1));
     const first = place.get(shown[0]).x;
     const last = place.get(shown[shown.length - 1]).x;
-    place.set(id, { x: (first + last) / 2, y: PAD + R + depth * ROW });
+    place.set(id, { x: (first + last) / 2, y: PAD + radiusAt(depth) + depth * ROW });
   };
   position(view.rootId, 0);
 
@@ -150,6 +168,8 @@ function layout() {
   const xs = [...place.values()].map((p) => p.x);
   const shift = -Math.min(...xs) + PAD + GAP / 2;
   place.forEach((p) => { p.x += shift; });
+
+  rows.forEach(({ node, depth }) => view.deep.set(node.id, depth));
 
   const depth = Math.max(...rows.map((r) => r.depth));
   return {
@@ -273,7 +293,7 @@ function paintEdges() {
     (view.kids.get(id) || []).forEach((childId) => {
       const c = view.drawn.get(childId);
       if (!c || c.fading) return;
-      const y1 = d.y + R, y2 = c.y - R, mid = (y1 + y2) / 2;
+      const y1 = d.y + radiusOf(id), y2 = c.y - radiusOf(child), mid = (y1 + y2) / 2;
       lines.push(`M ${d.x.toFixed(1)} ${y1.toFixed(1)}
                   C ${d.x.toFixed(1)} ${mid.toFixed(1)},
                     ${c.x.toFixed(1)} ${mid.toFixed(1)},
@@ -319,7 +339,10 @@ function refresh(g, node) {
   g.innerHTML = nodeMarkup(node);
 }
 
+const radiusOf = (id) => radiusAt(view.deep.get(id) || 0);
+
 function nodeMarkup(node) {
+  const R = radiusOf(node.id);
   const c = 2 * Math.PI * R;
   const filled = (Math.max(0, Math.min(100, node.percent)) / 100) * c;
   const label = node.goal.length > 22 ? node.goal.slice(0, 20).trimEnd() + '…' : node.goal;

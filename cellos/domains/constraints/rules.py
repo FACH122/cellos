@@ -69,6 +69,32 @@ def inconsistent_deadline(what, name, inner_due, outer_due):
              "%s “%s” is due after this cell is" % (what, name))]
 
 
+OVER_ALLOCATED_COST = 7   # the cells inside have promised more than there is
+
+
+def over_allocation(allocated, budget, currency, children_with_budgets):
+    """
+    The cells inside a cell have committed to more money than the cell itself
+    has.
+
+    Every cell sets its own budget, which is right -- a group that cannot say
+    what it is willing to spend is not really running anything. But a budget
+    set with no reference to the one above it is a wish, and nothing was
+    noticing. A parent with 100,000 and three children holding 60,000 each is
+    not a cell with a budget; it is a cell with a problem nobody has said out
+    loud yet.
+
+    Said, not enforced. CellOS does not refuse the third child's budget any
+    more than it refuses a late task -- the contradiction is surfaced and the
+    organisation decides what to do about it.
+    """
+    if not budget or not allocated or allocated <= budget:
+        return []
+    return [(OVER_ALLOCATED_COST,
+             "the %d cells inside have committed to %s against this cell's %s"
+             % (children_with_budgets, money(allocated, currency), money(budget, currency)))]
+
+
 def share(spent, budget):
     """How much of the budget is gone. None when there is no budget to share."""
     if not budget:

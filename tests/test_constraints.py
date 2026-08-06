@@ -267,3 +267,45 @@ class Contradictions(unittest.TestCase):
         task.assign(boss["id"], t["id"], boss["id"])
         task.set_deadline(boss["id"], t["id"], "2099-01-01")     # allowed
         self.assertEqual(task.get(t["id"])["due_on"], "2099-01-01")
+
+
+class MoneyKnowsWhereItSits(unittest.TestCase):
+    """
+    A budget set with no reference to the one above it is a wish.
+
+    Every cell may commit to what it will spend -- that is right, and it is not
+    changed here. What was missing is that nothing looked at the two together:
+    a cell holding 100,000 with three children holding 60,000 each was not a
+    cell with a budget, it was a cell with a problem nobody had said out loud.
+    """
+
+    def test_children_within_the_budget_say_nothing(self):
+        self.assertEqual(rules.over_allocation(80000, 100000, "EUR", 2), [])
+
+    def test_children_exactly_at_the_budget_say_nothing(self):
+        self.assertEqual(rules.over_allocation(100000, 100000, "EUR", 2), [])
+
+    def test_children_past_the_budget_are_said_out_loud(self):
+        said = rules.over_allocation(180000, 100000, "EUR", 3)
+        self.assertEqual(len(said), 1)
+        cost, words = said[0]
+        self.assertGreater(cost, 0)
+        self.assertIn("3 cells inside", words)
+        self.assertIn("180,000", words)
+        self.assertIn("100,000", words)
+
+    def test_a_cell_with_no_budget_of_its_own_is_not_over_anything(self):
+        self.assertEqual(rules.over_allocation(50000, None, "EUR", 1), [])
+
+    def test_children_with_no_budgets_are_not_an_over_allocation(self):
+        self.assertEqual(rules.over_allocation(0, 100000, "EUR", 0), [])
+
+    def test_it_is_said_not_enforced(self):
+        """
+        The same shape as every other contradiction here: a cost and a
+        sentence, handed to the health layer. Nothing raises, nothing is
+        refused -- which is the whole posture of this domain.
+        """
+        said = rules.over_allocation(200000, 100000, "USD", 2)
+        self.assertIsInstance(said, list)
+        self.assertIsInstance(said[0][1], str)
