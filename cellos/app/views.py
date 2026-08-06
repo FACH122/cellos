@@ -192,6 +192,122 @@ def _worth_showing(carried):
     )
 
 
+"""
+What has happened lately that concerns one person.
+
+There is no notification table, no unread flag and nothing to mark as read.
+That would be a new kind of fact, and the whole system is built on there being
+only one kind: what happened. So this is a query over the log -- things other
+people did, to things that are yours.
+
+The consequence is that it cannot get out of step with reality, and it cannot
+be gamed by writing to it. The consequence people will notice is that there
+is no badge with a number on it, which is deliberate: a count of unread items
+is a measure of the software, not of the work.
+"""
+
+# What is worth telling somebody about. Everything else in the log is either
+# their own doing or somebody else's business.
+CONCERNS = {
+    "TaskAssigned": "was handed to you",
+    "ProgressUpdated": "moved on",
+    "TaskCompleted": "was finished",
+    "TaskReopened": "was reopened",
+    "DecisionAccepted": "was settled",
+    "LeaderOverride": "was settled against the vote",
+    "DecisionRejected": "was dropped",
+    "DecisionReturned": "was sent back",
+    "VotingOpened": "is open for votes",
+    "ResolutionRequested": "is waiting for a decision",
+    "RemarkAdded": "was commented on",
+    "EvidenceAttached": "had evidence attached",
+    "KnowledgeRecorded": "was written into what the cell knows",
+    "TaskExpanded": "became a cell",
+}
+
+
+def _lately(user_id, limit=12):
+    """
+    Recent events touching something this person holds or has taken part in,
+    and which somebody else caused. Your own actions are not news to you.
+    """
+    from ..domains.decision import model as decision_model
+    from ..domains.task import model as task_model
+
+    visible = sorted(permission.visible_cell_ids(user_id))
+    if not visible:
+        return []
+
+    mine = {t["id"] for t in task_model.in_cells(visible, owner_id=user_id)}
+    spoken_for = set(decision_model.ids_voted_on_by(user_id, visible))
+    names = member_model.names()
+    goals = {}
+
+    out = []
+    for e in event_log.history(cell_ids=visible, limit=400):
+        if e["actor_id"] == user_id or e["type"] not in CONCERNS:
+            continue
+        payload = e.get("payload") or {}
+        about_me = (
+            e["subject_id"] in mine
+            or e["subject_id"] in spoken_for
+            or payload.get("owner_id") == user_id
+        )
+        if not about_me:
+            continue
+        if e["cell_id"] not in goals:
+            here = hierarchy.get(e["cell_id"])
+            goals[e["cell_id"]] = here["goal"] if here else ""
+        out.append({
+            "at": e["occurred_at"],
+            "who": names.get(e["actor_id"]) or "somebody",
+            "said": CONCERNS[e["type"]],
+            "subject_id": e["subject_id"],
+            "subject": _names_it(e["subject_id"]),
+            "cell_id": e["cell_id"],
+            "cell_goal": goals[e["cell_id"]],
+            "mine": e["subject_id"] in mine,
+        })
+        if len(out) >= limit:
+            break
+    return out
+
+
+def _names_it(subject_id):
+    """Whatever the event was about, said in the words a person would use."""
+    from ..domains.decision import model as decision_model
+    from ..domains.task import model as task_model
+
+    if str(subject_id).startswith("task_"):
+        t = task_model.get(subject_id)
+        return t["title"] if t else None
+    if str(subject_id).startswith("dec_"):
+        d = decision_model.get(subject_id)
+        return d["question"] if d else None
+    return None
+
+
+def yours(user_id):
+    """
+    One person, across everything they can see.
+
+    The cell page answers "what is going on here". This answers "what is on
+    me", which was never a question about one cell -- it was being asked once
+    per cell and answered half at a time.
+    """
+    carried = responsibility.everything(user_id)
+    goals = {}
+    for cell_id in permission.visible_cell_ids(user_id):
+        here = hierarchy.get(cell_id)
+        if here:
+            goals[cell_id] = here["goal"]
+    return {
+        "carried": carried,
+        "cells": goals,
+        "lately": _lately(user_id),
+    }
+
+
 def task(user_id, task_id):
     """
     One piece of work, whole.

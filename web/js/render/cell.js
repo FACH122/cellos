@@ -38,7 +38,6 @@ export function cellPage(v) {
     people(v),
     questions(v),
     work(v),
-    yours(v),
     inside(v),
     analytics(v),
     more(v),
@@ -376,50 +375,8 @@ function finished(v, done) {
   accomplish, in the order a person actually asks -- what is mine, who is
   waiting on me, what am I waiting on, what is stuck.
 */
-function yours(v) {
-  if (!v.yours) return '';
-  const y = v.yours;
-  const waiting = y.waiting_on_you;
-  const blocked = y.you_are_waiting_on;
+/* -------------------------------------------------------------- mission */
 
-  const lines = [];
-  if (waiting.votes.length)
-    lines.push(row('waiting', `${plural(waiting.votes.length, 'decision')} waiting for your vote`,
-                   waiting.votes));
-  if (waiting.decisions.length)
-    lines.push(row('waiting', `${plural(waiting.decisions.length, 'decision')} only you can settle`,
-                   waiting.decisions));
-  if (waiting.not_started.length)
-    lines.push(row('waiting', `${plural(waiting.not_started.length, 'thing')} you hold but have not started`));
-  if (blocked.work.length)
-    lines.push(row('', `${plural(blocked.work.length, 'thing')} you are waiting on other people for`));
-  if (y.blocked.length)
-    lines.push(row('stuck', `${plural(y.blocked.length, 'thing')} nobody has taken`));
-  if (y.moving.length)
-    lines.push(row('', `${plural(y.moving.length, 'thing')} moving`));
-
-  return `<section><h2>Yours</h2>
-    ${lines.join('')}
-    ${y.yours.length
-      ? y.yours.map((t) => taskRow(v, t)).join('') +
-        `<p class="xs faint">${y.progress.percent}% across ${plural(y.yours.length, 'thing')}</p>`
-      : '<p class="empty">Nothing assigned to you here.</p>'}
-    ${y.cells_led.length
-      ? `<p class="xs faint">You lead ${plural(y.cells_led.length, 'cell')} here.</p>` : ''}
-  </section>`;
-}
-
-const row = (tone, text, questions) => `<div class="carried ${tone}">
-  <span>${esc(text)}</span>
-  ${(questions || []).map((q) => `<button class="quiet" data-act="open"
-      data-cell="${q.cell_id}">${esc(q.question)}</button>`).join('')}
-</div>`;
-
-/*
-  What this cell grew out of. A cell that began as a piece of work carries
-  that work as its mission, with everything already attached to it -- nothing
-  was copied here, it is the same task read from where it always was.
-*/
 function mission(v) {
   if (!v.mission) return '';
   const m = v.mission;
@@ -436,8 +393,6 @@ function mission(v) {
       : ''}
   </section>`;
 }
-
-/* -------------------------------------------------------------- hierarchy */
 
 function inside(v) {
   if (!('structure' in v)) return '';

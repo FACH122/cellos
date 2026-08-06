@@ -31,6 +31,7 @@ export const api = {
   home: () => request('GET', '/api/home'),
   cell: (id) => request('GET', '/api/cells/' + id),
   task: (id) => request('GET', '/api/tasks/' + id),
+  yours: () => request('GET', '/api/yours'),
   /* One ring of the map, fetched when somebody opens a node. */
   childrenOf: (id) => request('GET', `/api/cells/${id}/children`),
   createCell: (goal, parent_id) => request('POST', '/api/cells', { goal, parent_id }),

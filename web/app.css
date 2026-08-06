@@ -505,9 +505,24 @@ td.num { font-variant-numeric: tabular-nums; }
   font-size: var(--t-sm); padding: var(--s2) 0;
 }
 .carried + .carried { border-top: 1px solid var(--hairline); }
-.carried.waiting > span:first-child { color: var(--warn); }
-.carried.stuck > span:first-child { color: var(--ink-faint); }
+.carried.waiting > :first-child { color: var(--warn); }
+.carried.stuck > :first-child { color: var(--ink-faint); }
 .carried button { font-size: var(--t-sm); }
+
+/* ------------------------------------------------------ one person's page
+
+   The news is a log, not a feed: a time, who did it, what they touched. No
+   badge, no unread state, nothing to dismiss -- it is a query over what
+   happened, so there is nothing to keep in step. */
+
+.lately .note { padding: var(--s3) 0; }
+.lately .note + .note { border-top: 1px solid var(--hairline); }
+.lately .note > span { display: block; }
+.lately .note > span + span { margin-top: 2px; }
+.lately a, .lately button { font-size: inherit; padding: 0; }
+.lately a { color: inherit; text-decoration: none; }
+.lately a:hover, .lately button:hover { color: var(--accent); }
+#who button.here { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
 
 .task.expanded { cursor: pointer; }
 .task.expanded:hover .title { color: var(--accent); }

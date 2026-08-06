@@ -141,10 +141,6 @@ def standing(user_id, roles_payload):
 def graph(user_id, cell_id):
     """
     Everything one person carries, within one cell and everything beneath it.
-
-    Five questions, in the order somebody actually asks them: what is mine,
-    what is waiting on me, what am I waiting on, what is stuck, what is
-    moving. Every one is a query over facts, not a stored list.
     """
     visible = permission.visible_cell_ids(user_id)
     # Nothing about a cell above you, not even a filtered version of it. If
@@ -154,7 +150,28 @@ def graph(user_id, cell_id):
     subtree = [c for c in hierarchy.subtree_ids(cell_id) if c in visible]
     if not subtree:
         return None
+    return _carried(user_id, subtree)
 
+
+def everything(user_id):
+    """
+    The same five questions asked of a person's whole working life rather than
+    of one cell: every cell they can see, at once.
+
+    A person does not have a separate self per cell. Answering "what is on me"
+    inside one cell was always half an answer -- the other half was in a cell
+    they had to remember to go and look at.
+    """
+    visible = sorted(permission.visible_cell_ids(user_id))
+    return _carried(user_id, visible) if visible else None
+
+
+def _carried(user_id, subtree):
+    """
+    Five questions, in the order somebody actually asks them: what is mine,
+    what is waiting on me, what am I waiting on, what is stuck, what is
+    moving. Every one is a query over facts, not a stored list.
+    """
     led = [c for c in subtree if permission.is_leader(user_id, c)]
     mine = task_model.in_cells(subtree, owner_id=user_id, unfinished_only=True)
     open_decisions = decision_model.in_cells(subtree, states=UNSETTLED)

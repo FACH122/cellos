@@ -6,6 +6,7 @@ import { S, boot, go, onChange, routeOf, sameRoute, signOut } from './store.js';
 import { cellPage } from './render/cell.js';
 import { crumbs, entry, homePage, mapPage } from './render/shell.js';
 import { taskPage } from './render/task.js';
+import { yoursPage } from './render/yours.js';
 import { mountMap, whenOpened } from './render/structure.js';
 import { apply as applyTheme, cycle as cycleTheme, describe, label } from './theme.js';
 
@@ -21,7 +22,9 @@ function render() {
   }
 
   bar.hidden = false;
-  document.getElementById('who').innerHTML = esc(S.user.name)
+  document.getElementById('who').innerHTML =
+    `<button data-act="yours" class="quiet${S.page === 'yours' ? ' here' : ''}">${
+      esc(S.user.name)}</button>`
     + `<button data-act="theme" class="quiet" title="${esc(describe())}">${esc(label())}</button>`
     + '<button data-act="signout" class="quiet">sign out</button>';
   document.getElementById('path').innerHTML = crumbs();
@@ -31,6 +34,7 @@ function render() {
   const y = window.scrollY;
   document.body.dataset.page = S.page;
   app.innerHTML = S.page === 'map' ? mapPage(S.view)
+    : S.page === 'yours' ? yoursPage(S.view)
     : S.page === 'task' ? taskPage(S.view)
     : S.cellId ? cellPage(S.view) : homePage(S.view);
   if (S.keepPlace !== false) window.scrollTo(0, y);
@@ -71,6 +75,7 @@ bar.addEventListener('click', (ev) => {
     cycleTheme();
     return render();
   }
+  if (el.dataset.act === 'yours') go(null, 'yours');
   if (el.dataset.act === 'home') go(null);
   if (el.dataset.act === 'open') go(el.dataset.cell);
   if (el.dataset.act === 'signout') signOut();

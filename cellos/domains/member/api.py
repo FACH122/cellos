@@ -27,6 +27,13 @@ def sign_out(actor, body):
     return {"ok": True}
 
 
+@route("GET", "/api/yours")
+def yours(actor, body):
+    """One person across every cell they can see, and what has happened to it."""
+    from ...app import views
+    return views.yours(actor["id"])
+
+
 @route("GET", "/api/me")
 def me(actor, body):
     return {"user": _person(actor)}

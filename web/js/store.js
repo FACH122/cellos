@@ -72,6 +72,7 @@ export function routeOf(hash) {
     const id = raw.slice(4);
     return id ? { page: 'map', cellId: id } : { page: 'home', cellId: null };
   }
+  if (raw === 'yours') return { page: 'yours', cellId: null };
   if (raw.startsWith('task/')) {
     const id = raw.slice(5);
     return id ? { page: 'task', cellId: id } : { page: 'home', cellId: null };
@@ -80,7 +81,9 @@ export function routeOf(hash) {
 }
 
 const addressOf = (page, id) =>
-  (page === 'map' ? `map/${id}` : page === 'task' ? `task/${id}` : (id || ''));
+  (page === 'yours' ? 'yours'
+    : page === 'map' ? `map/${id}`
+    : page === 'task' ? `task/${id}` : (id || ''));
 
 export const sameRoute = (a, b) => a.page === b.page && a.cellId === b.cellId;
 
@@ -96,6 +99,10 @@ export async function go(id, page) {
   S.cellId = page === 'task' ? null : id;
   location.hash = addressOf(page, id);
 
+  if (page === 'yours') {
+    S.view = await api.yours();
+    return render();
+  }
   if (!id) {
     S.page = 'home';
     S.view = await api.home();
@@ -120,6 +127,9 @@ export async function go(id, page) {
 /* Whatever page we are on, load it again -- used after acting on a task, when
    the reply is about the cell but the screen is about the task. */
 export const again = () => go(S.routeId, S.page);
+
+/* A person, rather than a place. */
+export const openYours = () => go(null, 'yours');
 
 /* The same cell, given the whole page instead of a section of one. */
 export const openMap = (cellId) => go(cellId, 'map');
