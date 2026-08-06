@@ -74,25 +74,76 @@ that `MEASUREMENT.md` was written to replace.
 
 ---
 
+## v3 — the version that was used
+
+*The first one strangers drove, and the first one to be fixed by what they
+found.*
+
+v1 proved the model, v2 made it liveable. v3 is what happened when fifteen
+people who had never seen it were given accounts and a real question to
+settle — ten on a battery chemistry for a grid prototype, five on replacing
+Wise for multi-currency accounts. They settled both, and on the way they
+found four places where the system broke its own rules.
+
+Verified at the moment it was tagged:
+
+```
+212 unit tests          pass   (17 more than v2, all on what the use exposed)
+ 76 end-to-end checks   pass
+1964 events             replay to byte-identical projections (12 tables)
+```
+
+**What the use found, and what was fixed:**
+
+| | |
+|---|---|
+| **Work could be silently taken** | three people had "taken" the same task in turn, each displacing the last, and two believed it was theirs. `assign` never looked at whether anybody was holding it. Unheld work is still free to pick up; taking it out of somebody's hands is a leader's call, and the refusal names them. |
+| **Voting was never offered** | it is not a state change, so it was not a transition, so it never appeared in `actions` — leaving the commonest action in the system as the one thing the server did not mention. A decision now says `can_vote`. |
+| **Ratifying a vote recorded no reason** | the cheapest way to close a question was the only silent one. It now records the count, which *is* the reason. |
+| **An error described a rule nobody was applying** | a goal refused for being "an essay" by a check that counts characters. |
+
+**What was built:**
+
+| | |
+|---|---|
+| **A page per task** | why it exists — traced to the decision that produced it — who is expected to do what, what it grew into, and evidence, which could never be attached to work before because there was no page to do it on. Opens in its own tab. `GET /api/tasks/<id>` did not exist until somebody using the API said so. |
+| **A page per person** | `#yours` asks "what is on me" of every cell at once, instead of once per cell and half an answer each time. |
+| **What has happened** | derived from the log — events other people caused, touching your work. No table, no unread flag, no badge. This reverses Phase 2's "no notifications" without building one. |
+| **The map, given a page** | it grows into the window up to twice size, then scrolls. |
+| **A visual grammar** | ◎ gold for a cell, ○ metal for a task, on rows and page titles alike; the goal in a serif, because it is the one piece of writing on a page of interface. |
+| **A calmer page** | health is a dot on the pulse line; what is settled, known and recorded sits behind one word. |
+
+The domain model is unchanged again. Every number is still derived and still
+never stored.
+
+Known gaps: **a Cell cannot end**, the Phase 4 health arithmetic is still the
+one `MEASUREMENT.md` was written to replace, and three things the users hit
+are not fixed — every write still answers with the whole cell (a 34KB reply
+to a one-line remark broke one person's tooling), nothing can say "this work
+is waiting on that question", and duplicate work is neither detected nor
+removable.
+
+---
+
 ## Going back
 
 ```bash
 git tag                          # every milestone
-git show v2 --stat               # what a milestone contains
-git diff --stat v1 v2            # what one milestone changed from the last
+git show v3 --stat               # what a milestone contains
+git diff --stat v2 v3            # what one milestone changed from the last
 ```
 
 **To look at a version without changing anything:**
 
 ```bash
-git checkout v1                  # detached; look around freely
+git checkout v3                  # detached; look around freely
 git switch -                     # come back
 ```
 
 **To work from an old version:**
 
 ```bash
-git switch -c from-v1 v1         # a branch starting there
+git switch -c from-v3 v3         # a branch starting there
 ```
 
 **To bring back one file:**
@@ -135,7 +186,7 @@ Then:
 ```bash
 git add -A
 git commit -m "what changed, and why"
-git tag -a v3 -m "v3 — <the milestone in one line>
+git tag -a v4 -m "v4 — <the milestone in one line>
 
 <what it added>
 <the verification numbers at the moment of tagging>"
