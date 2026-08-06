@@ -354,7 +354,7 @@ function nodeMarkup(node) {
 function tooltip(n) {
   const bits = [n.goal, `${n.percent}% · ${plural(n.people, 'person', 'people')}`];
   if (n.remaining) bits.push(`${plural(n.remaining, 'thing')} left`);
-  if (n.questions) bits.push(plural(n.questions, 'open question'));
+  if (n.questions) bits.push(plural(n.questions, 'open decision'));
   if (n.unowned) bits.push(`${plural(n.unowned, 'thing')} nobody has taken`);
   if (n.stalled) bits.push(`${plural(n.stalled, 'thing')} taken but not started`);
   if (n.health) bits.push('health: ' + n.health);
@@ -444,7 +444,7 @@ export function mapMount(roomy = false) {
 
 export function mapCaption(root, roomy = false) {
   const said = [];
-  if (root.questions) said.push(`${plural(root.questions, 'question')} still open`);
+  if (root.questions) said.push(`${plural(root.questions, 'decision')} still open`);
   if (root.unowned) said.push(`${plural(root.unowned, 'thing')} nobody has taken`);
   if (root.stalled) said.push(`${plural(root.stalled, 'thing')} taken but not started`);
 
@@ -454,7 +454,8 @@ export function mapCaption(root, roomy = false) {
   /* The way to the map's own page sits with the other things said about the
      map, in the same voice, and only when there is anything to look at. */
   const roomier = root.child_count && !roomy
-    ? '<button class="quiet faint xs" data-act="map">see it with more room</button>' : '';
+    ? `${hint ? '<span class="xs faint">·</span> ' : ''}`
+      + '<button class="quiet faint xs" data-act="map">see it with more room</button>' : '';
 
   if (!said.length) {
     return `<p class="xs faint">Nothing stuck anywhere below. ${hint} ${roomier}</p>`;

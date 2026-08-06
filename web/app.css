@@ -663,6 +663,15 @@ body[data-page="map"] header { max-width: none; }
 
 #app > section.aside .know .q { font-size: var(--t-sm); }
 
+/* The line under everything actionable. A hairline says there is something
+   below without spending a heading on it. */
+#app > section.more {
+  margin-top: var(--s5);
+  padding-top: var(--s4);
+  border-top: 1px solid var(--hairline);
+}
+#app > section.more + section.aside { margin-top: var(--s4); }
+
 /*
   Settled questions are history. A card says "this is a thing you can pick
   up"; these are things already put down, so in the quiet sections a card

@@ -37,10 +37,31 @@ export function cellPage(v) {
     yours(v),
     inside(v),
     analytics(v),
-    settled(v),
     knowledge(v),
-    record(v),
+    more(v),
   ].filter(Boolean).join('');
+}
+
+/*
+  The line under everything a person can act on.
+
+  What is behind it is the past: questions already settled, and the log of
+  what has happened here. Both are worth keeping and neither is worth the
+  height they were taking on a page somebody opens to find out what to do
+  next. What the cell knows stays above it, because a lesson learned is the
+  one piece of history that changes what you do today.
+
+  The control does not move when it opens, so the two sections appear below
+  it rather than pushing it down the page.
+*/
+function more(v) {
+  const open = showing('more');
+  const behind = open ? settled(v) + record(v) : '';
+  return `<section class="more">
+    <button class="quiet faint" data-act="${open ? 'unform' : 'form'}" data-form="more"
+      aria-label="Decisions already made, and what has happened here"
+      aria-expanded="${open}">${open ? 'less' : 'more'}</button>
+  </section>${behind}`;
 }
 
 /* ------------------------------------------------------------------ goal */
@@ -139,7 +160,7 @@ function people(v) {
 /* ------------------------------------------------------------- decisions */
 
 function questions(v) {
-  return `<section><h2>Open questions</h2>
+  return `<section><h2>Open decisions</h2>
     ${v.open_decisions.length
       ? v.open_decisions.map((d) => card(v, d)).join('')
       : '<p class="empty">Nothing waiting on anyone.</p>'}
@@ -351,10 +372,10 @@ function yours(v) {
 
   const lines = [];
   if (waiting.votes.length)
-    lines.push(row('waiting', `${plural(waiting.votes.length, 'question')} waiting for your answer`,
+    lines.push(row('waiting', `${plural(waiting.votes.length, 'decision')} waiting for your vote`,
                    waiting.votes));
   if (waiting.decisions.length)
-    lines.push(row('waiting', `${plural(waiting.decisions.length, 'question')} only you can settle`,
+    lines.push(row('waiting', `${plural(waiting.decisions.length, 'decision')} only you can settle`,
                    waiting.decisions));
   if (waiting.not_started.length)
     lines.push(row('waiting', `${plural(waiting.not_started.length, 'thing')} you hold but have not started`));
@@ -455,11 +476,11 @@ function settled(v) {
   const shown = all ? v.settled_decisions : v.settled_decisions.slice(0, ANSWERED_AT_REST);
   const hidden = v.settled_decisions.length - shown.length;
 
-  return `<section class="aside"><h2>Answered</h2>
+  return `<section class="aside"><h2>Decisions made</h2>
     ${shown.map((d) => card(v, d)).join('')}
     ${hidden
       ? `<p><button class="quiet faint" data-act="form" data-form="answered">${
-          plural(hidden, 'earlier question')}</button></p>`
+          plural(hidden, 'earlier decision')}</button></p>`
       : (all && v.settled_decisions.length > ANSWERED_AT_REST
           ? '<p><button class="quiet faint" data-act="unform" data-form="answered">show fewer</button></p>'
           : '')}
