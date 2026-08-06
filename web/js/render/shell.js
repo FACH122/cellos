@@ -62,7 +62,7 @@ export function homePage(v) {
 export function mapPage(v) {
   if (!v.structure) {
     return `<section style="margin-top:var(--s7)">
-      <h1>${esc(v.cell.goal)}</h1>
+      <h1 class="goal">${esc(v.cell.goal)}</h1>
       <p class="muted">There are no cells inside this one yet, so there is no map to show.</p>
       <p><button data-act="unmap">Back to the cell</button></p>
     </section>`;
@@ -70,7 +70,7 @@ export function mapPage(v) {
   return `<section class="map-page">
     <div class="row top">
       <div class="grow">
-        <h1>${esc(v.cell.goal)}</h1>
+        <h1 class="goal">${esc(v.cell.goal)}</h1>
         <p class="xs faint">everything inside it</p>
       </div>
       <button class="quiet faint" data-act="unmap">back to the cell</button>

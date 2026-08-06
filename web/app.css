@@ -108,6 +108,29 @@ h1 {
   max-width: 30ch;
 }
 
+/*
+  A cell's goal, and nothing else, is set in a serif.
+
+  Everything else on the page is interface -- buttons, counts, labels, words
+  the software chose. The goal is the one piece of writing: somebody sat down
+  and decided what this group is for, and every task, question and cell below
+  it exists to serve that sentence. A serif says so without a word of
+  explanation, and it cannot be mistaken for a control.
+
+  System faces only. There is no font to download, which keeps the promise
+  that this thing runs from a folder with no build step and no network.
+
+  Not the same numbers as the sans: a serif at this size wants a little less
+  weight and much less negative tracking, or it sets tight and heavy.
+*/
+h1.goal {
+  font-family: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino,
+               "Times New Roman", Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.006em;
+  line-height: 1.18;
+}
+
 h2 {
   margin: 0 0 var(--s4);
   font-size: var(--t-xs);

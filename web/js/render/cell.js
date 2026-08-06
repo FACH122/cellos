@@ -82,7 +82,7 @@ function goal(v) {
            <div class="actions"><button class="primary" type="submit">Save</button>
              <button type="button" class="quiet" data-act="unform" data-form="goal">cancel</button>
            </div></form>`
-      : `<div class="row top titled">${pip(v)}<h1 class="grow">${esc(v.cell.goal)}</h1>
+      : `<div class="row top titled">${pip(v)}<h1 class="goal grow">${esc(v.cell.goal)}</h1>
            ${v.you.is_leader
              ? '<button class="quiet faint" data-act="form" data-form="goal">edit</button>' : ''}
          </div>`}
