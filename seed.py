@@ -223,7 +223,59 @@ def product_org():
             o = crew[j % len(crew)]
             task.assign(head["id"], t["id"], o["id"])
             task.report_progress(o["id"], t["id"], [80, 30][j % 2])
+
+    _one_still_open(head, c)
     return c
+
+
+def _one_still_open(head, c):
+    """
+    A question nobody has settled yet.
+
+    Every other decision in this seed is driven to an outcome, which reads well
+    as history and badly as a demonstration: somebody opening the thing for the
+    first time finds an organisation where every question already has an
+    answer, no vote is offered anywhere, and the most distinctive thing the
+    system does is invisible.
+
+    So one stops half way. It is opened, put to the cell, and partly voted on --
+    and then left exactly there, with the count uneven and nobody having closed
+    it. Whoever arrives can cast a vote and watch it move, which is the point.
+    """
+    d = decision.propose(
+        head["id"], c["id"],
+        "Do we hold the release for the migration, or ship without it?",
+        "The migration is three weeks from done and the date is in nine days. "
+        "Shipping without it means running both paths in production over the launch.",
+        ["Hold the release until the migration lands",
+         "Ship on the date and run both paths",
+         "Ship a subset, hold the parts that touch billing"],
+        work={
+            "0": ["Tell the customers who were promised the date",
+                  "Re-cut the release branch after the migration"],
+            "1": ["Write the dual-path runbook", "Staff the launch weekend"],
+            "2": ["Draw the line: what ships, what waits",
+                  "Check the subset against the billing tests"],
+        },
+    )
+    step(head, d["id"], "open")
+    decision.remark(head["id"], d["id"],
+                    "I would rather move the date than carry two paths through a launch.")
+
+    people = member.members(c["id"])
+    decision.remark(people[3]["id"], d["id"],
+                    "Nine days is not a date we chose, it is one we announced. "
+                    "That is a different thing to break.")
+    decision.remark(people[7]["id"], d["id"],
+                    "The subset is not a compromise, it is a third system to test.")
+
+    step(head, d["id"], "put_to_cell")
+
+    # Enough of a count to look alive, not enough to look settled -- and
+    # deliberately no winner, so arriving and voting actually changes something.
+    options = dm.options_of(d["id"])
+    for i, m in enumerate(people[:9]):
+        decision.vote(m["id"], d["id"], options[i % 3]["id"])
 
 
 def company():
