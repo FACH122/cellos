@@ -117,9 +117,6 @@ export async function go(id, page) {
   render();
 }
 
-/* One piece of work, given the page to itself. */
-export const openTask = (taskId) => go(taskId, 'task');
-
 /* Whatever page we are on, load it again -- used after acting on a task, when
    the reply is about the cell but the screen is about the task. */
 export const again = () => go(S.routeId, S.page);

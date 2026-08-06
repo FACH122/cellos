@@ -9,7 +9,7 @@
 import { api, token } from './api.js';
 import { say } from './dom.js';
 import {
-  S, absorb, again, closeForm, closeMap, go, openForm, openMap, openTask, render,
+  S, absorb, again, closeForm, closeMap, go, openForm, openMap, render,
   signOut, toggleCard,
 } from './store.js';
 
@@ -41,7 +41,6 @@ export function wireClicks(root) {
       case 'unform': return closeForm(form);
       case 'home': return go(null);
       case 'open': ev.preventDefault(); return go(cell);
-      case 'task': ev.preventDefault(); return openTask(id);
       case 'map': return openMap(cell || S.cellId);
       case 'unmap': return closeMap();
       case 'expand': return toggleCard(id);

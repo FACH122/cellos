@@ -343,13 +343,12 @@ form.panel .actions { display: flex; align-items: center; gap: var(--s2); margin
 .task { display: flex; align-items: center; gap: var(--s4); padding: var(--s2) 0; }
 .task + .task { border-top: 1px solid var(--hairline); }
 .task .title { flex: 1; min-width: 0; }
-/* The row opens the task. The controls on it do their own thing -- a click
-   finds the nearest thing that acts, and they are nearer. */
-.task[data-act="task"] { cursor: pointer; }
-.task[data-act="task"]:hover .title { color: var(--accent); }
-.task[data-act="task"] button,
-.task[data-act="task"] input { cursor: auto; }
-.task[data-act="task"] button { cursor: pointer; }
+/* The title is a link to the task's own page. It should not announce itself
+   as one until you reach for it -- a list of underlined blue tasks would be
+   a worse list. */
+a.title { color: inherit; text-decoration: none; }
+a.title:hover { color: var(--accent); }
+a.title:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
 .task.done .title { color: var(--ink-faint); text-decoration: line-through; }
 .task .from { font-size: var(--t-xs); color: var(--ink-faint); }
 .task .owner { font-size: var(--t-sm); color: var(--ink-soft); white-space: nowrap; }

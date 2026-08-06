@@ -211,9 +211,13 @@ function taskRow(v, t) {
 
   const canMove = v.you.acts_here && (t.owner_id === S.user.id || !t.owner_id || v.you.is_leader);
   const key = 'split:' + t.id;
-  return `<div class="task${t.state === 'done' ? ' done' : ''}"
-       data-act="task" data-id="${t.id}">
-    <span class="title">${TASK_MARK}${esc(t.title)}</span>
+  /* A real link, so the browser's own ways of opening things all work:
+     click, middle-click, cmd-click, copy the address. It cannot wrap the
+     whole row -- there are buttons and a slider in there, and an anchor may
+     not contain them -- so the title is the link. */
+  return `<div class="task${t.state === 'done' ? ' done' : ''}">
+    <a class="title" href="#task/${t.id}" target="_blank" rel="noopener"
+       >${TASK_MARK}${esc(t.title)}</a>
     ${t.can_expand && !showing(key)
       ? `<button class="quiet faint" data-act="form" data-form="${key}">too large</button>` : ''}
     ${t.owner_id
