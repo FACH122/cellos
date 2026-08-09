@@ -11,6 +11,7 @@ DONE = "done"
 EXPANDED = "expanded"
 
 COMPLETE = 100
+MAX_NOTE = 2000
 
 
 def clean_title(title):
@@ -18,6 +19,21 @@ def clean_title(title):
     if not title:
         raise DomainError("A task needs a description.")
     return title
+
+
+def clean_note(body):
+    """
+    Something said while doing the work. Kept short on purpose: a note is what
+    you would tell somebody who asked how it was going, not a report.
+    """
+    body = (body or "").strip()
+    if not body:
+        raise DomainError("A note needs something in it.")
+    if len(body) > MAX_NOTE:
+        raise DomainError("That is %d characters; a note stops at %d. "
+                          "Anything longer is probably evidence."
+                          % (len(body), MAX_NOTE))
+    return body
 
 
 def clean_progress(progress):

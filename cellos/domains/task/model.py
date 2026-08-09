@@ -31,9 +31,24 @@ CREATE TABLE tasks (
 CREATE INDEX tasks_due ON tasks (due_on);
 CREATE INDEX tasks_cell ON tasks (cell_id, progress);
 CREATE INDEX tasks_owner ON tasks (owner_id, progress);
+
+-- What somebody said while doing the work.
+--
+-- A decision has remarks, which is where a cell argues before it settles
+-- something. Work has notes, which is a different act: what was found, what
+-- is in the way, what was tried. The two look alike and belong to different
+-- domains, so the task domain keeps its own rather than borrowing.
+CREATE TABLE notes (
+    id        TEXT PRIMARY KEY,
+    task_id   TEXT NOT NULL,
+    author_id TEXT NOT NULL,
+    body      TEXT NOT NULL,
+    said_at   TEXT NOT NULL
+);
+CREATE INDEX notes_task ON notes (task_id, id);
 """
 
-db.owns(["tasks"], SCHEMA)
+db.owns(["tasks", "notes"], SCHEMA)
 
 # Work that became a cell. Its progress now comes back up from that cell, so
 # counting it here as well would count the same work twice.
@@ -178,3 +193,15 @@ def all_done(task_ids):
 def state_of(task_id):
     task = get(task_id)
     return None if task is None else task["state"]
+
+
+def notes_of(task_id):
+    """What has been said while doing this, oldest first."""
+    return db.rows(
+        """
+        SELECT n.*, u.name AS author_name
+        FROM notes n LEFT JOIN users u ON u.id = n.author_id
+        WHERE n.task_id = ? ORDER BY n.id
+        """,
+        (task_id,),
+    )

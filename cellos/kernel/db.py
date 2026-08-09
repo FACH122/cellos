@@ -110,14 +110,30 @@ def close():
 
 
 def init():
-    """Create anything missing. Safe on every start."""
+    """
+    Make the database match the domains. Safe on every start, and returns
+    whether the derived tables had to be built.
+
+    A missing projection table means the shape has changed since this database
+    was written -- a domain added one, or renamed one. The answer is not to
+    patch the difference but to throw every projection away and rebuild from
+    the log, which is exactly what the log is for. Anything else would leave
+    two tables that disagree about when they were last correct.
+
+    Before, a new table made `_all_present` false and sent the whole set
+    through `CREATE TABLE`, which then failed on the first one that already
+    existed. Adding a table to a live database could not be done at all.
+    """
     conn = connect()
     with write_lock:
         conn.executescript(LOG_SCHEMA)
         conn.executescript(RUNTIME_SCHEMA)
-        if not _all_present(conn):
+        built = not _all_present(conn)
+        if built:
+            _drop_projections(conn)
             _create_projections(conn)
         conn.commit()
+    return built
 
 
 def _all_present(conn):
@@ -136,12 +152,16 @@ def _create_projections(conn):
         conn.executescript(schema)
 
 
+def _drop_projections(conn):
+    for table in ["relationships"] + _projection_tables:
+        conn.execute("DROP TABLE IF EXISTS %s" % table)
+
+
 def drop_projections():
     """Throw away everything derived. The log survives."""
     conn = connect()
     with write_lock:
-        for table in ["relationships"] + _projection_tables:
-            conn.execute("DROP TABLE IF EXISTS %s" % table)
+        _drop_projections(conn)
         _create_projections(conn)
         conn.commit()
 

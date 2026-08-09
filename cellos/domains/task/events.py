@@ -75,3 +75,12 @@ def _deadline(conn, event):
 def _cost(conn, event):
     conn.execute("UPDATE tasks SET cost = ? WHERE id = ?",
                  (event["payload"].get("cost"), event["subject_id"]))
+
+
+@events.projector("TaskNoted")
+def _noted(conn, event):
+    conn.execute(
+        "INSERT INTO notes (id, task_id, author_id, body, said_at) VALUES (?, ?, ?, ?, ?)",
+        (event["id"], event["subject_id"], event["actor_id"],
+         event["payload"]["body"], event["occurred_at"]),
+    )

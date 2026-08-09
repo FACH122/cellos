@@ -16,4 +16,9 @@ def boot():
     from . import domains  # noqa: F401  (importing registers everything)
     from .kernel import db
 
-    db.init()
+    # A changed projection shape means the derived tables were just rebuilt
+    # empty. Replay puts them back -- from the log, which never changed.
+    if db.init():
+        from .kernel import events
+
+        events.replay()

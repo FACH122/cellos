@@ -31,7 +31,7 @@ from ..domains.hierarchy import service as hierarchy
 from ..domains.member import model as member_model, service as member
 from ..domains.progress import service as progress
 from ..domains.responsibility import service as responsibility
-from ..domains.task import rules as task_rules, service as task_service
+from ..domains.task import model as task_model, rules as task_rules, service as task_service
 from ..kernel import events as event_log
 
 
@@ -282,8 +282,22 @@ def task(user_id, task_id):
         None, t.get("owner_id"), user_id, user_id, standing["is_leader"])
     t["can_report"] = standing["acts_here"] and t["state"] != task_rules.EXPANDED
 
+    names = member_model.names()
     return {
         "task": t,
+        "notes": [dict(n) for n in task_model.notes_of(task_id)],
+        # This task's own story, read straight off the log. Nothing is stored
+        # for it: every one of these was already an event, and until now the
+        # only place you could see them was the whole cell's record.
+        "record": [
+            {"at": e["occurred_at"], "type": e["type"],
+             "who": names.get(e["actor_id"]) or "somebody",
+             "payload": e.get("payload") or {}}
+            for e in event_log.history(subject_id=task_id, limit=60)
+            # The note itself is shown in full; saying "somebody left a note"
+            # beside it would be the same fact twice, once uselessly.
+            if e["type"] != "TaskNoted"
+        ],
         "cell": {"id": cell["id"], "goal": cell["goal"]},
         "path": [p for p in hierarchy.path(t["cell_id"])
                  if p["id"] in permission.visible_cell_ids(user_id)],

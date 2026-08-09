@@ -75,6 +75,27 @@ def assign(actor_id, task_id, owner_id):
     return get(task_id)
 
 
+def note(actor_id, task_id, body):
+    """
+    Say something while doing the work.
+
+    A decision has remarks -- that is a cell arguing before it settles
+    something. Work has notes, which is a different act and belongs to whoever
+    is holding it: what was found, what is in the way, what was tried and did
+    not work. It is the difference between a task page that reports a number
+    and one somebody actually works on.
+
+    Anyone who can act in the cell may leave one. Being blocked by somebody
+    else's task is exactly when you most need to say so.
+    """
+    task = get(task_id)
+    permission.require_member(actor_id, task["cell_id"])
+    body = rules.clean_note(body)
+    events.append("TaskNoted", actor_id=actor_id, cell_id=task["cell_id"],
+                  subject_id=task_id, body=body)
+    return model.notes_of(task_id)
+
+
 def report_progress(actor_id, task_id, progress):
     """
     Members report their own work. Nobody updates a number on their behalf,

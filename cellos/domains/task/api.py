@@ -27,6 +27,14 @@ def expand(actor, body, task_id):
     return views.cell(actor["id"], task["cell_id"])
 
 
+@route("POST", "/api/tasks/<task_id>/notes")
+def note(actor, body, task_id):
+    """Say something while doing the work."""
+    from ...app import views
+    service.note(actor["id"], task_id, body.get("body"))
+    return views.task(actor["id"], task_id)
+
+
 @route("PATCH", "/api/tasks/<task_id>")
 def update(actor, body, task_id):
     from ...app import views

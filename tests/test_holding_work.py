@@ -15,7 +15,7 @@ import unittest
 
 from cellos.domains.cell import service as cell_service
 from cellos.domains.member import service as member
-from cellos.domains.task import rules, service as task
+from cellos.domains.task import model, rules, service as task
 from cellos.kernel.errors import NotAllowed
 
 _n = [0]
@@ -102,3 +102,62 @@ class ThroughTheSystem(unittest.TestCase):
         task.assign(crew[0]["id"], t["id"], crew[0]["id"])
         task.assign(boss["id"], t["id"], crew[1]["id"])
         self.assertEqual(task.get(t["id"])["owner_id"], crew[1]["id"])
+
+
+class SayingWhatIsHappening(unittest.TestCase):
+    """
+    A task page is the one screen somebody sits at. Until now the only thing
+    it could accept was a number: a person could move progress from 40 to 55
+    and had nowhere to say why, or what they were stuck behind.
+    """
+
+    def test_a_note_needs_something_in_it(self):
+        from cellos.kernel.errors import DomainError
+        for empty in ("", "   ", None):
+            with self.assertRaises(DomainError):
+                rules.clean_note(empty)
+
+    def test_a_note_stops_before_it_becomes_a_report(self):
+        from cellos.kernel.errors import DomainError
+        with self.assertRaises(DomainError) as caught:
+            rules.clean_note("x" * (rules.MAX_NOTE + 1))
+        self.assertIn("probably evidence", str(caught.exception))
+
+    def test_anybody_in_the_cell_may_say_something(self):
+        """
+        Not only whoever holds it. Being blocked by somebody else's work is
+        exactly when you most need to say so.
+        """
+        boss, cell, crew = a_cell()
+        t = task.create(boss["id"], cell["id"], "Wait on the vendor")
+        task.assign(crew[0]["id"], t["id"], crew[0]["id"])
+
+        task.note(crew[1]["id"], t["id"], "Their quote assumes we host the runner.")
+        said = task.note(crew[0]["id"], t["id"], "Revised quote in, 20% lower.")
+
+        self.assertEqual(len(said), 2)
+        self.assertEqual(said[0]["body"], "Their quote assumes we host the runner.")
+        self.assertEqual(said[1]["author_id"], crew[0]["id"])
+
+    def test_a_stranger_may_not(self):
+        from cellos.kernel.errors import NotAllowed
+        boss, cell, _ = a_cell()
+        outsider = member.register("Outside", "outside@test.invalid")
+        t = task.create(boss["id"], cell["id"], "Something")
+        with self.assertRaises(NotAllowed):
+            task.note(outsider["id"], t["id"], "hello")
+
+    def test_notes_survive_a_replay(self):
+        """
+        They are a projection like everything else -- the log is the authority,
+        and dropping every derived table has to bring them back.
+        """
+        from cellos.kernel import events as event_log
+
+        boss, cell, _ = a_cell()
+        t = task.create(boss["id"], cell["id"], "Chase the supplier")
+        task.note(boss["id"], t["id"], "Left a voicemail.")
+
+        event_log.replay()
+        again = model.notes_of(t["id"])
+        self.assertEqual([n["body"] for n in again], ["Left a voicemail."])

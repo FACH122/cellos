@@ -156,6 +156,9 @@ export function wireForms(root) {
         case 'due':
           closeForm('due:' + id);
           return run(() => api.updateTask(id, { due_on: d.due_on, cost: d.cost }), 'Noted.');
+        case 'note':
+          closeForm('note:' + id);
+          return run(() => api.noteOnTask(id, d.body), 'Posted.');
         case 'split':
           closeForm('split:' + id);
           return run(() => api.splitOffTask(id, d.goal), 'It has its own cell now.');
