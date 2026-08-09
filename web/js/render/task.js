@@ -10,7 +10,7 @@
 
     the head      what this is and where it stands, in one line
     the bar       every action, together, once -- not scattered down the page
-    the work      everything that has happened to it, in order: what the
+    the work      everything that has happened to it, newest first: what the
                   system saw, what people said, and what they offered in
                   support. This is the middle of the page because it is the
                   middle of the job.
@@ -182,8 +182,12 @@ function evidenceForm(t) {
 /* ------------------------------------------------------------- the record */
 
 /*
-  Notes and events in one column, oldest first, because that is the order the
-  work happened in and reading it top to bottom is reading the story.
+  Newest first.
+
+  Oldest-first reads better as a story, and that is the wrong thing to
+  optimise for: somebody opens this to find out where the work got to, not to
+  read it from the beginning. On anything that has been going a while the
+  answer would be at the bottom, behind a scroll.
 
   A note says something a person chose to say. An event is something the
   system observed. Both belong here and they are drawn differently: the note
@@ -217,7 +221,13 @@ function work(v, t) {
         <span>${esc(said(e))}</span>
       </div>`,
     })),
-  ].sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
+  ]
+    // Ascending first, then turned over. Sorting straight down would be
+    // stable on ties -- and two things said in the same second are a tie --
+    // so they would keep the order they were built in, which is oldest
+    // first, and read backwards inside that second.
+    .sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0))
+    .reverse();
 
   return `<section><h2>The work</h2>
     ${lines.length
