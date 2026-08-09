@@ -224,12 +224,24 @@ form.panel .actions { display: flex; align-items: center; gap: var(--s2); margin
 
 /* An answer and what follows from it, side by side, so the pairing is
    structural rather than something you infer from the order of two lists. */
-.opt-rows { margin-top: var(--s3); }
+.opt-rows { margin-top: var(--s4); }
+.opt-head {
+  display: flex; gap: var(--s3);
+  margin-bottom: var(--s1);
+}
+.opt-head > span { flex: 1; min-width: 0; }
 .opt-row { display: flex; gap: var(--s3); align-items: flex-start; }
 .opt-row + .opt-row { margin-top: var(--s2); }
-.opt-row > .field { flex: 1; min-width: 0; margin: 0; }
-.opt-row textarea { min-height: 2.6rem; }
-.opt-rows > button { margin-top: var(--s2); }
+.opt-row > * { flex: 1; min-width: 0; }
+/* One line until it is used. A field that starts three lines tall looks like
+   work you owe it. */
+.opt-row textarea {
+  min-height: 0; height: 2.4rem; line-height: 1.4; resize: vertical;
+  transition: height .12s;
+}
+.opt-row textarea:focus { height: 4.4rem; }
+
+.more-fields { display: flex; gap: var(--s4); margin-top: var(--s3); }
 
 /* ------------------------------------------------------------ header bits */
 

@@ -213,44 +213,50 @@ function questions(v) {
 /*
   Every option gets to say what follows from it.
 
-  The form used to take the options as free lines and then ask, once, what
-  should happen "if the first option wins" -- which was never a rule, only the
-  shape of the form. The domain has always kept work per option, and a
-  question where you can only say the consequences of one answer is not really
-  offering a choice: the other options arrive at the vote with nothing
-  attached, and settling on one of them produces nothing.
+  The domain has always kept work per option; the form used to ask once, about
+  the first, which quietly made every other answer worse -- they arrived at the
+  vote with nothing attached.
 
-  So one row per option, each with its own consequences, and a quiet way to
-  add another.
+  Showing that without it looking like a spreadsheet is the whole problem. So:
+  no labels on the rows, one heading over the pair, and the consequences field
+  a single line that only earns more room when somebody uses it. The question
+  is the only thing with a label, because it is the only thing that is not
+  obvious from what is already typed in it.
 */
 function optionRows() {
   const rows = [];
   for (let i = 0; i < S.optionRows; i += 1) {
     rows.push(`<div class="opt-row">
-      <label class="field"><span>${i === 0 ? 'The options' : ''}</span>
-        <input name="option${i}" placeholder="${
-          i === 0 ? 'The garden' : i === 1 ? 'The hall' : 'another answer'}"></label>
-      <label class="field"><span>${i === 0 ? 'then, one per line' : ''}</span>
-        <textarea name="work${i}" rows="2" placeholder="${
-          i === 0 ? 'Put down the deposit&#10;Confirm the date' : ''}"></textarea></label>
+      <input name="option${i}" aria-label="Option ${i + 1}"
+             placeholder="${i === 0 ? 'The garden' : i === 1 ? 'The hall' : 'another answer'}">
+      <textarea name="work${i}" rows="1" aria-label="What follows from option ${i + 1}"
+                placeholder="${i === 0 ? 'then: put down the deposit' : 'then…'}"></textarea>
     </div>`);
   }
-  return `<div class="opt-rows">${rows.join('')}
-    ${S.optionRows < 6
-      ? '<button type="button" class="quiet faint" data-act="moreoption">another option</button>'
-      : ''}
-    <p class="xs faint">All optional. A question with no options at all is just
-      “shall we do this?”, and becomes one.</p>
+  return `<div class="opt-rows">
+    <div class="opt-head xs faint"><span>The options</span><span>and what each commits you to</span></div>
+    ${rows.join('')}
   </div>`;
 }
 
 function proposeForm() {
+  const context = showing('detail');
   return `<form class="panel" data-form="decision">
     <label class="field"><span>What has to be decided together?</span>
       <input name="question" required autofocus placeholder="Where do we hold it?"></label>
-    <label class="field"><span>Anything worth knowing first (optional)</span>
-      <textarea name="detail"></textarea></label>
+    ${context
+      ? `<label class="field"><span>Anything worth knowing first</span>
+           <textarea name="detail" rows="2" autofocus></textarea></label>`
+      : ''}
     ${optionRows()}
+    <div class="more-fields">
+      ${S.optionRows < 6
+        ? '<button type="button" class="quiet faint" data-act="moreoption">another option</button>'
+        : ''}
+      ${context
+        ? ''
+        : '<button type="button" class="quiet faint" data-act="form" data-form="detail">add context</button>'}
+    </div>
     <div class="actions"><button class="primary" type="submit">Ask it</button>
       <button type="button" class="quiet" data-act="unform" data-form="decision">cancel</button>
     </div></form>`;
