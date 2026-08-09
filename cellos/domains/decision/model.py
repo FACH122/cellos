@@ -69,6 +69,18 @@ def get(decision_id):
     return db.row("SELECT * FROM decisions WHERE id = ?", (decision_id,))
 
 
+def many(decision_ids):
+    """Several by id, oldest first."""
+    decision_ids = list(decision_ids)
+    if not decision_ids:
+        return []
+    return db.rows(
+        "SELECT * FROM decisions WHERE id IN (%s) ORDER BY created_at, id"
+        % db.marks(decision_ids),
+        decision_ids,
+    )
+
+
 def state_of(decision_id):
     return db.value("SELECT state FROM decisions WHERE id = ?", (decision_id,))
 

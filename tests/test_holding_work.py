@@ -161,3 +161,58 @@ class SayingWhatIsHappening(unittest.TestCase):
         event_log.replay()
         again = model.notes_of(t["id"])
         self.assertEqual([n["body"] for n in again], ["Left a voicemail."])
+
+
+class AskingAboutWork(unittest.TestCase):
+    """
+    A question can be raised *about* work that already exists.
+
+    The ordinary flow is unchanged: a question is settled and the work it
+    commits to appears, linked by `produces`. This is the other direction --
+    the work is already there and somebody wants to argue about it. Two
+    different facts, so two different edges.
+    """
+
+    def test_a_question_can_concern_existing_work(self):
+        from cellos.domains.decision import service as decision
+
+        boss, cell, _ = a_cell()
+        t = task.create(boss["id"], cell["id"], "Stand up the new service")
+        d = decision.propose(boss["id"], cell["id"],
+                             "Is this still worth finishing?", "",
+                             ["Keep going", "Stop"], about=t["id"])
+
+        asked = decision.questions_about(t["id"])
+        self.assertEqual([q["id"] for q in asked], [d["id"]])
+
+    def test_it_is_not_the_decision_the_work_came_from(self):
+        """
+        `because` answers "why does this exist". A question raised later is
+        something that happened to it, and must not be mistaken for its origin.
+        """
+        from cellos.domains.decision import service as decision
+
+        boss, cell, _ = a_cell()
+        t = task.create(boss["id"], cell["id"], "Chase the vendor")
+        decision.propose(boss["id"], cell["id"], "Still worth it?", "",
+                         ["Yes", "No"], about=t["id"])
+
+        self.assertIsNone(decision.decision_of_task(t["id"]))
+
+    def test_work_can_be_argued_over_more_than_once(self):
+        from cellos.domains.decision import service as decision
+
+        boss, cell, _ = a_cell()
+        t = task.create(boss["id"], cell["id"], "Run the campaign")
+        decision.propose(boss["id"], cell["id"], "Pause it?", "", ["Yes", "No"], about=t["id"])
+        decision.propose(boss["id"], cell["id"], "Resume it?", "", ["Yes", "No"], about=t["id"])
+
+        self.assertEqual(len(decision.questions_about(t["id"])), 2)
+
+    def test_a_question_about_nothing_is_still_an_ordinary_question(self):
+        from cellos.domains.decision import service as decision
+
+        boss, cell, _ = a_cell()
+        d = decision.propose(boss["id"], cell["id"], "Where do we meet?", "",
+                             ["Here", "There"])
+        self.assertEqual(decision.questions_about(d["id"]), [])

@@ -614,6 +614,19 @@ td.num { font-variant-numeric: tabular-nums; }
   max-width: 62ch;
 }
 .offered a { color: var(--accent); }
+
+/* A question raised about the work. Louder than evidence, because an open
+   one is a thing somebody has to answer before this can finish. */
+.asked {
+  display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap;
+  padding: var(--s2) var(--s3);
+  border-left: 2px solid var(--edge);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  max-width: 62ch;
+}
+.asked.live { border-left-color: var(--warn); background: var(--warn-soft); }
+.asked.settled { background: var(--surface-sunk); }
+.asked button { font-size: var(--t-sm); flex: 1; min-width: 0; text-align: left; }
 .offered .grow { flex: 1; min-width: 0; }
 
 .margin-block + .margin-block { margin-top: var(--s4); }

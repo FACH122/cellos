@@ -26,6 +26,18 @@ PRODUCES = relationships.register(
     description="An accepted decision and the work it generated.",
 )
 
+# The other direction in meaning, the same direction in shape: a question
+# raised *about* work that already exists. "Should we still be doing this?"
+# is not the reasoning a task came from -- it is a thing that happened to the
+# task, and it belongs in that task's record with everything else.
+#
+# Not single_head: one piece of work can be argued over more than once, and
+# the second argument does not erase the first.
+CONCERNS = relationships.register(
+    "concerns", "decision", "task",
+    description="A question raised about a piece of work that already exists.",
+)
+
 
 def get(decision_id):
     d = model.get(decision_id)
@@ -64,7 +76,13 @@ def actions(actor_id, decision):
 
 # ------------------------------------------------------------------ writing
 
-def propose(actor_id, cell_id, question, detail="", option_texts=None, work=None):
+def propose(actor_id, cell_id, question, detail="", option_texts=None, work=None,
+            about=None):
+    """
+    Raise a question. `about` names a task the question concerns -- work that
+    already exists and is now being argued over, rather than work this
+    question might one day produce.
+    """
     permission.require_member(actor_id, cell_id)
     question = rules.clean_question(question)
     options = [
@@ -73,13 +91,22 @@ def propose(actor_id, cell_id, question, detail="", option_texts=None, work=None
     ]
 
     decision_id = events.new_id("dec")
-    events.append(
-        "DecisionCreated",
-        actor_id=actor_id, cell_id=cell_id, subject_id=decision_id,
-        question=question, detail=(detail or "").strip(),
-        options=options, state=DRAFT,
-    )
+    with events.unit_of_work():
+        events.append(
+            "DecisionCreated",
+            actor_id=actor_id, cell_id=cell_id, subject_id=decision_id,
+            question=question, detail=(detail or "").strip(),
+            options=options, state=DRAFT,
+        )
+        if about:
+            relationships.form(CONCERNS, "decision", decision_id, "task", about,
+                               actor_id=actor_id, cell_id=cell_id)
     return get(decision_id)
+
+
+def questions_about(task_id):
+    """Every question raised about this piece of work, oldest first."""
+    return model.many(relationships.tails(CONCERNS, task_id))
 
 
 def remark(actor_id, decision_id, body):

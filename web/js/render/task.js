@@ -95,6 +95,7 @@ function bar(v, t) {
   }
   if (v.you.acts_here) {
     acts.push(`<button data-act="form" data-form="note:${t.id}">Add a note</button>`);
+    acts.push(`<button data-act="form" data-form="ask:${t.id}">Ask the cell about this</button>`);
     acts.push(`<button data-act="form" data-form="ev:${t.id}">Attach evidence</button>`);
   }
   if (t.can_time) {
@@ -121,6 +122,7 @@ function bar(v, t) {
 function panels(v, t) {
   return [
     showing('note:' + t.id) ? noteForm(t) : '',
+    showing('ask:' + t.id) ? askForm(t) : '',
     showing('due:' + t.id) ? dueForm(t) : '',
     showing('ev:' + t.id) ? evidenceForm(t) : '',
     showing('split:' + t.id) ? splitForm(t) : '',
@@ -134,6 +136,30 @@ function noteForm(t) {
         placeholder="What you found, what is in the way, what you tried."></textarea></label>
     <div class="actions"><button class="primary" type="submit">Post</button>
       <button type="button" class="quiet" data-act="unform" data-form="note:${t.id}">cancel</button>
+    </div></form>`;
+}
+
+/*
+  A question about work that already exists.
+
+  The ordinary flow is unchanged -- a question is settled and the work it
+  commits to appears. This is the other direction: the work is already there
+  and somebody wants to argue about it. "Should we still be doing this?"
+*/
+function askForm(t) {
+  return `<form class="panel" data-form="ask" data-id="${t.id}">
+    <label class="field"><span>What has to be decided about this?</span>
+      <input name="question" required autofocus
+             placeholder="Do we keep going with this, or drop it?"></label>
+    <label class="field"><span>Anything worth knowing first (optional)</span>
+      <textarea name="detail" rows="2"></textarea></label>
+    <label class="field"><span>The options, one per line</span>
+      <textarea name="options" rows="3"
+        placeholder="Keep going&#10;Drop it&#10;Hand it to somebody else"></textarea></label>
+    <p class="xs faint">It becomes an open decision in this cell, and shows up
+      here in the record at the moment you asked it.</p>
+    <div class="actions"><button class="primary" type="submit">Ask</button>
+      <button type="button" class="quiet" data-act="unform" data-form="ask:${t.id}">cancel</button>
     </div></form>`;
 }
 
@@ -195,6 +221,15 @@ function evidenceForm(t) {
 */
 function work(v, t) {
   const lines = [
+    ...v.questions.map((q) => ({
+      at: q.at,
+      html: `<div class="asked ${q.settled ? 'settled' : 'live'}">
+        <span class="xs faint">${q.settled ? 'asked, and settled' : 'asked, still open'}</span>
+        <button class="quiet" data-act="openq" data-cell="${q.cell_id}" data-id="${q.id}"
+          >“${esc(q.question)}”</button>
+        <span class="xs faint nowrap"><time datetime="${esc(q.at)}">${esc(when(q.at))}</time></span>
+      </div>`,
+    })),
     ...v.evidence.map((e) => ({
       at: e.added_at,
       html: `<div class="offered">

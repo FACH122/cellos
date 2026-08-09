@@ -298,6 +298,16 @@ def task(user_id, task_id):
             # beside it would be the same fact twice, once uselessly.
             if e["type"] != "TaskNoted"
         ],
+        # Questions raised about this work. Not the decision it came from --
+        # that is `because` -- but arguments somebody started about it after
+        # it existed, which are things that happened to it.
+        "questions": [
+            {"id": q["id"], "question": q["question"], "state": q["state"],
+             "cell_id": q["cell_id"], "at": q["created_at"],
+             "settled": q["state"] in ("accepted", "executing", "completed",
+                                       "knowledge", "rejected")}
+            for q in decision_service.questions_about(task_id)
+        ],
         "cell": {"id": cell["id"], "goal": cell["goal"]},
         "path": [p for p in hierarchy.path(t["cell_id"])
                  if p["id"] in permission.visible_cell_ids(user_id)],

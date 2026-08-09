@@ -41,6 +41,9 @@ export function wireClicks(root) {
       case 'unform': return closeForm(form);
       case 'home': return go(null);
       case 'open': ev.preventDefault(); return go(cell);
+      /* Open the cell with that question already unfolded, rather than
+         landing on a page where it is one collapsed card among several. */
+      case 'openq': S.open.add(id); return go(cell);
       case 'map': return openMap(cell || S.cellId);
       case 'unmap': return closeMap();
       case 'expand': return toggleCard(id);
@@ -159,6 +162,12 @@ export function wireForms(root) {
         case 'note':
           closeForm('note:' + id);
           return run(() => api.noteOnTask(id, d.body), 'Posted.');
+        case 'ask':
+          closeForm('ask:' + id);
+          return run(() => api.propose(S.cellId, {
+            question: d.question, detail: d.detail,
+            options: lines(d.options), work: {}, about: id,
+          }), 'Asked.');
         case 'split':
           closeForm('split:' + id);
           return run(() => api.splitOffTask(id, d.goal), 'It has its own cell now.');

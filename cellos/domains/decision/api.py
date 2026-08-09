@@ -17,6 +17,7 @@ def propose(actor, body, cell_id):
     service.propose(
         actor["id"], cell_id, body.get("question"), body.get("detail", ""),
         body.get("options") or [], body.get("work") or {},
+        about=body.get("about"),
     )
     return views.cell(actor["id"], cell_id)
 
