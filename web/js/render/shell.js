@@ -45,7 +45,7 @@ export function homePage(v) {
              <button type="button" class="quiet" data-act="unform" data-form="start">cancel</button>
            </div></form>`
       : `<p style="margin-top:var(--s6)">
-           <button data-act="form" data-form="start">Start something</button></p>`}
+           <button class="add" data-act="form" data-form="start">Start something</button></p>`}
   </section>`;
 }
 

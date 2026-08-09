@@ -189,6 +189,22 @@ button.quiet {
 }
 button.quiet:hover { border-color: transparent; text-decoration: underline; }
 
+/*
+  The way to add the thing a section is made of: a question, a task, a group.
+
+  They are the same act in four places and should look like it. They are also
+  not what a person came to the page for -- the section's contents are -- so
+  they sit a size below everything around them and keep only enough of a
+  border to read as a control rather than as a link.
+*/
+button.add {
+  font-size: var(--t-xs);
+  padding: var(--s1) var(--s3);
+  color: var(--ink-faint);
+  border-color: var(--hairline);
+}
+button.add:hover { color: var(--ink-soft); border-color: var(--ink-faint); }
+
 button.caution:hover { color: var(--warn); border-color: var(--warn); }
 button[disabled] { opacity: .4; cursor: default; }
 

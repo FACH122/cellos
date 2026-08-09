@@ -206,7 +206,7 @@ function questions(v) {
     ${showing('decision')
       ? proposeForm()
       : (v.you.acts_here
-          ? '<p><button data-act="form" data-form="decision">Ask the cell something</button></p>' : '')}
+          ? '<p><button class="add" data-act="form" data-form="decision">Ask the cell something</button></p>' : '')}
   </section>`;
 }
 
@@ -429,7 +429,7 @@ function work(v) {
              <button type="button" class="quiet" data-act="unform" data-form="task">cancel</button>
            </div></form>`
       : (v.you.acts_here
-          ? '<p><button data-act="form" data-form="task">Add a task</button></p>' : '')}
+          ? '<p><button class="add" data-act="form" data-form="task">Add a task</button></p>' : '')}
   </section>`;
 }
 
@@ -484,7 +484,7 @@ function inside(v) {
              <button type="button" class="quiet" data-act="unform" data-form="child">cancel</button>
            </div></form>`
       : (v.you.can_create_child
-          ? '<p><button data-act="form" data-form="child">Start a group inside this one</button></p>' : '')}
+          ? '<p><button class="add" data-act="form" data-form="child">Start a group inside this one</button></p>' : '')}
   </section>`;
 }
 
