@@ -117,14 +117,21 @@ def work_concerned(decision_id):
     return task_model.get(about[0]) if about else None
 
 
-def remark(actor_id, decision_id, body):
+def remark(actor_id, decision_id, body, option_id=None):
+    """
+    Say something. `option_id` names the answer it is about -- the case for
+    it, or against it -- rather than filing every argument against the
+    question and leaving a reader to work out which one it bears on.
+    """
     d = get(decision_id)
     permission.require_member(actor_id, d["cell_id"])
     body = rules.clean_note(body, "Say something.")
     if d["state"] not in UNSETTLED:
         raise DomainError("This decision is settled.")
+    if option_id and not model.option(option_id, decision_id):
+        raise DomainError("That is not one of the options.")
     events.append("RemarkAdded", actor_id=actor_id, cell_id=d["cell_id"],
-                  subject_id=decision_id, body=body)
+                  subject_id=decision_id, body=body, option_id=option_id)
 
 
 def vote(actor_id, decision_id, option_id):
@@ -221,6 +228,10 @@ def record(actor_id, decision_id):
         o["votes"] = result["counts"].get(o["id"], 0)
         o["voters"] = voters.get(o["id"], [])
         o["chosen"] = o["id"] == d["chosen_option"]
+        # The case for this answer, and against it: said and offered about
+        # this option rather than about the question in general.
+        o["said"] = model.remarks_of(decision_id, o["id"])
+        o["evidence"] = evidence.supporting("option", o["id"])
 
     names = member_model.names([d["created_by"], d["decided_by"]])
     d.update({

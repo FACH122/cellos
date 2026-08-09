@@ -54,8 +54,11 @@ function body(view, d) {
   parts.push(options(d));
 
   if (d.decided_by_name) parts.push(verdict(d));
-  if (d.remarks.length || d.actions.length) parts.push(discussion(view, d));
-  if (view.evidence_in_use || d.evidence.length) parts.push(evidence(view, d));
+  /* Anything said before arguments belonged to an answer. Kept, not moved --
+     rewriting what somebody said to be about something else is exactly what
+     this system exists not to do. */
+  if (d.remarks.length) parts.push(discussion(view, d));
+  if (d.evidence.length) parts.push(evidence(view, d));
   if (d.tasks.length) parts.push(work(d));
   if (d.outcome) parts.push(outcome(d));
 
@@ -76,23 +79,88 @@ function options(d) {
   const votable = d.state === 'voting' && d.can_vote;
   return `<ul class="options">` + d.options.map((o) => {
     const share = d.turnout ? Math.round((o.votes / d.turnout) * 100) : 0;
+    const open = S.open.has(o.id);
+    const heard = o.said.length + o.evidence.length;
     const classes = ['option',
       votable ? 'votable' : '',
       d.your_vote === o.id ? 'yours' : '',
       o.chosen ? 'chosen' : ''].filter(Boolean).join(' ');
-    return `<li class="${classes}"
-      ${votable ? `role="button" tabindex="0" data-act="vote" data-id="${d.id}"
-                   data-option="${o.id}"` : ''}>
-      ${share ? `<span class="fill" style="width:${share}%" aria-hidden="true"></span>` : ''}
-      <span class="txt">${esc(o.text)}${
-        d.your_vote === o.id ? '<span class="mine">your answer</span>' : ''}${
-        o.chosen ? '<span class="mine">chosen</span>' : ''}
-        ${o.work.length
-          ? `<span class="work">then: ${o.work.map(esc).join(' · ')}</span>` : ''}
-      </span>
-      ${d.turnout ? `<span class="count">${o.votes || 0}</span>` : ''}
+    return `<li class="${classes}">
+      <div class="opt-line"
+        ${votable ? `role="button" tabindex="0" data-act="vote" data-id="${d.id}"
+                     data-option="${o.id}"` : ''}>
+        ${share ? `<span class="fill" style="width:${share}%" aria-hidden="true"></span>` : ''}
+        <span class="txt">${esc(o.text)}${
+          d.your_vote === o.id ? '<span class="mine">your answer</span>' : ''}${
+          o.chosen ? '<span class="mine">chosen</span>' : ''}
+          ${o.work.length
+            ? `<span class="work">then: ${o.work.map(esc).join(' · ')}</span>` : ''}
+        </span>
+        ${d.turnout ? `<span class="count">${o.votes || 0}</span>` : ''}
+      </div>
+      <button class="quiet faint xs case" data-act="expand" data-id="${o.id}"
+        aria-expanded="${open}">${
+        heard ? plural(heard, 'thing') + ' said about this' : 'make the case'}</button>
+      ${open ? theCase(d, o) : ''}
     </li>`;
   }).join('') + '</ul>';
+}
+
+/*
+  The case for an answer, and against it.
+
+  Arguments used to be filed against the question -- one thread for the whole
+  decision -- which meant a quote for one venue and an objection about another
+  sat in the same list, and a reader had to work out which answer each bore on.
+  They belong to the option they are about, in the order they were made, the
+  way a task's record works.
+*/
+function theCase(d, o) {
+  const key = 'ev:' + o.id;
+  const lines = [
+    ...o.said.map((r) => ({
+      at: r.said_at,
+      html: `<div class="argued"><b>${esc(r.author_name || 'someone')}</b>
+        <span>${esc(r.body)}</span></div>`,
+    })),
+    ...o.evidence.map((e) => ({
+      at: e.added_at,
+      html: `<div class="backed">
+        <span class="kind">${esc(e.kind)}</span>
+        ${e.ref ? `<a href="${esc(e.ref)}" target="_blank" rel="noopener">${esc(e.label)}</a>`
+                : `<span>${esc(e.label)}</span>`}
+        <span class="xs faint">${esc(e.added_by_name || '')}</span></div>`,
+    })),
+  ].sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : 0));
+
+  return `<div class="case-body">
+    ${lines.map((l) => l.html).join('')}
+    ${d.actions.length ? `<form data-form="remark" data-id="${d.id}" data-option="${o.id}"
+        class="row">
+        <input name="body" placeholder="Why this one, or why not" class="grow">
+        <button type="submit">Add</button></form>
+      ${showing(key)
+        ? evidenceForm(d, o)
+        : `<button class="quiet faint xs" data-act="form" data-form="${key}"
+             >attach something</button>`}` : ''}
+  </div>`;
+}
+
+function evidenceForm(d, o) {
+  return `<form data-form="evidence" data-kind="option" data-id="${o.id}" class="stack">
+    <div class="row">
+      <select name="kind" style="width:9rem">
+        ${['link', 'document', 'measurement', 'report', 'note']
+          .map((k) => `<option>${k}</option>`).join('')}
+      </select>
+      <input name="label" placeholder="What is it?" class="grow" required autofocus>
+    </div>
+    <div class="row">
+      <input name="ref" placeholder="Link or reference (optional)" class="grow">
+      <button class="primary" type="submit">Attach</button>
+      <button type="button" class="quiet" data-act="unform" data-form="ev:${o.id}">cancel</button>
+    </div>
+  </form>`;
 }
 
 function verdict(d) {

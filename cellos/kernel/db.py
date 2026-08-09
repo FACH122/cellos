@@ -137,13 +137,34 @@ def init():
 
 
 def _all_present(conn):
-    wanted = ["relationships"] + _projection_tables
-    marks = ",".join("?" * len(wanted))
-    found = conn.execute(
-        "SELECT count(*) AS n FROM sqlite_master WHERE type = 'table' AND name IN (%s)" % marks,
-        wanted,
-    ).fetchone()["n"]
-    return found == len(wanted)
+    """
+    Whether the derived tables on disk are the ones the domains describe --
+    every table, and every column of every table.
+
+    Names alone were not enough. A domain adding a *column* left the old table
+    in place, matching by name while missing the field, and the first query
+    that mentioned it failed at runtime instead of at boot. Unit tests cannot
+    catch that: they build a fresh database every run, so their schema is
+    always the current one by construction. Only a database that has been
+    around since before the change can be wrong.
+
+    SQLite is the parser. The declared schema is built in memory and the two
+    are compared column by column, which is exact and needs no SQL of our own
+    to be read by hand.
+    """
+    expected = sqlite3.connect(":memory:")
+    try:
+        _create_projections(expected)
+        for table in ["relationships"] + _projection_tables:
+            live = [c[1] for c in conn.execute("PRAGMA table_info(%s)" % table)]
+            if not live:
+                return False
+            want = [c[1] for c in expected.execute("PRAGMA table_info(%s)" % table)]
+            if live != want:
+                return False
+    finally:
+        expected.close()
+    return True
 
 
 def _create_projections(conn):

@@ -3,7 +3,9 @@
 from ...kernel.errors import DomainError
 
 KINDS = ("link", "file", "document", "measurement", "report", "note")
-SUBJECTS = ("decision", "task", "cell")
+# An option is a subject in its own right: a quote for one venue is not
+# evidence about "where do we hold it", it is evidence about the garden.
+SUBJECTS = ("decision", "option", "task", "cell")
 
 
 def clean_label(label):
@@ -21,7 +23,7 @@ def check_kind(kind):
 
 def check_subject(subject_kind):
     if subject_kind not in SUBJECTS:
-        raise DomainError("Evidence attaches to a decision, a task or a cell.")
+        raise DomainError("Evidence attaches to a decision, an answer, a task or a cell.")
     return subject_kind
 
 

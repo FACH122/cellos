@@ -55,6 +55,11 @@ CREATE TABLE votes (
 CREATE TABLE remarks (
     id          INTEGER PRIMARY KEY,
     decision_id TEXT NOT NULL,
+    -- Which answer this was said about, or null when it is about the
+    -- question as a whole. An argument about parking is an argument about
+    -- the garden, not about where to hold it in general, and filing it
+    -- against the question loses the one thing that made it useful.
+    option_id   TEXT,
     author_id   TEXT,
     body        TEXT NOT NULL,
     said_at     TEXT NOT NULL
@@ -132,14 +137,22 @@ def voters_by_option(decision_id):
     return grouped
 
 
-def remarks_of(decision_id):
+def remarks_of(decision_id, option_id=None):
+    """
+    What was said. With an option, only what was said about that answer;
+    without one, only what was said about the question itself.
+    """
+    if option_id is None:
+        where, params = "r.option_id IS NULL", (decision_id,)
+    else:
+        where, params = "r.option_id = ?", (decision_id, option_id)
     return db.rows(
         """
         SELECT r.*, u.name AS author_name
         FROM remarks r LEFT JOIN users u ON u.id = r.author_id
-        WHERE r.decision_id = ? ORDER BY r.id
-        """,
-        (decision_id,),
+        WHERE r.decision_id = ? AND %s ORDER BY r.id
+        """ % where,
+        params,
     )
 
 

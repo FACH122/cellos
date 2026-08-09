@@ -30,7 +30,7 @@ def read(actor, body, decision_id):
 
 @route("POST", "/api/decisions/<decision_id>/remarks")
 def remark(actor, body, decision_id):
-    service.remark(actor["id"], decision_id, body.get("body"))
+    service.remark(actor["id"], decision_id, body.get("body"), body.get("option_id"))
     return _cell_after(actor, decision_id)
 
 

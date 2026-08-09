@@ -43,7 +43,8 @@ export const api = {
   propose: (id, decision) => request('POST', `/api/cells/${id}/decisions`, decision),
   addTask: (id, title) => request('POST', `/api/cells/${id}/tasks`, { title }),
 
-  remark: (id, body) => request('POST', `/api/decisions/${id}/remarks`, { body }),
+  remark: (id, body, option) =>
+    request('POST', `/api/decisions/${id}/remarks`, { body, option_id: option || null }),
   vote: (id, option_id) => request('POST', `/api/decisions/${id}/votes`, { option_id }),
   /* Every state change: the server named the step, the client fires it. */
   step: (id, step, args) => request('POST', `/api/decisions/${id}/steps/${step}`, args),

@@ -96,9 +96,10 @@ def _knowledge(conn, event):
 @events.projector("RemarkAdded")
 def _remark(conn, event):
     conn.execute(
-        "INSERT INTO remarks (id, decision_id, author_id, body, said_at) VALUES (?, ?, ?, ?, ?)",
-        (event["id"], event["subject_id"], event["actor_id"],
-         event["payload"]["body"], event["occurred_at"]),
+        "INSERT INTO remarks (id, decision_id, option_id, author_id, body, said_at)"
+        " VALUES (?, ?, ?, ?, ?, ?)",
+        (event["id"], event["subject_id"], event["payload"].get("option_id"),
+         event["actor_id"], event["payload"]["body"], event["occurred_at"]),
     )
 
 

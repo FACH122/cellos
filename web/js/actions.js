@@ -193,7 +193,7 @@ export function wireForms(root) {
           return run(() => api.splitOffTask(id, d.goal), 'It has its own cell now.');
         case 'remark':
           f.reset();
-          return run(() => api.remark(id, d.body));
+          return run(() => api.remark(id, d.body, f.dataset.option));
         case 'evidence':
           closeForm('ev:' + id);
           return run(() => api.attachEvidence({

@@ -58,5 +58,8 @@ from .health import api as _health_api        # noqa: F401,E402
 # Evidence does not know what a decision or a task is. Each domain says how to
 # find the cell one of its entities lives in, and that is the whole coupling.
 evidence.register_subject("decision", lambda i: (_decision_model.get(i) or {}).get("cell_id"))
+evidence.register_subject(
+    "option", lambda i: (_decision_model.get((_decision_model.option(i) or {}).get("decision_id"))
+                         or {}).get("cell_id"))
 evidence.register_subject("task", lambda i: (_task_model.get(i) or {}).get("cell_id"))
 evidence.register_subject("cell", lambda i: i if _cell_model.exists(i) else None)
