@@ -117,8 +117,9 @@ The domain model is unchanged again. Every number is still derived and still
 never stored.
 
 Known gaps: **a Cell cannot end**, the Phase 4 health arithmetic is still the
-one `MEASUREMENT.md` was written to replace, and three things the users hit
-are not fixed — every write still answers with the whole cell (a 34KB reply
+one `MEASUREMENT.md` was written to replace, **evidence cannot hold a file** —
+the agreed shape for that is `STORAGE.md`, decided and not built — and three
+things the users hit are not fixed — every write still answers with the whole cell (a 34KB reply
 to a one-line remark broke one person's tooling), nothing can say "this work
 is waiting on that question", and duplicate work is neither detected nor
 removable.
