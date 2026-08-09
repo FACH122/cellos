@@ -20,8 +20,25 @@ two people) or `bahaeddin889@gmail.com` (a company, 211). There is no password.
 | `python3 run.py rebuild` | drop every projection and replay the log |
 | `python3 run.py reset` | delete the database |
 | `python3 run.py routes` | every endpoint and every relationship kind |
-| `python3 run.py test` | 93 unit tests |
-| `python3 smoke.py` | 69 end-to-end checks against a running server |
+| `python3 run.py test` | 235 unit tests |
+| `python3 smoke.py` | 90 end-to-end checks against a running server |
+
+## Worked examples
+
+Each seeds its own database on its own port, so they can all run at once and
+none of them touches the others.
+
+| | | |
+| --- | --- | --- |
+| `python3 run.py seed` | 8420 | four cells at four scales — 2, 6, 33 and 211 people, where every difference between them is a consequence of headcount alone |
+| `python3 run.py students` | 8420 | eight students and one assignment |
+| `python3 run.py demo` | 8420 | three organisations at 200, 100 and 30 |
+| `python3 relax.py` | 8424 | Relax Confort — a real Algerian bedding shop run by seven people across seven cells |
+| `python3 wedding.py` | 8425 | a wedding in the Aurès — five people answer for it, twenty end up in it, across eleven cells and three layers |
+
+The last two are the ones to read if you want to see the model carry something
+real. Both are built entirely by expansion: not one of their cells was
+created, because a cell small enough to need this cannot create children.
 
 ## Shape
 
