@@ -22,8 +22,14 @@ from . import db, events
 from .errors import Conflict, DomainError
 
 Transition = namedtuple(
-    "Transition", "name sources target event guard extra label requires asks"
+    "Transition", "name sources target event guard extra label requires asks tone"
 )
+
+# How much an offered step should weigh on screen. Not styling -- a fact about
+# the transition that only the workflow knows: `on` carries the question
+# forward, `aside` steps out of the flow, and an interface that had to guess
+# would end up giving four buttons the same weight and saying nothing.
+ONWARD, ASIDE = "onward", "aside"
 
 
 class Workflow:
@@ -44,7 +50,8 @@ class Workflow:
     # -------------------------------------------------------- declaration
 
     def transition(self, name, sources, target, event,
-                   guard=None, extra=None, label="", requires=None, asks=()):
+                   guard=None, extra=None, label="", requires=None, asks=(),
+                   tone=ONWARD):
         """
         `guard(ctx, current)` validates and returns the payload for the event,
         or raises DomainError. `extra(ctx, current)` may return a list of
@@ -61,7 +68,7 @@ class Workflow:
         self.transitions[name] = Transition(
             name=name, sources=sources, target=target, event=event,
             guard=guard, extra=extra, label=label or name, requires=requires,
-            asks=tuple(asks),
+            asks=tuple(asks), tone=tone,
         )
         return self
 
@@ -91,6 +98,7 @@ class Workflow:
                 "name": t.name,
                 "label": t.label,
                 "target": t.target,
+                "tone": t.tone,
                 "asks": [dict(a) for a in t.asks],
             })
         return out

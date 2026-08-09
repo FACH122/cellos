@@ -55,24 +55,36 @@ function body(view, d) {
   return `<div class="body">${parts.join('')}</div>`;
 }
 
+/*
+  The options.
+
+  They were filled boxes stacked inside a filled card, which is a box in a box
+  and reads as clutter however carefully the greys are chosen. They are rows
+  now, separated by a hairline, with the share of the vote drawn as a tint
+  running behind the text -- so the distribution is legible at a glance
+  instead of being four numbers you have to compare yourself.
+*/
 function options(d) {
-  const votable = d.state === 'voting';
-  return '<div>' + d.options.map((o) => {
+  const votable = d.state === 'voting' && d.can_vote;
+  return `<ul class="options">` + d.options.map((o) => {
     const share = d.turnout ? Math.round((o.votes / d.turnout) * 100) : 0;
     const classes = ['option',
       votable ? 'votable' : '',
       d.your_vote === o.id ? 'yours' : '',
       o.chosen ? 'chosen' : ''].filter(Boolean).join(' ');
-    return `<div class="${classes}"
-      ${votable ? `data-act="vote" data-id="${d.id}" data-option="${o.id}"` : ''}>
-      <span class="txt">${esc(o.text)}
-        ${o.work.length ? `<div class="work">${o.work.map(esc).join(' · ')}</div>` : ''}
-        ${share ? `<div class="bar" style="width:${share}%"></div>` : ''}
+    return `<li class="${classes}"
+      ${votable ? `role="button" tabindex="0" data-act="vote" data-id="${d.id}"
+                   data-option="${o.id}"` : ''}>
+      ${share ? `<span class="fill" style="width:${share}%" aria-hidden="true"></span>` : ''}
+      <span class="txt">${esc(o.text)}${
+        d.your_vote === o.id ? '<span class="mine">your answer</span>' : ''}${
+        o.chosen ? '<span class="mine">chosen</span>' : ''}
+        ${o.work.length
+          ? `<span class="work">then: ${o.work.map(esc).join(' · ')}</span>` : ''}
       </span>
-      ${o.chosen ? '<span class="mark">chosen</span>' : ''}
       ${d.turnout ? `<span class="count">${o.votes || 0}</span>` : ''}
-    </div>`;
-  }).join('') + '</div>';
+    </li>`;
+  }).join('') + '</ul>';
 }
 
 function verdict(d) {
@@ -150,10 +162,17 @@ function actions(d) {
 
   const simple = d.actions.filter((a) => !a.asks.length);
   const asking = d.actions.filter((a) => a.asks.length);
-  const buttons = [
-    ...simple.map((a) => button(d, a)),
-    ...asking.filter((a) => !showing(formKey(d, a))).map((a) => button(d, a)),
-  ].join(' ');
+  /* The workflow says which steps carry the question forward and which step
+     out of it. Four buttons of equal weight said nothing about what to do
+     next; now the first onward step is the filled one and the rest recede. */
+  const offered = [
+    ...simple,
+    ...asking.filter((a) => !showing(formKey(d, a))),
+  ];
+  const lead = offered.find((a) => a.tone !== 'aside');
+  const buttons = offered
+    .map((a) => button(d, a, a === lead ? 'primary' : a.tone === 'aside' ? 'quiet' : ''))
+    .join(' ');
 
   const forms = asking
     .filter((a) => showing(formKey(d, a)))
@@ -165,9 +184,13 @@ function actions(d) {
 
 const formKey = (d, a) => `step:${a.name}:${d.id}`;
 
-function button(d, a) {
-  const tone = a.target === 'rejected' ? 'caution'
-    : a.asks.length || a.target === 'accepted' ? 'primary' : '';
+/*
+  The caller decides the weight, because only it knows which of the offered
+  steps is the one in front. Declining is still drawn as a caution wherever it
+  appears -- that is about the step itself, not about where it sits in a list.
+*/
+function button(d, a, weight) {
+  const tone = a.target === 'rejected' ? 'quiet caution' : weight;
   return a.asks.length
     ? `<button class="${tone}" data-act="form" data-form="${formKey(d, a)}">${esc(a.label)}</button>`
     : `<button class="${tone}" data-act="step" data-id="${d.id}" data-step="${a.name}">${esc(a.label)}</button>`;

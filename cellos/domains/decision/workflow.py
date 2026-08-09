@@ -174,14 +174,14 @@ def _record_knowledge(ctx, _current):
     .transition(
         "return", (VOTING, LEADER_RESOLUTION), OPEN, "DecisionReturned",
         guard=_note_guard("Say what needs reworking."),
-        requires=_leader, label="Send back",
+        requires=_leader, label="Send back", tone=engine.ASIDE,
         asks=({"name": "note", "kind": "line", "label": "What needs reworking?",
                "required": True},),
     )
     .transition(
         "reject", (DRAFT, OPEN, VOTING, LEADER_RESOLUTION), REJECTED, "DecisionRejected",
         guard=_note_guard("Say why."),
-        requires=_leader, label="Decline",
+        requires=_leader, label="Decline", tone=engine.ASIDE,
         asks=({"name": "note", "kind": "line", "label": "Say why", "required": True},),
     )
     # Fired by the task domain, never offered to a person.
