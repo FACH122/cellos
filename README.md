@@ -66,7 +66,7 @@ dropped and rebuilt from those events alone. `run.py rebuild` does exactly
 that, and all ten tables come back byte-identical.
 
 **Capabilities are a function of headcount.** `domains/governance/rules.py` is
-the whole of it: at five people voting appears, at twenty child cells and a
+the whole of it: at two people voting appears, at twenty child cells and a
 leader who confirms, at fifty a dashboard, at two hundred analytics. There is
 no settings screen because there is nothing to configure, and a cell that
 shrinks gives capabilities back.

@@ -6,7 +6,9 @@ exists to avoid. A cell that grows acquires capabilities and a cell that
 shrinks gives them back.
 
     one person       a list of tasks
-    five people      votes, because agreement stops being obvious
+    two people       votes, because the moment there is somebody else to
+                     disagree with, agreement stops being something you can
+                     assume and starts being something you find out
     twenty people    child cells, and a leader who confirms the vote
     fifty people     a dashboard, because nobody can see the whole cell
     two hundred      analytics, because the shape of the work is now a question
@@ -21,7 +23,7 @@ DASHBOARD = "dashboard"
 ANALYTICS = "analytics"
 
 THRESHOLDS = (
-    (VOTING, 5),
+    (VOTING, 2),
     (CHILDREN, 20),
     (LEADER_CONFIRMS, 20),
     (DASHBOARD, 50),

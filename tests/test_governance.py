@@ -17,9 +17,14 @@ class Emergence(unittest.TestCase):
         self.assertNotIn(governance.CHILDREN, caps)
         self.assertNotIn(governance.DASHBOARD, caps)
 
-    def test_voting_appears_at_five_and_not_at_four(self):
-        self.assertFalse(governance.has(4, governance.VOTING))
-        self.assertTrue(governance.has(5, governance.VOTING))
+    def test_voting_appears_the_moment_there_is_somebody_to_disagree_with(self):
+        """
+        One person has nothing to put to a vote. Two do -- and the second
+        person is the whole difference, because that is the point at which
+        agreement stops being something you can assume.
+        """
+        self.assertFalse(governance.has(1, governance.VOTING))
+        self.assertTrue(governance.has(2, governance.VOTING))
 
     def test_children_appear_at_twenty(self):
         self.assertFalse(governance.has(19, governance.CHILDREN))
@@ -45,12 +50,13 @@ class Emergence(unittest.TestCase):
 
 class Governing(unittest.TestCase):
 
-    def test_small_cells_are_informal(self):
+    def test_a_cell_of_one_is_informal(self):
+        """A person alone decides and writes down why. There is nobody to ask."""
         self.assertEqual(governance.model(1), governance.INFORMAL)
-        self.assertEqual(governance.model(4), governance.INFORMAL)
-        self.assertFalse(governance.votes(4))
+        self.assertFalse(governance.votes(1))
 
     def test_the_count_settles_it_in_the_middle(self):
+        self.assertEqual(governance.model(2), governance.VOTE_DECIDES)
         self.assertEqual(governance.model(5), governance.VOTE_DECIDES)
         self.assertEqual(governance.model(19), governance.VOTE_DECIDES)
         self.assertTrue(governance.votes(5))
@@ -61,5 +67,5 @@ class Governing(unittest.TestCase):
         self.assertTrue(governance.votes(20))
 
     def test_next_threshold_names_what_growing_would_add(self):
-        self.assertEqual(governance.next_threshold(1), (governance.VOTING, 5))
+        self.assertEqual(governance.next_threshold(1), (governance.VOTING, 2))
         self.assertEqual(governance.next_threshold(300), (None, None))
