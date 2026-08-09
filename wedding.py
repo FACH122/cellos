@@ -1,86 +1,89 @@
 #!/usr/bin/env python3
 """
-A wedding in the Aurès: five people answer for it, twenty end up in it.
+A wedding at a hotel: five people answer for it, twenty-two end up in it.
 
-Dounia is from Arris, Massinissa from T'kout. Three days in September, six
-hundred people if nobody is left out, twenty-five sheep, and a village of
-ninety houses lending its floors. This is the largest thing most families
-ever run, and they run it with no tooling at all.
+Amel and Yanis, the Hôtel Panorama in Constantine, 12 June, four hundred
+guests, one evening. A cortège, a traiteur, a DJ, a negafa, a photographer, a
+videographer with a drone, a pâtissière, a florist, and a banquet manager who
+works for the hotel and not for them.
 
-Five people answer for the whole of it -- and all five lead, because in the
-Aurès the couple are not the organisers. The two fathers, the bride's mother
-and the eldest brother are, and none of them outranks the others:
+Five answer for the whole of it -- four family and one hired, because a modern
+wedding has a professional in the middle of it. Lamia is not staff here. She
+leads the venue and the run of the evening, and she has a vote:
 
-    ◎  Marry Dounia and Massinissa in T'kout over three days in September
-       Massinissa, Dounia, Salah, Djamila, Hocine -- all five lead
-       3,500,000 DZD · the day is 18 September 2027
+    ◎  Marry Amel and Yanis at the Hôtel Panorama on 12 June, four hundred
+       guests, one evening, and nothing owed afterwards
+       Amel, Yanis, Ryma, Nabil, Lamia -- all five lead
+       6,000,000 DZD · 12 June 2027
        │
-       ├─ ◎ Run three days so nobody stands about wondering what is next
-       │     Salah* + Amar the elder · 120,000
+       ├─ ◎ The room, the tables and the running order
+       │     Lamia* + Karim of the hotel, Sabrina on flowers, Ryma · 2,600,000
        │
-       ├─ ◎ Feed six hundred people for three days
-       │     Djamila* + Yamina, Zohra, Brahim · 1,850,000
-       │     └─ ◎ Roast twenty-five sheep over three days
-       │           Brahim* + Tayeb · 200,000
+       ├─ ◎ Four hundred dinners that come out hot and at the same time
+       │     Ryma* + Hakim the traiteur, Nawel · 1,900,000
+       │     └─ ◎ A cake that survives the room, a sweets table that lasts
+       │           Nawel* + Sofia · 180,000
        │
-       ├─ ◎ Have the trousseau, the dresses and the henna night ready
-       │     Dounia* + Kenza, Nadjet · 700,000
-       │     └─ ◎ Give the henna night its own evening
-       │           Nadjet* + Souad who sings · 180,000
+       ├─ ◎ The dresses, the negafa, and the morning of it
+       │     Amel* + Djazia the negafa, Meriem on hair · 650,000
+       │     └─ ◎ Five dress changes without the evening stopping each time
+       │           Djazia* + Sarah · 250,000
        │
-       ├─ ◎ Bring the bride from Arris on a road not built for it
-       │     Hocine* + Rabah, Youcef · 240,000
+       ├─ ◎ The cortège, from the house to the hotel, still together
+       │     Nabil* + Sofiane with the cars, Redha driving · 320,000
        │
-       ├─ ◎ Have the rahaba, the zerna and the baroud at the right hour
-       │     Massinissa* + Lakhdar, Farid · 350,000
+       ├─ ◎ The DJ, the entrance, and a dance floor that never goes flat
+       │     Yanis* + Sami the DJ, Nassim · 480,000
+       │     └─ ◎ Getting the couple into the room, in under the time
+       │           Nassim* + Bilal on bendir · 150,000
        │
-       ├─ ◎ Put six hundred people to bed in a village of ninety houses
-       │     Hocine* + Ourida, Slimane · 180,000
+       ├─ ◎ Somebody covering the day who agreed in advance what they cover
+       │     Lamia* + Ines on photos, Walid on film and the drone · 420,000
        │
-       ├─ ◎ Have the mairie and the mosque satisfied before anybody travels
-       │     Massinissa* + Ali · 15,000
+       ├─ ◎ Knowing who is coming before the traiteur needs a number
+       │     Ryma* + Lina who prints them · 90,000
        │
-       └─ ◎ Know what this costs before it is spent
-             Hocine* + Salah, Massinissa
+       ├─ ◎ The sixty who came from Algiers and Annaba, fed and slept
+       │     Nabil* + Farida on reservations · 380,000
+       │
+       └─ ◎ Knowing what it costs before it is signed
+             Yanis* + Nabil, Lamia
 
-Eleven cells, twenty people, fifty-four things to do, six questions.
+Thirteen cells, twenty-two people, sixty-two things to do, six questions.
 
-**Fifteen of the twenty never appear on the wedding's own list of people.**
-Yamina has rolled chakhchoukha for thirty years and is in the food cell only.
-Ali does the Batna runs. Souad sings at henna nights. Thirteen of the fifteen
-are in exactly one cell; only Brahim and Nadjet are in two, because the piece
-each was brought in for -- the méchoui, the henna night -- grew a cell of its
-own underneath them. Nobody needs to be listed at the top to be trusted with
-something: a cell is not a subset of the cell above it. That is the shape of a
-wedding like this. Five answer for it, and it is carried by people who each
-own one piece of it.
-
-The money cell is the exception that proves it, and the only one bringing
-nobody new: its three are all upstairs already, and they still had to be
-admitted to it by name. Leading a cell above lets you *act* below, but it does
-not put work in your hands. Being answerable for something is a membership,
-not an inheritance.
+**Seventeen of the twenty-two never appear on the wedding's own list of
+people.** Hakim cooks and is in the dinner cell only. Sami is the DJ. Djazia
+is the negafa. Karim works for the hotel, not for the couple, and is in one
+cell of theirs. None of them is anywhere near the top and none of them needs
+to be -- a cell is not a subset of the cell above it.
 
 Three things are worth watching once it is running:
 
-  · **It crossed twenty without anybody deciding to.** It began as five. Each
-    cell brought in the people it needed, and the total reached exactly
-    twenty -- where CellOS stops letting a vote settle a question on its own
-    and starts asking a leader to sign it. Nobody configured that. Nobody was
-    told. The wedding got big and the way it decides things changed.
+  · **The parts come to 6,840,000 against a 6,000,000 budget.** Every piece
+    has quoted and nothing is signed but the hotel. Nobody added it up; the
+    wedding says so on its own page. The question open at the top is *what
+    goes* -- cut a hundred guests, drop the video, or put the difference on
+    the two families -- and the planner has already said which one every
+    wedding she does ends on.
 
-  · **The parts come to 3,455,000 of 3,500,000.** It balances, with 45,000
-    spare, which is not a comfortable number against three days and six
-    hundred people. And the question still open at the top is *how many do we
-    actually invite* -- where six hundred is winning, and six hundred is the
-    option that breaks the 45,000.
+  · **Work cannot be handed to somebody who is not in the cell.** The seating
+    plan is Ryma's, and she leads the wedding, and it still would not attach
+    to her until she was named in the venue cell. Leading a cell above lets
+    you act below; it does not put work in your hands. The money cell brings
+    in nobody new and had to name its three anyway.
 
-  · **Nothing here was created.** A cell of five cannot create children; that
-    unlocks at twenty, which this only reached afterwards. Every one of the
-    ten grew out of a task that stopped fitting one person -- which works at
-    any size, and is the only reason this shape exists at all.
+  · **Nothing here was created.** The first cell grew when this was five
+    people, and five can create nothing -- that unlocks at twenty, which the
+    wedding only passed once every cell had brought in who it needed. It is
+    twenty-two now, which is why a vote at the top no longer settles a
+    question on its own and a leader signs it instead. Nobody configured
+    that. It grew into it.
 
-    python3 wedding.py         seed it and serve on 8425
+For the same wedding done the other way -- three days in a village in the
+Aurès, six hundred people, twenty-five sheep, no hotel and no DJ -- see
+`aures.py`.
+
+    python3 wedding.py         seed it and serve on 8426
 """
 
 import os
@@ -90,7 +93,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 os.environ.setdefault("CELLOS_DB", os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "data", "wedding.db"))
-os.environ.setdefault("CELLOS_PORT", "8425")
+os.environ.setdefault("CELLOS_PORT", "8426")
 
 import cellos  # noqa: E402
 from cellos.app import server  # noqa: E402
@@ -102,7 +105,7 @@ from cellos.domains.task import service as task  # noqa: E402
 from cellos.kernel import db  # noqa: E402
 
 DZD = "DZD"
-DAY = "2027-09-18"          # the third day, the one people mean by "the wedding"
+DAY = "2027-06-12"
 
 
 def step(actor, decision_id, *preferred, **args):
@@ -119,29 +122,29 @@ def step(actor, decision_id, *preferred, **args):
 def build():
     # --- the five who answer for it --------------------------------------
     #
-    # Two families and the wedding between them. In the Aurès the couple are
-    # not the organisers -- the fathers, the mothers and the eldest brother
-    # are -- so all five lead, and none of them outranks the others here.
-    massi = member.register("Massinissa Aït Amrane", "massinissa@aures.dz")
-    wedding = cell_service.create(
-        massi["id"],
-        "Marry Dounia and Massinissa in T'kout over three days in September, "
-        "feed everyone who comes, and owe nothing afterwards")
+    # Four family and one hired. A modern wedding has a professional in the
+    # middle of it, and she is not staff here -- she leads the venue and the
+    # run of the evening, and the family leads the rest.
+    amel = member.register("Amel Ferhat", "amel@mariage.dz")
+    w = cell_service.create(
+        amel["id"],
+        "Marry Amel and Yanis at the Hôtel Panorama in Constantine on 12 June, "
+        "four hundred guests, one evening, and nothing owed afterwards")
 
     five = {}
     for name, email in [
-        ("Dounia Boulahbal", "dounia@aures.dz"),        # the bride
-        ("Salah Aït Amrane", "salah@aures.dz"),         # the groom's father
-        ("Djamila Boulahbal", "djamila@aures.dz"),      # the bride's mother
-        ("Hocine Aït Amrane", "hocine@aures.dz"),       # the eldest brother
+        ("Yanis Meddour", "yanis@mariage.dz"),        # the groom
+        ("Ryma Ferhat", "ryma@mariage.dz"),           # the bride's sister, témoin
+        ("Nabil Meddour", "nabil@mariage.dz"),        # the groom's brother
+        ("Lamia Zerrouki", "lamia@mariage.dz"),       # the wedding planner
     ]:
         five[name.split()[0].lower()] = member.admit(
-            massi["id"], wedding["id"], name, email, member.LEADER)
-    dounia, salah = five["dounia"], five["salah"]
-    djamila, hocine = five["djamila"], five["hocine"]
+            amel["id"], w["id"], name, email, member.LEADER)
+    yanis, ryma = five["yanis"], five["ryma"]
+    nabil, lamia = five["nabil"], five["lamia"]
 
-    cell_service.set_budget(salah["id"], wedding["id"], 3_500_000, DZD)
-    cell_service.set_deadline(salah["id"], wedding["id"], DAY)
+    cell_service.set_budget(yanis["id"], w["id"], 6_000_000, DZD)
+    cell_service.set_deadline(yanis["id"], w["id"], DAY)
 
     # --- helpers ---------------------------------------------------------
 
@@ -149,7 +152,7 @@ def build():
         return cell["id"] if isinstance(cell, dict) else cell
 
     def add(cell, title, owner, progress=0, due=None, cost=None):
-        t = task.create(massi["id"], ident(cell), title)
+        t = task.create(amel["id"], ident(cell), title)
         if owner:
             task.assign(owner["id"], t["id"], owner["id"])
             if progress:
@@ -162,141 +165,136 @@ def build():
 
     def grew(parent, title, owner, goal, joining=(), budget=None, due=None):
         """
-        A piece of work that stopped fitting one person.
-
-        `joining` is the people it brings in who are not upstairs. That is the
-        whole shape of a wedding like this: the five answer for it, and the
-        aunt who has cooked chakhchoukha for thirty years is in exactly one
-        cell and belongs nowhere else on the tree.
+        A piece of work that stopped fitting one person. `joining` is the
+        people it brings in who are not upstairs -- the traiteur, the DJ, the
+        negafa, the banquet manager. None of them is on the wedding's own
+        list of people and none of them needs to be.
         """
         seed_task = add(parent, title, owner)
-        task.expand(massi["id"], seed_task["id"], goal)
+        task.expand(amel["id"], seed_task["id"], goal)
         cell = task.expanded_into(seed_task["id"])
         brought = {}
         for name, email in joining:
-            p = member.admit(massi["id"], cell, name, email)
+            p = member.admit(amel["id"], cell, name, email)
             brought[name.split()[0].lower()] = p
         if budget:
-            cell_service.set_budget(salah["id"], cell, budget, DZD)
+            cell_service.set_budget(yanis["id"], cell, budget, DZD)
         if due:
-            cell_service.set_deadline(salah["id"], cell, due)
+            cell_service.set_deadline(yanis["id"], cell, due)
         return cell, brought
 
-    # --- settled: the village or a hall in Batna --------------------------
+    # --- settled: hotel, or a salle des fêtes -----------------------------
+    venue_q = decision.propose(
+        lamia["id"], w["id"],
+        "The hotel, or a salle des fêtes?",
+        "A salle is half the price and you bring your own traiteur, your own "
+        "decorator and your own problems. The hotel is one contract, one "
+        "person to shout at, and rooms for the people who came from Algiers.",
+        [
+            "The Hôtel Panorama — one contract, rooms included",
+            "A salle des fêtes at Ali Mendjeli, and we assemble the rest",
+            "The hotel for the dinner, a salle for the afternoon",
+        ],
+        work={
+            "0": ["Sign the hotel contract and read the cancellation clause",
+                  "Block thirty rooms for the guests coming from far",
+                  "Get the hotel's own list of what is and is not included"],
+            "1": ["Find a salle for 12 June", "Find a traiteur", "Find a decorator"],
+            "2": ["Price both", "Work out how four hundred people move between them"],
+        },
+    )
+    step(lamia, venue_q["id"], "open")
+    vq = dm.options_of(venue_q["id"])
+    decision.remark(lamia["id"], venue_q["id"],
+                    "A salle in June is booked by January and the good traiteurs go "
+                    "with it. If we want a salle we are deciding this week.", vq[1]["id"])
+    decision.remark(nabil["id"], venue_q["id"],
+                    "Sixty people are coming from Algiers and Annaba. If there are no "
+                    "rooms they drive back at two in the morning or they do not come.",
+                    vq[0]["id"])
+    decision.remark(yanis["id"], venue_q["id"],
+                    "The salle is 1,400,000 against 2,600,000. That is a car.",
+                    vq[1]["id"])
+    evidence.attach(lamia["id"], "option", vq[0]["id"], "note",
+                    "Panorama quote: hall, dinner, thirty rooms, 12 June")
+    step(lamia, venue_q["id"], "put_to_cell")
+    for who, pick in ((amel, 0), (nabil, 0), (ryma, 0), (lamia, 0), (yanis, 1)):
+        decision.vote(who["id"], venue_q["id"], vq[pick]["id"])
+    step(amel, venue_q["id"], "accept_by_vote", "send_to_leader", "resolve",
+         option_id=vq[0]["id"],
+         note="Four to one. Yanis is right about the money and outvoted on the rooms.")
+
+    # --- settled and recorded: how long it runs ---------------------------
+    length = decision.propose(
+        amel["id"], w["id"],
+        "One evening, or the henna the night before as well?",
+        "The henna is family and close friends, about eighty people, and it is "
+        "the night everybody actually enjoys.",
+        ["One evening only", "Henna at home on the Friday, the wedding on the Saturday"],
+        work={"1": ["Find eighty chairs and somewhere to put them",
+                    "Ask Djazia whether she does the henna night too"]},
+    )
+    step(amel, length["id"], "open")
+    step(amel, length["id"], "put_to_cell")
+    lo = dm.options_of(length["id"])
+    for who in (amel, ryma, lamia, nabil, yanis):
+        decision.vote(who["id"], length["id"], lo[1]["id"])
+    step(amel, length["id"], "accept_by_vote", "send_to_leader", "resolve",
+         option_id=lo[1]["id"],
+         note="Unanimous, and it was never really in doubt. It is in here so the "
+              "Friday gets a budget instead of being paid for out of surprise.")
+    step(amel, length["id"], "record",
+         outcome="Henna at home on the Friday, the hotel on the Saturday.",
+         lesson="The evening nobody planned is the one that gets paid for twice. "
+                "Deciding to have it is what makes it cheap.")
+
+    # --- open, and the one that actually matters --------------------------
     #
-    # The question every Aurès family argues about. A hall in Batna is one
-    # afternoon, paid for and finished. T'kout is three days, four hundred
-    # relatives, and every house in the village lending its floor.
-    where = decision.propose(
-        salah["id"], wedding["id"],
-        "T'kout, or a hall in Batna?",
-        "Half the family is in Batna and Constantine and would have to drive "
-        "the mountain road twice. The other half has never held a wedding "
-        "anywhere but the village.",
+    # Every part has now quoted, and together they quote more than the whole.
+    cut = decision.propose(
+        yanis["id"], w["id"],
+        "We are over. What goes?",
+        "Everything that has quoted comes to more than the budget, and nothing "
+        "has been signed yet except the hotel. Three ways out, and one of them "
+        "is not really a way out.",
         [
-            "Three days in T'kout, the way both families were married",
-            "One afternoon in a hall in Batna, catered, everyone home by night",
-            "Henna night in T'kout, the wedding itself in a hall in Batna",
+            "Four hundred becomes three hundred",
+            "Drop the video — keep the photographer, lose the film and the drone",
+            "Keep everything and put the difference on the two families",
         ],
         work={
-            "0": ["Ask every house in the village how many it can sleep",
-                  "Work out the water for three days",
-                  "Get the road to the upper houses graded before September"],
-            "1": ["Price three halls in Batna", "Count who would actually come that far"],
-            "2": ["Price the halls", "Work out two sets of transport"],
+            "0": ["Cut the guest list, and tell people before the invitations go out"],
+            "1": ["Tell Walid before he blocks the date"],
+            "2": ["Agree in writing who covers what, now and not in July"],
         },
     )
-    step(salah, where["id"], "open")
-    opts = dm.options_of(where["id"])
-    decision.remark(djamila["id"], where["id"],
-                    "My mother was married in that village and so was I. If we do it "
-                    "in a hall the old women will not come, and they are the wedding.",
-                    opts[0]["id"])
-    decision.remark(hocine["id"], where["id"],
-                    "Three days in T'kout means water for six hundred people in "
-                    "September. The spring is at its lowest then. That is the part "
-                    "nobody costs.", opts[0]["id"])
-    decision.remark(massi["id"], where["id"],
-                    "A hall is 400,000 and it is finished. Three days is everything "
-                    "we have and the whole village's time as well.", opts[1]["id"])
-    evidence.attach(hocine["id"], "option", opts[0]["id"], "measurement",
-                    "The village spring in September: 40% of its spring flow")
-    step(salah, where["id"], "put_to_cell")
-    for who, pick in ((djamila, 0), (dounia, 0), (salah, 0), (hocine, 0), (massi, 1)):
-        decision.vote(who["id"], where["id"], opts[pick]["id"])
-    step(salah, where["id"], "accept_by_vote", "send_to_leader", "resolve",
-         option_id=opts[0]["id"],
-         note="Four to one for the village. Hocine is right about the water, so that "
-              "becomes work rather than an objection.")
+    step(yanis, cut["id"], "open")
+    co = dm.options_of(cut["id"])
+    decision.remark(yanis["id"], cut["id"],
+                    "A hundred guests is 190,000 of dinner alone. It is the only "
+                    "option that closes the gap on its own.", co[0]["id"])
+    decision.remark(amel["id"], cut["id"],
+                    "You cannot uninvite a hundred people in Constantine. Whatever we "
+                    "save we pay for in twenty years of who was left out.", co[0]["id"])
+    decision.remark(ryma["id"], cut["id"],
+                    "The film is the only thing you still have in ten years. The "
+                    "drone I would drop tomorrow.", co[1]["id"])
+    evidence.attach(yanis["id"], "option", co[0]["id"], "measurement",
+                    "Cost per couvert × 100, against the 840,000 gap")
+    decision.remark(lamia["id"], cut["id"],
+                    "Every wedding I do ends on the third option. I would rather you "
+                    "chose it in April than discovered it in June.", co[2]["id"])
+    step(yanis, cut["id"], "put_to_cell")
+    for who, pick in ((ryma, 1), (lamia, 2), (yanis, 0), (amel, 1)):
+        decision.vote(who["id"], cut["id"], co[pick]["id"])
 
-    # --- settled and recorded: how many days ------------------------------
-    days = decision.propose(
-        djamila["id"], wedding["id"],
-        "Three days, or two?",
-        "Henna night, the day itself, and the day after for whoever is still "
-        "there. The middle day is the one everybody means. The third is the "
-        "one that costs.",
-        ["Three days", "Two days, and people go home on the Saturday night"],
-        work={"0": ["Feed people on the Sunday too",
-                    "Find beds for whoever is still there on the Sunday"]},
-    )
-    step(djamila, days["id"], "open")
-    step(djamila, days["id"], "put_to_cell")
-    o = dm.options_of(days["id"])
-    for who in (salah, dounia, hocine, massi, djamila):
-        decision.vote(who["id"], days["id"], o[0]["id"])
-    step(salah, days["id"], "accept_by_vote", "send_to_leader", "resolve",
-         option_id=o[0]["id"],
-         note="Nobody who drove from Constantine is leaving on the Saturday night. "
-              "The third day happens whether we plan it or not, so we plan it.")
-    step(salah, days["id"], "record",
-         outcome="Three days, and the Sunday budgeted rather than improvised.",
-         lesson="The day that costs the most is the one nobody decided to have. "
-                "Deciding to have it is cheaper than being surprised by it.")
-
-    # --- open, and genuinely undecided ------------------------------------
-    how_many = decision.propose(
-        hocine["id"], wedding["id"],
-        "How many do we actually invite?",
-        "Six hundred is what the two families come to if nobody is left out. "
-        "Every hundred is roughly four more sheep and eighty more beds.",
-        [
-            "Six hundred — nobody in either family is left out",
-            "Three hundred and fifty — the close families and the village",
-            "Six hundred on the middle day, the village only on the other two",
-        ],
-        work={
-            "0": ["Count the beds in the village against six hundred"],
-            "1": ["Draw the line and tell people before they hear it from others"],
-            "2": ["Work out three different numbers for three days"],
-        },
-    )
-    step(hocine, how_many["id"], "open")
-    hm = dm.options_of(how_many["id"])
-    decision.remark(salah["id"], how_many["id"],
-                    "You cannot invite a man's brother and not the man. Six hundred "
-                    "is not a choice we are making, it is a count of who exists.",
-                    hm[0]["id"])
-    decision.remark(hocine["id"], how_many["id"],
-                    "Six hundred over three days is 1,800 meals. At 900 DZD a plate "
-                    "that is more than the whole food budget on its own.", hm[1]["id"])
-    evidence.attach(hocine["id"], "option", hm[1]["id"], "measurement",
-                    "Meals × days × plate cost against the food budget")
-    decision.remark(dounia["id"], how_many["id"],
-                    "The third option is what my aunt did in Arris and nobody was "
-                    "offended. The village is there every day anyway.", hm[2]["id"])
-    step(hocine, how_many["id"], "put_to_cell")
-    for who, pick in ((dounia, 2), (djamila, 0), (massi, 2), (salah, 0)):
-        decision.vote(who["id"], how_many["id"], hm[pick]["id"])
-
-    # Work the two settled questions made. Nobody typed it in; it appeared
-    # when the family chose, and it stays here because it was decided here.
-    made = {t["title"]: t for t in task.in_cells([wedding["id"]])}
+    # Work the two settled questions made, picked up by whoever it belongs to.
+    made = {t["title"]: t for t in task.in_cells([w["id"]])}
     for title, owner, progress in [
-        ("Ask every house in the village how many it can sleep", djamila, 55),
-        ("Work out the water for three days", hocine, 30),
-        ("Get the road to the upper houses graded before September", salah, 0),
-        ("Feed people on the Sunday too", djamila, 20),
+        ("Sign the hotel contract and read the cancellation clause", lamia, 100),
+        ("Block thirty rooms for the guests coming from far", nabil, 45),
+        ("Get the hotel's own list of what is and is not included", lamia, 70),
+        ("Find eighty chairs and somewhere to put them", ryma, 20),
     ]:
         t = made.get(title)
         if t:
@@ -305,245 +303,265 @@ def build():
                 task.report_progress(owner["id"], t["id"], progress)
 
     # ------------------------------------------------------------------
-    # The cells. None of these were created -- a cell of five cannot create
-    # children, that unlocks at twenty. Every one grew out of a task that
-    # stopped fitting one person, which works at any size.
+    # The cells. Not one of them was created. The first was grown when this
+    # was a cell of five, and five cannot create anything -- that unlocks at
+    # twenty, which the wedding only passed once every cell had brought in
+    # the people it needed. Expansion works at any size, which is the only
+    # reason this shape exists at all.
     # ------------------------------------------------------------------
 
-    # 1. The three days themselves, and the order of them.
-    days_cell, p = grew(
-        wedding, "Work out what happens on each of the three days", salah,
-        "Run three days in T'kout so nobody is standing about wondering what is next",
-        [("Amar Ould Salah", "amar@aures.dz")],       # the village elder
-        budget=120_000, due="2027-09-01")
-    amar = p["amar"]
-    add(days_cell, "Write the order of the middle day, hour by hour", salah, 40, "2027-08-20")
-    add(days_cell, "Agree with the mosque what time the fatiha is", amar, 70, "2027-07-15")
-    add(days_cell, "Decide who greets people at the road", amar, 0)
-    add(days_cell, "Work out where six hundred people stand during the fatiha", salah, 15)
+    # 1. The venue and the run of the evening.
+    venue, p = grew(
+        w, "Run the hotel side of it", lamia,
+        "Have the room, the tables and the running order settled so nobody is "
+        "improvising on the night",
+        [("Karim Lounis", "karim@mariage.dz"),        # the hotel's banquet manager
+         ("Sabrina Adjali", "sabrina@mariage.dz"),    # decor and flowers
+         # Upstairs already, and named here anyway: the seating plan is hers,
+         # and work cannot be put in the hands of somebody who is not in the
+         # cell, however senior they are above it.
+         ("Ryma Ferhat", "ryma@mariage.dz")],
+        budget=2_600_000, due="2027-06-05")
+    karim, sabrina = p["karim"], p["sabrina"]
+    plan = add(venue, "Do the seating plan for four hundred", ryma, 25, "2027-05-25")
+    add(venue, "Agree the running order with the hotel, hour by hour", lamia, 60,
+        "2027-05-30")
+    add(venue, "The centrepieces and what happens to them after", sabrina, 40,
+        "2027-06-01", 340_000)
+    add(venue, "Walk the room and count the plugs the DJ will need", karim, 80)
+    add(venue, "Agree what time the hotel wants everybody out", karim, 100, "2027-04-20")
+    task.note(ryma["id"], plan["id"],
+              "Four hundred people is forty tables of ten. The problem is not the "
+              "tables, it is that six families cannot be seated near each other and "
+              "two of them do not know that yet.")
 
-    # 2. Feeding them. The largest thing in the wedding by every measure.
-    food, p = grew(
-        wedding, "Feed everyone for three days", djamila,
-        "Feed six hundred people for three days without anyone waiting or anyone "
-        "running out",
-        [("Yamina Aït Amrane", "yamina@aures.dz"),    # chakhchoukha, thirty years of it
-         ("Zohra Boulahbal", "zohra@aures.dz"),       # the bride's aunt
-         ("Brahim Meziani", "brahim@aures.dz")],      # does the méchoui
-        budget=1_850_000, due="2027-09-16")
-    yamina, zohra, brahim = p["yamina"], p["zohra"], p["brahim"]
-    chak = add(food, "Roll the chakhchoukha — how many hands, how many days ahead",
-               yamina, 35, "2027-09-12")
-    add(food, "Count the sheep and agree the price now, not in September", brahim, 60,
-        "2027-06-30", 1_125_000)
-    add(food, "Find the twelve gas rings and the big pots", zohra, 25)
-    add(food, "Work out who serves, and who serves the servers", djamila, 10)
-    add(food, "The sweets — how many trays and who makes them", zohra, 45, "2027-09-10")
-    task.note(yamina["id"], chak["id"],
-              "Chakhchoukha for six hundred cannot be rolled the day before. Eight "
-              "women, three days, and it has to be somewhere dry. The old school is "
-              "empty and it has a floor.")
-    evidence.attach(yamina["id"], "task", chak["id"], "note",
-                    "Eight women × three days, and the old school as the room")
+    # 2. Dinner.
+    dinner, p = grew(
+        w, "Sort out the dinner", ryma,
+        "Feed four hundred people a dinner that comes out hot and at the same time",
+        [("Hakim Tounsi", "hakim@mariage.dz"),        # the traiteur
+         ("Nawel Saadi", "nawel@mariage.dz")],        # pâtissière
+        budget=1_900_000, due="2027-06-10")
+    hakim, nawel = p["hakim"], p["nawel"]
+    add(dinner, "Taste the menu and agree it in writing", ryma, 75, "2027-04-15")
+    add(dinner, "Count the vegetarians and the allergies from the RSVPs", ryma, 30)
+    add(dinner, "Agree how many servers for four hundred", hakim, 50)
+    add(dinner, "Decide the soft bar and who tops it up during the evening", hakim, 20)
 
-    # 2a. The méchoui got big enough to be its own thing.
-    mechoui, p = grew(
-        food, "Do the méchoui properly", brahim,
-        "Roast twenty-five sheep over three days without anybody waiting for meat",
-        [("Tayeb Meziani", "tayeb@aures.dz")],        # Brahim's brother, the pits
-        budget=200_000, due="2027-09-15")
-    tayeb = p["tayeb"]
-    add(mechoui, "Dig and line the four pits", tayeb, 0, "2027-09-14")
-    add(mechoui, "Order the charcoal in June before the price moves", brahim, 100,
-        "2027-06-20", 95_000)
-    add(mechoui, "Agree with the butcher in Arris who slaughters and when", brahim, 50)
+    # 2a. The cake and the sweets table became their own thing.
+    sweets, p = grew(
+        dinner, "The pièce montée and the sweets table", nawel,
+        "Have a cake that survives the room and a sweets table that does not run out "
+        "at eleven",
+        [("Sofia Bendaoud", "sofia@mariage.dz")],     # does the traditional sweets
+        budget=180_000, due="2027-06-11")
+    sofia = p["sofia"]
+    add(sweets, "Agree the cake, and how many tiers are real", nawel, 60, "2027-05-10",
+        95_000)
+    add(sweets, "Work out how it gets to the room without collapsing", nawel, 10)
+    add(sweets, "The traditional sweets — how many trays, made when", sofia, 45)
 
-    # 3. The bride's side: the trousseau, and the henna night.
-    bride, p = grew(
-        wedding, "Get the bride's side ready", dounia,
-        "Have the trousseau, the dresses and the henna night ready without Dounia "
-        "doing all of it herself",
-        [("Kenza Boulahbal", "kenza@aures.dz"),       # the bride's sister
-         ("Nadjet Boulahbal", "nadjet@aures.dz")],    # cousin, does the henna
-        budget=700_000, due="2027-09-16")
-    kenza, nadjet = p["kenza"], p["nadjet"]
-    melhfa = add(bride, "Find the melhfa and have it fitted", dounia, 65, "2027-08-10",
-                 180_000)
-    add(bride, "Get grandmother's tabzimt and the silver cleaned and checked", kenza, 80,
-        "2027-08-01")
-    add(bride, "Buy the trousseau, and write down what came from whom", kenza, 30)
-    add(bride, "Decide what the bride wears on each of the three days", dounia, 20)
-    task.note(dounia["id"], melhfa["id"],
-              "The woman in Arris who does the traditional melhfa properly has two "
-              "other weddings in September. She wants to know now.")
+    # 3. The bride.
+    look, p = grew(
+        w, "Get the bride's side ready", amel,
+        "Have the dresses, the negafa and the morning of it planned so Amel is not "
+        "organising her own wedding on the day",
+        [("Djazia Belkhir", "djazia@mariage.dz"),     # the negafa
+         ("Meriem Ait Said", "meriem@mariage.dz")],   # hair and makeup
+        budget=650_000, due="2027-06-11")
+    djazia, meriem = p["djazia"], p["meriem"]
+    robe = add(look, "The white dress — find it, and have it fitted twice", amel, 70,
+               "2027-05-01", 220_000)
+    add(look, "The karakou and the chedda, and whose they are", djazia, 55)
+    add(look, "Trial the hair and makeup, properly, in daylight", meriem, 40, "2027-05-15")
+    add(look, "Work out the morning — what time everything starts", amel, 15)
+    task.note(amel["id"], robe["id"],
+              "Second fitting is three weeks before. The shop wants the balance at "
+              "the second fitting, not on collection.")
 
-    # 3a. The henna night became its own evening with its own people.
-    henna, p = grew(
-        bride, "Run the henna night", nadjet,
-        "Give the henna night its own evening rather than squeezing it into the day "
-        "before",
-        [("Souad Hamlaoui", "souad@aures.dz")],       # sings at henna nights
-        budget=180_000, due="2027-09-16")
-    souad = p["souad"]
-    add(henna, "Ask Souad and the women who sing with her", nadjet, 90, "2027-07-01")
-    add(henna, "Work out the room — the courtyard if it is dry, the school if not", souad, 20)
-    add(henna, "The henna itself, and who applies it", nadjet, 50)
+    # 3a. The dress changes on the night are their own operation.
+    changes, p = grew(
+        look, "Plan the dress changes on the night", djazia,
+        "Get the bride through five changes without the evening stopping each time",
+        [("Sarah Meddour", "sarah@mariage.dz")],      # the groom's cousin, helps
+        budget=250_000, due="2027-06-11")
+    sarah = p["sarah"]
+    add(changes, "Agree the order of the outfits with the DJ's running order", djazia, 30)
+    add(changes, "Get a room near the hall, not upstairs", sarah, 0, "2027-05-20")
+    add(changes, "Work out who carries what, and who holds the jewellery", sarah, 20)
 
-    # 4. Bringing the bride from Arris to T'kout: the rakb, over mountain road.
-    rakb, p = grew(
-        wedding, "Bring the bride from Arris", hocine,
-        "Bring the bride from Arris to T'kout with everyone who is coming with her, "
-        "on a road that is not built for it",
-        [("Rabah Aït Amrane", "rabah@aures.dz"),      # cousin, drives
-         ("Youcef Hamlaoui", "youcef@aures.dz")],     # has the 4x4s
-        budget=240_000, due="2027-09-17")
-    rabah, youcef = p["rabah"], p["youcef"]
-    road = add(rakb, "Decide which road the rakb takes", hocine, 100, "2027-07-20")
-    add(rakb, "Count the cars, and who drives which", rabah, 40)
-    add(rakb, "Ask the gendarmerie about the convoy on that stretch", youcef, 0, "2027-08-25")
-    add(rakb, "Work out where the convoy stops and for how long", rabah, 15)
+    # 4. The cortège.
+    cortege, p = grew(
+        w, "Sort out the cortège", nabil,
+        "Get the cortège from the house to the hotel without losing half of it at "
+        "the lights",
+        [("Sofiane Kaci", "sofiane@mariage.dz"),      # supplies the cars
+         ("Redha Belhadj", "redha@mariage.dz")],      # drives the lead car
+        budget=320_000, due="2027-06-11")
+    sofiane, redha = p["sofiane"], p["redha"]
+    add(cortege, "Book the cars and see them first, not in photographs", sofiane, 65,
+        "2027-05-05", 260_000)
+    route = add(cortege, "Decide the route and drive it at the same hour", redha, 100,
+                "2027-05-18")
+    add(cortege, "Work out who is in which car and tell them", nabil, 20)
+    add(cortege, "Agree what the cortège does if it rains", redha, 0)
 
-    # A question settled inside the cell that owns it, and recorded.
-    which_road = decision.propose(
-        hocine["id"], rakb, "The old mountain road, or round by the N87?",
-        "The mountain road is forty minutes. The N87 is an hour and fifty but it "
-        "is tarmac the whole way and a convoy can hold together on it.",
-        # Declared, because a question with no work attached falls back to
-        # making one task named after the winning option -- which reads as
-        # "Round by the N87" sitting in the list as though it were a job.
-        ["The mountain road", "Round by the N87"],
-        work={"0": ["Drive it once loaded, in September light"],
-              "1": ["Tell every driver the route a week before, not on the day"]},
+    # Settled inside the cell that owns it, and recorded.
+    road = decision.propose(
+        nabil["id"], cortege,
+        "Through the centre, or round by the viaduct?",
+        "The centre is shorter and it is Constantine at six in the evening. The "
+        "viaduct is twenty minutes longer and the cortège stays together.",
+        ["Through the centre", "Round by the viaduct"],
+        work={"0": ["Warn every driver about the two lights that split convoys"],
+              "1": ["Drive it once at the same hour on a Saturday"]},
     )
-    step(hocine, which_road["id"], "open")
-    wr = dm.options_of(which_road["id"])
-    decision.remark(youcef["id"], which_road["id"],
-                    "Thirty cars on the mountain road means the last one arrives "
-                    "twenty minutes after the first and one of them will be a Clio.",
-                    wr[1]["id"])
-    evidence.attach(youcef["id"], "option", wr[1]["id"], "note",
-                    "Drove both in April with a loaded car: 42 min against 1h48")
-    step(hocine, which_road["id"], "put_to_cell")
-    for who in (rabah, youcef, hocine):
-        decision.vote(who["id"], which_road["id"], wr[1]["id"])
-    step(hocine, which_road["id"], "accept_by_vote", "send_to_leader", "resolve",
-         option_id=wr[1]["id"],
-         note="Longer, and everybody arrives together, which is the entire point of "
-              "a rakb.")
-    step(hocine, which_road["id"], "record",
-         outcome="The N87. Convoy held together both times we tested it.",
-         lesson="A procession is not measured by how fast the first car arrives.")
+    step(nabil, road["id"], "open")
+    ro = dm.options_of(road["id"])
+    decision.remark(redha["id"], road["id"],
+                    "Twelve cars through the centre at six is not a cortège, it is "
+                    "twelve cars that all arrive separately.", ro[1]["id"])
+    evidence.attach(redha["id"], "option", ro[1]["id"], "note",
+                    "Drove both on a Saturday in April: 18 min against 34, but "
+                    "nothing split on the viaduct")
+    step(nabil, road["id"], "put_to_cell")
+    for who in (sofiane, redha, nabil):
+        decision.vote(who["id"], road["id"], ro[1]["id"])
+    step(nabil, road["id"], "accept_by_vote", "send_to_leader", "resolve",
+         option_id=ro[1]["id"],
+         note="Longer, and everybody arrives together, which is the entire point.")
+    step(nabil, road["id"], "record",
+         outcome="The viaduct. Held together both times it was driven.",
+         lesson="A cortège is not measured by when the first car arrives.")
 
-    # 5. The music, the rahaba, and the baroud.
+    # 5. Music, the DJ and the dance floor.
     music, p = grew(
-        wedding, "Sort out the music and the rahaba", massi,
-        "Have the rahaba, the zerna and the baroud happen at the right hour and "
-        "without anybody getting hurt",
-        [("Lakhdar Sahraoui", "lakhdar@aures.dz"),    # leads the rahaba troupe
-         ("Farid Bouzid", "farid@aures.dz")],         # the baroud, and the licence for it
-        budget=350_000, due="2027-09-17")
-    lakhdar, farid = p["lakhdar"], p["farid"]
-    troupe = add(music, "Book Lakhdar's troupe for the middle day", massi, 75, "2027-06-15",
-                 220_000)
-    add(music, "Agree with the zerna players what they play and when", lakhdar, 30)
-    add(music, "Get the licence for the baroud and tell the gendarmerie", farid, 20,
-        "2027-08-30")
-    add(music, "Decide where the baroud happens, away from the cars and the children",
-        farid, 0)
+        w, "Sort out the music", yanis,
+        "Have the DJ, the entrance and the dance floor run so the evening never "
+        "goes flat",
+        [("Sami Aloui", "sami@mariage.dz"),           # the DJ
+         ("Nassim Berrah", "nassim@mariage.dz")],     # leads the zaffa
+        budget=480_000, due="2027-06-11")
+    sami, nassim = p["sami"], p["nassim"]
+    dj = add(music, "Book the DJ and hear him somewhere else first", yanis, 100,
+             "2027-03-20", 300_000)
+    add(music, "Give the DJ the running order and the five things not to play", yanis, 35)
+    add(music, "Agree the sound with the hotel — their limiter, his desk", sami, 50)
+    add(music, "Work out the first dance, and whether there is one", yanis, 0)
 
-    # 6. Where six hundred people sleep and wash. The thing the village
-    #    actually provides, and the thing nobody budgets for.
-    beds, p = grew(
-        wedding, "Work out where everybody sleeps", hocine,
-        "Put six hundred people to bed for three nights in a village of ninety houses",
-        [("Ourida Aït Amrane", "ourida@aures.dz"),    # knows every house
-         ("Slimane Ferhat", "slimane@aures.dz")],     # the big house at the top
-        budget=180_000, due="2027-09-14")
-    ourida, slimane = p["ourida"], p["slimane"]
-    add(beds, "Write down every house and how many it sleeps", ourida, 55, "2027-08-15")
-    add(beds, "Borrow mattresses and blankets, and write down whose", ourida, 25)
-    water = add(beds, "The water — three days, six hundred people, September", slimane, 10,
-                "2027-08-31")
-    add(beds, "Work out the washing and where people can be clean", slimane, 0)
-    task.note(slimane["id"], water["id"],
-              "The spring is at its lowest in September. Two tankers from Arris is "
-              "about 60,000 and it is the cheapest thing on this whole list.")
+    # 5a. The entrance became its own thing, as it always does.
+    zaffa, p = grew(
+        music, "Plan the entrance", nassim,
+        "Get the couple into the room in a way people remember, without it running "
+        "twenty minutes long",
+        [("Bilal Rahmani", "bilal@mariage.dz")],      # bendir and the troupe
+        budget=150_000, due="2027-06-11")
+    bilal = p["bilal"]
+    add(zaffa, "Agree the troupe and how many of them", nassim, 70, "2027-05-12")
+    add(zaffa, "Time it — it cannot be longer than the doors are open", bilal, 25)
+    add(zaffa, "Agree the handover from the zaffa to the DJ", bilal, 0)
 
-    # 7. The papers. Small, dull, and the only cell that can stop the wedding.
-    papers, p = grew(
-        wedding, "Do the paperwork", massi,
-        "Have the mairie and the mosque both satisfied before anybody travels",
-        [("Ali Benyahia", "ali@aures.dz")],           # does the Batna runs
-        budget=15_000, due="2027-08-20")
-    ali = p["ali"]
-    add(papers, "Get both birth certificates from the mairie in Batna", ali, 100,
-        "2027-05-30", 1_200)
-    add(papers, "The medical certificates, both of us", massi, 50, "2027-08-01")
-    add(papers, "Book the date at the mairie", ali, 100, "2027-06-10")
-    add(papers, "Agree the fatiha with the imam", massi, 60)
+    # 6. Photo and video.
+    photo, p = grew(
+        w, "Sort out the photos and the film", lamia,
+        "Have somebody covering the day who has agreed in advance what they are "
+        "covering",
+        [("Ines Merabet", "ines@mariage.dz"),         # photographer
+         ("Walid Cherif", "walid@mariage.dz")],       # video and the drone
+        budget=420_000, due="2027-06-11")
+    ines, walid = p["ines"], p["walid"]
+    add(photo, "Book the photographer and see a whole wedding, not a portfolio",
+        lamia, 100, "2027-03-10", 240_000)
+    drone = add(photo, "Book the video, the film and the drone", walid, 30, "2027-05-01",
+                180_000)
+    add(photo, "Agree the shot list, including the family groups", ines, 45)
+    add(photo, "Find out whether the hotel allows a drone at all", walid, 0, "2027-05-05")
 
-    # 8. What it costs, and who puts in. The cell that watches the others.
-    #
-    # The only cell that brings nobody new in. Its three are already upstairs
-    # -- and they have to be named here anyway, because leading a cell above
-    # lets you act in the ones below but does not put work in your hands.
-    # Being answerable for something is a membership, not an inheritance.
+    # 7. Invitations and the guest list.
+    invites, p = grew(
+        w, "Do the invitations and the list", ryma,
+        "Know who is actually coming before the traiteur needs a number",
+        [("Lina Haddad", "lina@mariage.dz")],         # designs and prints them
+        budget=90_000, due="2027-04-30")
+    lina = p["lina"]
+    add(invites, "Agree the list between the two families", ryma, 60, "2027-04-01")
+    add(invites, "Design and print them", lina, 80, "2027-04-10", 62_000)
+    add(invites, "Deliver them by hand where it matters", ryma, 30)
+    add(invites, "Chase the RSVPs, twice, and then a third time", lina, 15, "2027-05-20")
+
+    # 8. Where people sleep, and the day after.
+    guests, p = grew(
+        w, "Look after the people who came from far", nabil,
+        "Have the sixty who came from Algiers and Annaba fed, slept and not "
+        "wondering where to go",
+        [("Farida Ould Kaci", "farida@mariage.dz")],  # does the hotel reservations
+        budget=380_000, due="2027-06-11")
+    farida = p["farida"]
+    add(guests, "Match the thirty rooms to the sixty people", farida, 40, "2027-05-25")
+    add(guests, "Organise the brunch on the Sunday", nabil, 10)
+    add(guests, "Tell people how to get from the airport", farida, 0)
+
+    # 9. The money. Brings nobody new -- and its three still had to be named,
+    #    because leading a cell above lets you act below but does not put work
+    #    in your hands.
     money, _ = grew(
-        wedding, "Keep track of what this costs", hocine,
-        "Know what this costs before it is spent, and who has put in what",
-        [("Salah Aït Amrane", "salah@aures.dz"),
-         ("Massinissa Aït Amrane", "massinissa@aures.dz")],
-        due="2027-09-18")
-    add(money, "Write down what each family has put in so far", hocine, 60)
-    add(money, "Price everything that has not been priced", hocine, 35, "2027-07-31")
-    add(money, "Agree what we do if we go over", massi, 0)
+        w, "Keep track of what this costs", yanis,
+        "Know what this costs before it is signed, and who is covering what",
+        [("Nabil Meddour", "nabil@mariage.dz"),
+         ("Lamia Zerrouki", "lamia@mariage.dz")],
+        due=DAY)
+    add(money, "Put every quote in one place with a date on it", yanis, 70, "2027-04-25")
+    add(money, "Work out what is already non-refundable", yanis, 40)
+    add(money, "Agree in writing who covers what", nabil, 0)
 
     # --- a question about work that already exists -------------------------
     #
-    # Not a proposal for new work. The rahaba booking exists, somebody has
-    # doubts about the second night, and the answer belongs in that task's
-    # record rather than in a task of its own.
-    second_night = decision.propose(
-        hocine["id"], music,
-        "Do we need the rahaba on the second night as well?",
-        "They are booked for the middle day. The second night is another 90,000 "
-        "and the older guests will have gone.",
-        ["Both nights, as booked", "The middle day only, and the zerna on the second"],
-        about=troupe["id"])
-    step(hocine, second_night["id"], "open")
-    sn = dm.options_of(second_night["id"])
-    decision.remark(lakhdar["id"], second_night["id"],
-                    "The second night is when the young men dance. If you want a "
-                    "rahaba at all, that is the night it is actually for.", sn[0]["id"])
-    decision.remark(hocine["id"], second_night["id"],
-                    "90,000 is the water for three days.", sn[1]["id"])
-    step(hocine, second_night["id"], "put_to_cell")
-    for who, pick in ((lakhdar, 0), (massi, 0), (farid, 1)):
-        decision.vote(who["id"], second_night["id"], sn[pick]["id"])
+    # The video is booked. Somebody has doubts about the drone specifically.
+    # The answer belongs in that task's record, not in a task of its own.
+    drone_q = decision.propose(
+        yanis["id"], photo,
+        "Do we keep the drone?",
+        "It is 60,000 of the 180,000, the hotel has not said yes to it, and it is "
+        "the first thing on the list when we need to find money.",
+        ["Keep it", "Drop the drone, keep the film"],
+        about=drone["id"])
+    step(yanis, drone_q["id"], "open")
+    dq = dm.options_of(drone_q["id"])
+    decision.remark(walid["id"], drone_q["id"],
+                    "The drone is the opening thirty seconds and it is the shot "
+                    "everybody sends to everybody. Without it the film opens on a "
+                    "car park.", dq[0]["id"])
+    decision.remark(yanis["id"], drone_q["id"],
+                    "The hotel has not confirmed it is allowed. We may be arguing "
+                    "about something that cannot happen.", dq[1]["id"])
+    step(yanis, drone_q["id"], "put_to_cell")
+    for who, pick in ((walid, 0), (ines, 1), (lamia, 1)):
+        decision.vote(who["id"], drone_q["id"], dq[pick]["id"])
 
     # --- an open question inside the cell that owns it ---------------------
-    menu = decision.propose(
-        djamila["id"], food,
-        "Chakhchoukha on the middle day, or couscous?",
-        "Chakhchoukha is what T'kout expects and it is three days of work by "
-        "hand. Couscous for six hundred is one long night.",
-        ["Chakhchoukha on the middle day, couscous on the other two",
-         "Couscous all three days, and chakhchoukha only for the close family"],
+    service = decision.propose(
+        ryma["id"], dinner,
+        "Served at the table, or a buffet?",
+        "Four hundred people served at the table needs forty servers and takes an "
+        "hour and a half. A buffet takes twenty minutes and a queue.",
+        ["Served at the table", "Buffet", "Starter and dessert served, main as a buffet"],
     )
-    step(djamila, menu["id"], "open")
-    mo = dm.options_of(menu["id"])
-    decision.remark(yamina["id"], menu["id"],
-                    "If there is no chakhchoukha on the middle day people will say "
-                    "so for twenty years. I have eight women. It is doable.",
-                    mo[0]["id"])
-    decision.remark(zohra["id"], menu["id"],
-                    "Eight women for three days is eight women who are not doing "
-                    "the other nine things on this list.", mo[1]["id"])
-    step(djamila, menu["id"], "put_to_cell")
-    for who, pick in ((yamina, 0), (zohra, 1), (djamila, 0), (brahim, 0)):
-        decision.vote(who["id"], menu["id"], mo[pick]["id"])
+    step(ryma, service["id"], "open")
+    so = dm.options_of(service["id"])
+    decision.remark(hakim["id"], service["id"],
+                    "Forty servers for four hundred is what it takes and it is why "
+                    "it costs what it costs. Thirty and the last table eats cold.",
+                    so[0]["id"])
+    decision.remark(lamia["id"], service["id"],
+                    "An hour and a half of service in the middle of the evening is "
+                    "an hour and a half the dance floor is empty.", so[1]["id"])
+    decision.remark(amel["id"], service["id"],
+                    "A queue at my wedding. No.", so[0]["id"])
+    step(ryma, service["id"], "put_to_cell")
+    for who, pick in ((hakim, 0), (amel, 0), (lamia, 2), (ryma, 2)):
+        decision.vote(who["id"], service["id"], so[pick]["id"])
 
-    return wedding
+    return w
 
 
 def main():
@@ -552,26 +570,26 @@ def main():
         print("data/wedding.db already has something in it. Delete it to reseed.")
     else:
         build()
-        print("The wedding at T'kout seeded.")
+        print("The wedding at the Hôtel Panorama seeded.")
 
     host, port = "127.0.0.1", int(os.environ["CELLOS_PORT"])
     print("\n  http://%s:%d\n" % (host, port))
-    print("  the five who answer for it -- sign in with any name and one of these:\n")
+    print("  the five who answer for it:\n")
     for who, does in [
-        ("salah@aures.dz", "the groom's father"),
-        ("djamila@aures.dz", "the bride's mother"),
-        ("hocine@aures.dz", "the eldest brother — money, water, the rakb"),
-        ("massinissa@aures.dz", "the groom"),
-        ("dounia@aures.dz", "the bride"),
+        ("amel@mariage.dz", "the bride"),
+        ("yanis@mariage.dz", "the groom — and the money"),
+        ("ryma@mariage.dz", "the bride's sister — dinner, the list, the seating"),
+        ("nabil@mariage.dz", "the groom's brother — the cortège and the guests"),
+        ("lamia@mariage.dz", "the wedding planner — the venue and the evening"),
     ]:
         print("    %-24s %s" % (who, does))
     print("\n  and some of the fourteen who are in one cell only:\n")
     for who, does in [
-        ("yamina@aures.dz", "rolls the chakhchoukha"),
-        ("brahim@aures.dz", "the méchoui"),
-        ("lakhdar@aures.dz", "leads the rahaba"),
-        ("ourida@aures.dz", "knows which house sleeps how many"),
-        ("ali@aures.dz", "does the Batna runs"),
+        ("hakim@mariage.dz", "the traiteur"),
+        ("sami@mariage.dz", "the DJ"),
+        ("djazia@mariage.dz", "the negafa"),
+        ("walid@mariage.dz", "video and the drone"),
+        ("karim@mariage.dz", "the hotel's banquet manager"),
     ]:
         print("    %-24s %s" % (who, does))
     print()

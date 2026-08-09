@@ -34,11 +34,19 @@ none of them touches the others.
 | `python3 run.py students` | 8420 | eight students and one assignment |
 | `python3 run.py demo` | 8420 | three organisations at 200, 100 and 30 |
 | `python3 relax.py` | 8424 | Relax Confort — a real Algerian bedding shop run by seven people across seven cells |
-| `python3 wedding.py` | 8425 | a wedding in the Aurès — five people answer for it, twenty end up in it, across eleven cells and three layers |
+| `python3 aures.py` | 8425 | a wedding in the Aurès — three days in a village, six hundred people, eleven cells |
+| `python3 wedding.py` | 8426 | the same wedding done at a hotel — cortège, traiteur, DJ, negafa, a drone, thirteen cells |
 
-The last two are the ones to read if you want to see the model carry something
-real. Both are built entirely by expansion: not one of their cells was
-created, because a cell small enough to need this cannot create children.
+The last three are the ones to read if you want to see the model carry
+something real. All three are built entirely by expansion: not one of their
+cells was created, because each began too small to be allowed to, and every
+cell in them grew out of a task that stopped fitting one person.
+
+The two weddings are the same event run two ways, and the pair is the point.
+One is five people and a village; the other is five people, a hotel and
+seventeen suppliers. Neither was configured differently. Both ended up past
+twenty people without anyone deciding to, and both changed how they settle a
+question when they got there.
 
 ## Shape
 
