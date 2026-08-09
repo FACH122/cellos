@@ -176,6 +176,40 @@ def _task(user_id, t, standing):
     return t
 
 
+"""
+What has happened lately that concerns one person.
+
+There is no notification table, no unread flag and nothing to mark as read.
+That would be a new kind of fact, and the whole system is built on there being
+only one kind: what happened. So this is a query over the log -- things other
+people did, to things that are yours.
+
+The consequence is that it cannot get out of step with reality, and it cannot
+be gamed by writing to it. The consequence people will notice is that there
+is no badge with a number on it, which is deliberate: a count of unread items
+is a measure of the software, not of the work.
+"""
+
+# What is worth telling somebody about. Everything else in the log is either
+# their own doing or somebody else's business.
+CONCERNS = {
+    "TaskAssigned": "was handed to you",
+    "ProgressUpdated": "moved on",
+    "TaskCompleted": "was finished",
+    "TaskReopened": "was reopened",
+    "DecisionAccepted": "was settled",
+    "LeaderOverride": "was settled against the vote",
+    "DecisionRejected": "was dropped",
+    "DecisionReturned": "was sent back",
+    "VotingOpened": "is open for votes",
+    "ResolutionRequested": "is waiting for a decision",
+    "RemarkAdded": "was commented on",
+    "EvidenceAttached": "had evidence attached",
+    "KnowledgeRecorded": "was written into what the cell knows",
+    "TaskExpanded": "became a cell",
+}
+
+
 SETTLED_STATES = ("accepted", "executing", "completed", "knowledge", "rejected")
 
 

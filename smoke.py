@@ -275,6 +275,38 @@ if t:
     check("every piece of work says who is expected to do it",
           "responsibility" in t[0], t[0].keys())
 
+# ---------------------------------------------------------------------------
+# The pages a person actually opens.
+#
+# These exist because /api/yours returned 500 for a while and every check here
+# stayed green: nothing in this file had ever requested it. A page with no
+# end-to-end check is a page that can break without anybody being told, and
+# the two newest ones had none.
+
+status, v = call("GET", "/api/yours", None, tok_b)
+check("a person's own page answers", status == 200, v)
+check("it spans every cell they can see", "cells" in v and "carried" in v, list(v))
+check("it says what has happened to their work", "lately" in v, list(v))
+c = v.get("carried") or {}
+for part in ("yours", "waiting_on_you", "you_are_waiting_on", "blocked", "cells_led"):
+    check("  it carries %s" % part, part in c, list(c))
+
+status, v = call("GET", "/api/cells/%s" % cell_id, None, tok_a)
+some_task = next((x for x in v["tasks"] if x["state"] != "expanded"), None)
+if some_task:
+    status, t = call("GET", "/api/tasks/%s" % some_task["id"], None, tok_a)
+    check("one piece of work answers on its own", status == 200, t)
+    check("it says which cell it is in", t.get("cell", {}).get("id") == cell_id, t.get("cell"))
+    check("it carries its own record", "record" in t and "notes" in t, list(t))
+    check("and what has been asked about it", "questions" in t, list(t))
+
+    status, after = call("POST", "/api/tasks/%s/notes" % some_task["id"],
+                         {"body": "A note left by the smoke test."}, tok_a)
+    check("somebody can say what is happening", status == 200, after)
+    check("and it lands in the record",
+          any(n["body"].startswith("A note left") for n in after.get("notes", [])),
+          after.get("notes"))
+
 print()
 if failures:
     print("%d failed: %s" % (len(failures), ", ".join(failures)))
