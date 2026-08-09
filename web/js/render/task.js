@@ -10,10 +10,12 @@
 
     the head      what this is and where it stands, in one line
     the bar       every action, together, once -- not scattered down the page
-    the work      what has actually happened to it, and what people said
-                  while doing it; this is the middle of the page because it
-                  is the middle of the job
-    the margin    why it exists, who answers for it, what backs it up
+    the work      everything that has happened to it, in order: what the
+                  system saw, what people said, and what they offered in
+                  support. This is the middle of the page because it is the
+                  middle of the job.
+    the margin    why it exists and who answers for it -- things that are
+                  true of the work rather than things that happened to it
 
   Nothing in the record is stored. Every line of it was already an event; the
   only place you could see them before was the whole cell's log, mixed in with
@@ -189,6 +191,17 @@ function evidenceForm(t) {
 */
 function work(v, t) {
   const lines = [
+    ...v.evidence.map((e) => ({
+      at: e.added_at,
+      html: `<div class="offered">
+        <span class="kind">${esc(e.kind)}</span>
+        ${e.ref
+          ? `<a href="${esc(e.ref)}" target="_blank" rel="noopener">${esc(e.label)}</a>`
+          : `<span class="grow">${esc(e.label)}</span>`}
+        <span class="xs faint nowrap">${esc(e.added_by_name || 'someone')}
+          · <time datetime="${esc(e.added_at)}">${esc(when(e.added_at))}</time></span>
+      </div>`,
+    })),
     ...v.notes.map((n) => ({
       at: n.said_at,
       html: `<article class="note-said">
@@ -286,16 +299,6 @@ function margin(v, t) {
       ${who}
       <p class="xs faint">Derived, not assigned — read off who holds the work,
         who leads here, and who leads the cell above.</p>
-    </div>`);
-  }
-  if (v.evidence.length) {
-    parts.push(`<div class="margin-block">
-      <h3>Offered in support</h3>
-      <div class="evidence stack">${v.evidence.map((e) => `<div class="row sm">
-        <span class="kind">${esc(e.kind)}</span>
-        ${e.ref ? `<a href="${esc(e.ref)}" target="_blank" rel="noopener">${esc(e.label)}</a>`
-                : `<span>${esc(e.label)}</span>`}
-      </div>`).join('')}</div>
     </div>`);
   }
   if (!parts.length) return '';

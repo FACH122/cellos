@@ -584,6 +584,21 @@ td.num { font-variant-numeric: tabular-nums; }
 .did { display: flex; gap: var(--s3); color: var(--ink-soft); align-items: baseline; }
 .did time { width: 7.5rem; flex: none; }
 
+/* Somebody offering something sits between the two: more than an observation,
+   less than a sentence. A hairline rather than a card, so a run of links does
+   not read as a stack of paragraphs. */
+.offered {
+  display: flex; align-items: baseline; gap: var(--s3); flex-wrap: wrap;
+  font-size: var(--t-sm);
+  padding: var(--s2) var(--s3);
+  border-left: 2px solid var(--edge);
+  background: var(--surface-sunk);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  max-width: 62ch;
+}
+.offered a { color: var(--accent); }
+.offered .grow { flex: 1; min-width: 0; }
+
 .margin-block + .margin-block { margin-top: var(--s4); }
 .margin h3 {
   font-size: var(--t-xs); font-weight: 600; letter-spacing: .06em;
