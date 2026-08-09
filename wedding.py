@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 """
-A wedding at a hotel: five people answer for it, twenty-two end up in it.
+A wedding at a hotel: six people answer for it, twenty-three end up in it.
 
 Amel and Yanis, the Hôtel Panorama in Constantine, 12 June, four hundred
 guests, one evening. A cortège, a traiteur, a DJ, a negafa, a photographer, a
 videographer with a drone, a pâtissière, a florist, and a banquet manager who
 works for the hotel and not for them.
 
-Five answer for the whole of it -- four family and one hired, because a modern
-wedding has a professional in the middle of it. Lamia is not staff here. She
-leads the venue and the run of the evening, and she has a vote:
+Six answer for the whole of it -- four family, one hired, and one seat for
+whoever is looking. A modern wedding has a professional in the middle of it,
+and Lamia is not staff here: she leads the venue and the run of the evening,
+and she has a vote like anyone else.
 
     ◎  Marry Amel and Yanis at the Hôtel Panorama on 12 June, four hundred
        guests, one evening, and nothing owed afterwards
-       Amel, Yanis, Ryma, Nabil, Lamia -- all five lead
+       Amel, Yanis, Ryma, Nabil, Lamia, nari -- all six lead
        6,000,000 DZD · 12 June 2027
        │
        ├─ ◎ The room, the tables and the running order
@@ -49,9 +50,9 @@ leads the venue and the run of the evening, and she has a vote:
        └─ ◎ Knowing what it costs before it is signed
              Yanis* + Nabil, Lamia
 
-Thirteen cells, twenty-two people, sixty-two things to do, six questions.
+Thirteen cells, twenty-three people, sixty-two things to do, six questions.
 
-**Seventeen of the twenty-two never appear on the wedding's own list of
+**Seventeen of the twenty-three never appear on the wedding's own list of
 people.** Hakim cooks and is in the dinner cell only. Sami is the DJ. Djazia
 is the negafa. Karim works for the hotel, not for the couple, and is in one
 cell of theirs. None of them is anywhere near the top and none of them needs
@@ -75,7 +76,7 @@ Three things are worth watching once it is running:
   · **Nothing here was created.** The first cell grew when this was five
     people, and five can create nothing -- that unlocks at twenty, which the
     wedding only passed once every cell had brought in who it needed. It is
-    twenty-two now, which is why a vote at the top no longer settles a
+    twenty-three now, which is why a vote at the top no longer settles a
     question on its own and a leader signs it instead. Nobody configured
     that. It grew into it.
 
@@ -83,7 +84,8 @@ For the same wedding done the other way -- three days in a village in the
 Aurès, six hundred people, twenty-five sheep, no hotel and no DJ -- see
 `aures.py`.
 
-    python3 wedding.py         seed it and serve on 8426
+    python3 run.py seed        build it alongside the other four, on one site
+    python3 wedding.py         or give it a database and a port of its own
 """
 
 import os
@@ -91,9 +93,10 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-os.environ.setdefault("CELLOS_DB", os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "data", "wedding.db"))
-os.environ.setdefault("CELLOS_PORT", "8426")
+# Nothing is chosen at import time. `build()` puts the wedding in whatever
+# database it is called against, which is what lets the ordinary seed include
+# it on the one site a deployment has, instead of it needing a port and a
+# database of its own. Running this file directly is what asks for those.
 
 import cellos  # noqa: E402
 from cellos.app import server  # noqa: E402
@@ -108,6 +111,14 @@ DZD = "DZD"
 DAY = "2027-06-12"
 
 
+def alone():
+    """Give this wedding a database and a port of its own, for running it by
+    itself. Not called when the ordinary seed builds it into the main site."""
+    os.environ.setdefault("CELLOS_DB", os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "data", "wedding.db"))
+    os.environ.setdefault("CELLOS_PORT", "8426")
+
+
 def step(actor, decision_id, *preferred, **args):
     """Fire the first offered transition, the way the interface does."""
     d = decision.get(decision_id)
@@ -120,28 +131,33 @@ def step(actor, decision_id, *preferred, **args):
 
 
 def build():
-    # --- the five who answer for it --------------------------------------
+    # --- the six who answer for it ---------------------------------------
     #
-    # Four family and one hired. A modern wedding has a professional in the
-    # middle of it, and she is not staff here -- she leads the venue and the
-    # run of the evening, and the family leads the rest.
+    # Four family, one hired and one seat for whoever is looking. A modern
+    # wedding has a professional in the middle of it, and she is not staff
+    # here -- Lamia leads the venue and the run of the evening, and the family
+    # leads the rest.
     amel = member.register("Amel Ferhat", "amel@mariage.dz")
     w = cell_service.create(
         amel["id"],
         "Marry Amel and Yanis at the Hôtel Panorama in Constantine on 12 June, "
         "four hundred guests, one evening, and nothing owed afterwards")
 
-    five = {}
+    leads = {}
     for name, email in [
         ("Yanis Meddour", "yanis@mariage.dz"),        # the groom
         ("Ryma Ferhat", "ryma@mariage.dz"),           # the bride's sister, témoin
         ("Nabil Meddour", "nabil@mariage.dz"),        # the groom's brother
         ("Lamia Zerrouki", "lamia@mariage.dz"),       # the wedding planner
+        # A sixth, and not one of the family: the account for whoever is
+        # looking at this. A leader of the top cell leads every cell under
+        # it, so this is the seat that sees the whole wedding at once.
+        ("nari", "nari@gmail.com"),
     ]:
-        five[name.split()[0].lower()] = member.admit(
+        leads[name.split()[0].lower()] = member.admit(
             amel["id"], w["id"], name, email, member.LEADER)
-    yanis, ryma = five["yanis"], five["ryma"]
-    nabil, lamia = five["nabil"], five["lamia"]
+    yanis, ryma = leads["yanis"], leads["ryma"]
+    nabil, lamia = leads["nabil"], leads["lamia"]
 
     cell_service.set_budget(yanis["id"], w["id"], 6_000_000, DZD)
     cell_service.set_deadline(yanis["id"], w["id"], DAY)
@@ -565,6 +581,7 @@ def build():
 
 
 def main():
+    alone()
     cellos.boot()
     if db.value("SELECT count(*) FROM events", default=0):
         print("data/wedding.db already has something in it. Delete it to reseed.")
@@ -574,13 +591,14 @@ def main():
 
     host, port = "127.0.0.1", int(os.environ["CELLOS_PORT"])
     print("\n  http://%s:%d\n" % (host, port))
-    print("  the five who answer for it:\n")
+    print("  the six who answer for it:\n")
     for who, does in [
         ("amel@mariage.dz", "the bride"),
         ("yanis@mariage.dz", "the groom — and the money"),
         ("ryma@mariage.dz", "the bride's sister — dinner, the list, the seating"),
         ("nabil@mariage.dz", "the groom's brother — the cortège and the guests"),
         ("lamia@mariage.dz", "the wedding planner — the venue and the evening"),
+        ("nari@gmail.com", "the seat that sees all thirteen cells"),
     ]:
         print("    %-24s %s" % (who, does))
     print("\n  and some of the fourteen who are in one cell only:\n")

@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 """
-Four cells at four scales, so the same workflow can be watched changing shape.
+Five cells at five scales, so the same workflow can be watched changing shape.
 
-    a wedding      2 people    no votes; one person decides and writes down why
-    a beta launch  6 people    the cell votes, and the count decides
-    a product      33 people   child cells appear, and a leader confirms the vote
-    a company      211 people  a dashboard, then analytics
+    a wedding       2 people    no votes; one person decides and writes down why
+    a beta launch   6 people    the cell votes, and the count decides
+    a product      33 people    child cells appear, and a leader confirms the vote
+    a company     211 people    a dashboard, then analytics
+    a hotel wedding 23 people   thirteen cells, three layers, and over budget
 
-Nothing here configures anything. Every difference between these four cells is
+Nothing here configures anything. Every difference between these five cells is
 a consequence of how many people are in them.
+
+The last one comes from `wedding.py`, which can also be run on its own. It is
+built here so that the ordinary site -- the one at one address, which is the
+only one a deployment has -- carries it too, rather than it needing a port and
+a database nobody hosted.
 
 The seed drives the same workflow steps a browser would: it asks which
 transitions are available and fires one by name, rather than calling a private
@@ -327,7 +333,11 @@ def seed():
         print("There is already something here. `python3 run.py reset` first if you meant to.")
         return
 
-    for build in (wedding, beta_launch, product_org, company):
+    # Imported here, not at the top: this module is what `run.py seed` calls,
+    # and the two would import each other at load time otherwise.
+    from wedding import build as hotel_wedding
+
+    for build in (wedding, beta_launch, product_org, company, hotel_wedding):
         c = build()
         n = hierarchy.scale(c["id"])
         caps = sorted(governance.capabilities(n) - set(governance.ALWAYS))
@@ -341,6 +351,7 @@ def seed():
     print("  priya@example.org       the beta launch")
     print("  mariam@example.org      the product org")
     print("  bahaeddin889@gmail.com  the company")
+    print("  nari@gmail.com          the hotel wedding, all thirteen cells")
 
 
 if __name__ == "__main__":

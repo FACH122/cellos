@@ -11,12 +11,13 @@ python3 run.py seed && python3 run.py
 ```
 
 Then open <http://127.0.0.1:8420> and sign in as `sara@example.org` (a wedding,
-two people) or `bahaeddin889@gmail.com` (a company, 211). There is no password.
+two people), `bahaeddin889@gmail.com` (a company, 211) or `nari@gmail.com` (a
+hotel wedding, 23 people across thirteen cells). There is no password.
 
 | command | what it does |
 | --- | --- |
 | `python3 run.py` | serve on 127.0.0.1:8420 |
-| `python3 run.py seed` | four cells at four scales |
+| `python3 run.py seed` | five cells at five scales, the hotel wedding among them |
 | `python3 run.py rebuild` | drop every projection and replay the log |
 | `python3 run.py reset` | delete the database |
 | `python3 run.py routes` | every endpoint and every relationship kind |
@@ -25,17 +26,19 @@ two people) or `bahaeddin889@gmail.com` (a company, 211). There is no password.
 
 ## Worked examples
 
-Each seeds its own database on its own port, so they can all run at once and
-none of them touches the others.
+The first three all build into the ordinary site on 8420 — a deployment has
+one address, so anything meant to be reachable from one has to live there.
+The rest take a database and a port of their own, so they can run alongside it
+without touching it.
 
 | | | |
 | --- | --- | --- |
-| `python3 run.py seed` | 8420 | four cells at four scales — 2, 6, 33 and 211 people, where every difference between them is a consequence of headcount alone |
+| `python3 run.py seed` | 8420 | five cells — 2, 6, 33, 211 and 23 people, where every difference between them is a consequence of headcount alone. This is what a deployment serves. |
 | `python3 run.py students` | 8420 | eight students and one assignment |
 | `python3 run.py demo` | 8420 | three organisations at 200, 100 and 30 |
 | `python3 relax.py` | 8424 | Relax Confort — a real Algerian bedding shop run by seven people across seven cells |
 | `python3 aures.py` | 8425 | a wedding in the Aurès — three days in a village, six hundred people, eleven cells |
-| `python3 wedding.py` | 8426 | the same wedding done at a hotel — cortège, traiteur, DJ, negafa, a drone, thirteen cells |
+| `python3 wedding.py` | 8426 | the same wedding at a hotel — cortège, traiteur, DJ, negafa, a drone, thirteen cells. Already inside `run.py seed`; this only gives it a port of its own. |
 
 The last three are the ones to read if you want to see the model carry
 something real. All three are built entirely by expansion: not one of their
@@ -43,10 +46,10 @@ cells was created, because each began too small to be allowed to, and every
 cell in them grew out of a task that stopped fitting one person.
 
 The two weddings are the same event run two ways, and the pair is the point.
-One is five people and a village; the other is five people, a hotel and
-seventeen suppliers. Neither was configured differently. Both ended up past
-twenty people without anyone deciding to, and both changed how they settle a
-question when they got there.
+One is a village, three days and six hundred people; the other is a hotel, one
+evening and seventeen suppliers. Neither was configured differently. Both
+ended up past twenty people without anyone deciding to, and both changed how
+they settle a question when they got there.
 
 ## Shape
 
