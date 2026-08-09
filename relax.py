@@ -8,16 +8,60 @@ in French and Arabic, at 2,500 to 38,500 DZD, with orders taken over two phone
 numbers.
 
 Seven people is a size worth showing, because it is the size most companies
-actually are and the one where a system like this either helps or gets in the
-way. At seven, CellOS gives them almost nothing: tasks, questions, votes,
-evidence, and what the cell has learned. No child cells, no dashboard, no
-analytics -- those appear at twenty, fifty and two hundred, and this shop is
-none of those. Nothing here turns them off. They simply have not arrived.
+actually are, and the one where a system like this either helps or gets in the
+way. At seven they get no dashboard and no analytics -- those arrive at fifty
+and two hundred, and this shop is neither. Nothing here turns them off. They
+simply have not arrived.
 
-The one exception is worth watching: a piece of work can outgrow one person at
-any size. When "open a showroom" stops being something Yacine does on
-Saturdays, it becomes a cell with people in it, and the seven-person cell has
-a child without ever having been big enough to "create" one.
+What they do get is the shape of the company:
+
+    ◎  Sell 400 mattresses a month without money stuck in stock or transit
+       7 people · 4,000,000 DZD · by 31 Dec
+       │
+       ├─ ◎ Take every order that comes in, on the phone or the page
+       │     Amina, Rachid ─ "Do we take orders on WhatsApp as well?"
+       │
+       ├─ ◎ Get every parcel delivered and every dinar back within the month
+       │     Nadia, Lila · 600,000 DZD
+       │
+       ├─ ◎ Know what is in the depot without walking into it
+       │     Lila, Karim · 2,000,000 DZD
+       │
+       ├─ ◎ Sell six models we can always get, from people who answer the phone
+       │     Karim, Yacine, Sofiane ─ "Five years on the orthopedic range?"
+       │
+       ├─ ◎ Be the first shop somebody in Algeria finds
+       │     Sofiane, Amina · 400,000 DZD
+       │
+       ├─ ◎ Make a complaint cheaper to answer than to ignore
+       │     Rachid, Nadia
+       │
+       └─ ◎ Open a showroom in Boumerdès people can walk into
+             Yacine, Lila, Rachid · 1,200,000 DZD · by 31 Mar
+
+Seven cells and seven people, which means everybody is in two or three of
+them. That is the point: a cell is an area of responsibility, not a
+department, and nobody here has a department.
+
+None of these children were "created". A cell of seven cannot create children
+-- that unlocks at twenty. Every one of them started as a task in the shop
+that outgrew one person, and expansion works at any size. Amina taking phone
+orders became "take every order that comes in" the day Rachid had to help.
+
+Three things are worth watching once it is running:
+
+  · Four of the children have put a number on what they need, and those four
+    come to 4,200,000 DZD of a 4,000,000 DZD budget. Nothing stops them. The
+    shop says so, on its own page, in a sentence with the number in it.
+
+  · Two children are due after the shop is. Said the same way, blocked the
+    same amount, which is not at all.
+
+  · The carrier question was answered by six of the seven -- Yacine settled
+    it without voting in it, which is what running a shop looks like -- and
+    made work at the top, where it was asked. That work is not repeated
+    inside the delivery cell that grew later. A company-wide answer makes
+    company-wide work, and whoever's area it is picks it up where it lies.
 
     python3 relax.py           seed it and serve on 8424
 """
@@ -202,65 +246,176 @@ def build():
                 task.report_progress(owner["id"], t["id"], progress)
 
     # --- the work ---------------------------------------------------------
-    def add(title, owner, progress=0, due=None, cost=None):
-        t = task.create(yacine["id"], shop["id"], title)
-        task.assign(owner["id"], t["id"], owner["id"])
-        if progress:
-            task.report_progress(owner["id"], t["id"], progress)
-        if due:
-            task.set_deadline(owner["id"], t["id"], due)
-        if cost is not None:
-            task.record_cost(owner["id"], t["id"], cost)
+
+    def ident(cell):
+        """A cell is a dict when you just made it and an id when you looked it
+        up. Take either rather than making every caller remember which."""
+        return cell["id"] if isinstance(cell, dict) else cell
+
+    def add(cell, title, owner, progress=0, due=None, cost=None):
+        t = task.create(yacine["id"], ident(cell), title)
+        if owner:
+            task.assign(owner["id"], t["id"], owner["id"])
+            if progress:
+                task.report_progress(owner["id"], t["id"], progress)
+            if due:
+                task.set_deadline(owner["id"], t["id"], due)
+            if cost is not None:
+                task.record_cost(owner["id"], t["id"], cost)
         return t
 
-    arabic = add("Rewrite the product pages in Arabic first, French second",
+    def claim(title, owner, progress=0):
+        """Pick up work one of the settled questions produced."""
+        for t in task.in_cells([shop["id"]]):
+            if t["title"] == title:
+                task.assign(owner["id"], t["id"], owner["id"])
+                if progress:
+                    task.report_progress(owner["id"], t["id"], progress)
+                return t
+        return None
+
+    # A question the whole shop answered makes work for the whole shop. It
+    # stays where it was made and whoever's area it is picks it up -- rather
+    # than being retyped inside the cell that later grew around it.
+    claim("Buy or lease the van", nadia, 30)
+    claim("Hire a driver", nadia)
+    claim("Work out the cost per parcel on our own route", nadia, 20)
+    claim("Agree the six with Sofiane", karim, 80)
+    claim("Set the reorder point", karim, 80)
+
+    # --- the parts of the business ----------------------------------------
+    #
+    # None of these was "created". Each began as one thing on somebody's list
+    # that stopped fitting on a list, and became a cell with its own goal,
+    # its own people and its own questions. A seven-person shop cannot start
+    # a child cell -- that is offered at twenty -- but work outgrowing one
+    # person is not gated on headcount, and this is what an organisation
+    # actually is.
+    def grew(title, owner, goal, crew, budget=None, due=None):
+        """A piece of work that stopped fitting on one person's list."""
+        seed_task = add(shop, title, owner)
+        task.expand(yacine["id"], seed_task["id"], goal)
+        cell = task.expanded_into(seed_task["id"])
+        for who in crew:
+            member.admit(yacine["id"], cell, who["name"], who["email"])
+        if budget:
+            cell_service.set_budget(yacine["id"], cell, budget, DZD)
+        if due:
+            cell_service.set_deadline(yacine["id"], cell, due)
+        return cell
+
+    # Orders, and the two phone numbers on the site.
+    orders = grew("Take the orders without losing any", amina,
+                  "Take every order that comes in, on the phone or the page",
+                  [rachid])
+    add(orders, "Rewrite the order sheet so two people can use it", amina, 60, "2026-11-18")
+    add(orders, "Answer Instagram messages inside the hour", rachid, 30)
+    add(orders, "Call back the 40 orders that never confirmed", amina, 0, "2026-11-12")
+    whatsapp = decision.propose(
+        amina["id"], orders,
+        "Do we take orders on WhatsApp as well as the phone?",
+        "Half the messages already arrive there. Right now we answer and then "
+        "ask them to call, and some of them do not.",
+        ["Yes, one number for both", "No, the phone is already full"],
+        work={"0": ["Put the number on the site", "Agree who watches it and when"]})
+    step(amina, whatsapp["id"], "open")
+    step(amina, whatsapp["id"], "put_to_cell")
+    decision.vote(rachid["id"], whatsapp["id"], dm.options_of(whatsapp["id"])[0]["id"])
+
+    # Delivery, and the money that has to come back with the driver.
+    delivery = grew("Get the parcels there and the money back", nadia,
+                    "Get every parcel delivered and every dinar back within the week",
+                    [lila], budget=600_000, due="2026-12-31")
+    add(delivery, "Reconcile October against the carrier's statement", nadia, 100, "2026-11-05")
+    add(delivery, "Rank the wilayas by refusal rate", lila, 45)
+    add(delivery, "Agree what we do with a parcel refused twice", None)
+
+    # The depot.
+    depot = grew("Know what is actually in the depot", lila,
+                 "Know what is in the depot without walking into it",
+                 [karim], budget=2_000_000, due="2026-12-31")
+    add(depot, "Count everything and write it down", lila, 60, "2026-11-20")
+    add(depot, "Find somewhere dry for the toppers", lila, 0)
+
+    # What we sell, and who makes it.
+    # Sofiane is in here because what we sell and what the site says we sell
+    # have to be the same six. That is the whole reason "agree the six with
+    # Sofiane" is on Karim's list at the top.
+    sourcing = grew("Choose what we sell and who makes it", karim,
+                    "Sell six models we can always get, from people who answer the phone",
+                    [yacine, sofiane], due="2027-01-31")
+    add(sourcing, "Agree return terms with the workshop for pressure marks",
+        karim, 25, "2026-12-10")
+    add(sourcing, "Visit the two workshops in Sétif", karim, 0, "2026-11-28", 45_000)
+    add(sourcing, "Drop the three models nobody buys", yacine, 40)
+    warranty_q = decision.propose(
+        karim["id"], sourcing,
+        "Do we put five years on the orthopedic range?",
+        "Everyone selling against us says two. The workshop will not sign for five.",
+        ["Five years, and we carry it ourselves", "Two years, like everyone else"],
+        work={"0": ["Work out what a claim costs us", "Say it plainly on the page"]})
+    step(karim, warranty_q["id"], "open")
+    step(karim, warranty_q["id"], "put_to_cell")
+    w = dm.options_of(warranty_q["id"])
+    decision.vote(yacine["id"], warranty_q["id"], w[0]["id"])
+    decision.vote(karim["id"], warranty_q["id"], w[0]["id"])
+    step(karim, warranty_q["id"], "accept_by_vote", "send_to_leader", "resolve",
+         option_id=w[0]["id"],
+         note="Five years is the only thing we can say that they cannot.")
+
+    # Getting found.
+    reach = grew("Make people find us", sofiane,
+                 "Be the first shop somebody in Algeria finds when they want a mattress",
+                 [amina], budget=400_000, due="2026-12-31")
+    arabic = add(reach, "Rewrite the product pages in Arabic first, French second",
                  sofiane, 40, "2026-11-30")
-    add("Photograph the six models on a real bed, not on the floor", sofiane, 70, "2026-11-15")
-    add("Reconcile October's cash on delivery against the carrier's statement",
-        nadia, 100, "2026-11-05")
-    add("Agree return terms with the workshop for pressure marks", karim, 25, "2026-12-10")
-    add("Count the depot and write down what is actually there", lila, 60, "2026-11-20")
-    warranty = add("Answer the twelve warranty claims from September", rachid, 50, "2026-11-25")
-    showroom = add("Open a showroom in Boumerdès so people can lie on one", yacine, 15)
+    add(reach, "Photograph the six models on a real bed, not on the floor",
+        sofiane, 70, "2026-11-15", 28_000)
+    add(reach, "Stop the ads for models we do not stock", amina, 0, "2026-11-10")
 
     task.note(sofiane["id"], arabic["id"],
-              "Half the messages on Instagram are in Arabic and the site answers in French. "
-              "Doing the six that sell first.")
-    task.note(rachid["id"], warranty["id"],
-              "Nine of the twelve are the same complaint: the topper flattens on one side. "
-              "That is a supplier question, not a warranty question.")
-    evidence.attach(rachid["id"], "task", warranty["id"], "note",
-                    "Nine of twelve claims name the same model")
+              "Half the messages on Instagram are in Arabic and the site answers in "
+              "French. Doing the six that sell first.")
+    evidence.attach(sofiane["id"], "task", arabic["id"], "measurement",
+                    "62% of October's messages were written in Arabic")
 
-    # A question about work that already exists. Its answer comes back to the
-    # task; it does not turn into more work.
+    # A question about work that already exists. Its answer goes back to that
+    # work; it does not become more work.
     doubt = decision.propose(
-        sofiane["id"], shop["id"],
+        sofiane["id"], reach,
         "Is the Arabic rewrite worth it before the winter season?",
         "It is six weeks of Sofiane, and winter is when mattresses sell.",
         ["Finish it before winter", "Six models now, the rest in January",
          "Stop, and spend the six weeks on ads"],
-        about=arabic["id"],
-    )
+        about=arabic["id"])
     step(sofiane, doubt["id"], "open")
     decision.remark(amina["id"], doubt["id"],
                     "People ask the price in Arabic and leave when the page answers "
                     "in French. That is the whole conversation.",
                     dm.options_of(doubt["id"])[1]["id"])
 
-    # --- work that outgrew one person -------------------------------------
-    task.expand(yacine["id"], showroom["id"],
-                "Open a showroom in Boumerdès people can walk into")
-    room = task.expanded_into(showroom["id"])
-    for who in (lila, rachid):
-        member.admit(yacine["id"], room, who["name"], who["email"])
-    cell_service.set_budget(yacine["id"], room, 1_200_000, DZD)
-    cell_service.set_deadline(yacine["id"], room, "2027-03-31")
-    for title, owner in [("Find 60m² on the main road", lila),
-                         ("Price the fit-out", lila),
-                         ("Work out who staffs it on Fridays", rachid)]:
-        t = task.create(yacine["id"], room, title)
-        task.assign(owner["id"], t["id"], owner["id"])
+    # After the sale.
+    care = grew("Look after people once they have paid", rachid,
+                "Make a complaint cheaper to answer than to ignore", [nadia])
+    claims = add(care, "Answer the twelve warranty claims from September", rachid, 50, "2026-11-25")
+    add(care, "Write down what we do when a topper flattens", rachid, 0)
+    add(care, "Find out whether the returns come from one wilaya", nadia, 15)
+    task.note(rachid["id"], claims["id"],
+              "Nine of the twelve are the same complaint: the topper flattens on one "
+              "side. That is a supplier question, not a warranty question.")
+    evidence.attach(rachid["id"], "task", claims["id"], "note",
+                    "Nine of twelve claims name the same model")
+
+    # The one that is not running the shop, but building it.
+    room = grew("Open a showroom in Boumerdès so people can lie on one", yacine,
+                "Open a showroom in Boumerdès people can walk into",
+                [lila, rachid], budget=1_200_000, due="2027-03-31")
+    add(room, "Find 60m² on the main road", lila, 0, "2026-12-15")
+    add(room, "Price the fit-out", lila, 0)
+    add(room, "Work out who staffs it on Fridays", rachid, 0)
+
+    # Still one person's, still at the top.
+    add(shop, "Set the winter price list", yacine, 20, "2026-11-30")
 
     return shop, room
 
