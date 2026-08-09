@@ -176,6 +176,32 @@ def _task(user_id, t, standing):
     return t
 
 
+SETTLED_STATES = ("accepted", "executing", "completed", "knowledge", "rejected")
+
+
+def _questions_about(task_id):
+    from ..domains.decision import model as decision_model
+
+    names = member_model.names()
+    out = []
+    for q in decision_service.questions_about(task_id):
+        settled = q["state"] in SETTLED_STATES
+        answer = None
+        if q["chosen_option"]:
+            picked = decision_model.option(q["chosen_option"], q["id"])
+            answer = picked["text"] if picked else None
+        out.append({
+            "id": q["id"], "question": q["question"], "state": q["state"],
+            "cell_id": q["cell_id"], "at": q["created_at"], "settled": settled,
+            "answer": answer,
+            "declined": q["state"] == "rejected",
+            "settled_at": q["decided_at"] or (q["closed_at"] if settled else None),
+            "note": q["resolution_note"],
+            "by": names.get(q["decided_by"]),
+        })
+    return out
+
+
 def _lately(user_id, limit=12):
     """
     Recent events touching something this person holds or has taken part in,
@@ -301,13 +327,13 @@ def task(user_id, task_id):
         # Questions raised about this work. Not the decision it came from --
         # that is `because` -- but arguments somebody started about it after
         # it existed, which are things that happened to it.
-        "questions": [
-            {"id": q["id"], "question": q["question"], "state": q["state"],
-             "cell_id": q["cell_id"], "at": q["created_at"],
-             "settled": q["state"] in ("accepted", "executing", "completed",
-                                       "knowledge", "rejected")}
-            for q in decision_service.questions_about(task_id)
-        ],
+        #
+        # Two moments each, not one: when it was asked, and when it was
+        # answered. A question about existing work does not produce a task --
+        # its answer *is* the outcome, and it belongs in this record at the
+        # moment it was given, or the trail stops at "somebody asked" and
+        # never says what came of it.
+        "questions": _questions_about(task_id),
         "cell": {"id": cell["id"], "goal": cell["goal"]},
         "path": [p for p in hierarchy.path(t["cell_id"])
                  if p["id"] in permission.visible_cell_ids(user_id)],

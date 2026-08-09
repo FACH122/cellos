@@ -14,6 +14,7 @@ is for. What must not happen is work quietly leaving the hands it is in.
 import unittest
 
 from cellos.domains.cell import service as cell_service
+from cellos.domains.decision import model as dm
 from cellos.domains.member import service as member
 from cellos.domains.task import model, rules, service as task
 from cellos.kernel.errors import NotAllowed
@@ -216,3 +217,44 @@ class AskingAboutWork(unittest.TestCase):
         d = decision.propose(boss["id"], cell["id"], "Where do we meet?", "",
                              ["Here", "There"])
         self.assertEqual(decision.questions_about(d["id"]), [])
+
+    def test_settling_it_makes_no_new_work(self):
+        """
+        The answer to "should we keep going with this?" is not a task. Left
+        alone, the generator's fallback turns the winning option into work
+        named after itself, and the cell acquires a task called "Rescope it
+        to the smaller service" sitting next to the thing it was about.
+        """
+        from cellos.domains.decision import service as decision
+        from cellos.domains.task import model as task_model
+
+        boss, cell, _ = a_cell()
+        t = task.create(boss["id"], cell["id"], "Stand up the new service")
+        before = len(task_model.in_cells([cell["id"]]))
+
+        d = decision.propose(boss["id"], cell["id"], "Keep going with this?", "",
+                             ["Keep going", "Rescope it"], about=t["id"])
+        decision.act(boss["id"], d["id"], "open")
+        options = dm.options_of(d["id"])
+        decision.act(boss["id"], d["id"], "resolve",
+                     option_id=options[1]["id"], note="Smaller scope covers the launch.")
+
+        self.assertEqual(len(task_model.in_cells([cell["id"]])), before)
+        settled = decision.get(d["id"])
+        self.assertEqual(settled["state"], "accepted")
+        self.assertEqual(settled["chosen_option"], options[1]["id"])
+
+    def test_an_ordinary_question_still_makes_work(self):
+        """The change must not touch the flow it is not about."""
+        from cellos.domains.decision import service as decision
+        from cellos.domains.task import model as task_model
+
+        boss, cell, _ = a_cell()
+        before = len(task_model.in_cells([cell["id"]]))
+        d = decision.propose(boss["id"], cell["id"], "Which vendor?", "",
+                             ["North", "South"], work={"0": ["Sign with North"]})
+        decision.act(boss["id"], d["id"], "open")
+        options = dm.options_of(d["id"])
+        decision.act(boss["id"], d["id"], "resolve", option_id=options[0]["id"], note="Cheaper.")
+
+        self.assertEqual(len(task_model.in_cells([cell["id"]])), before + 1)

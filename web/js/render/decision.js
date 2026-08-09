@@ -36,6 +36,14 @@ function rail(d) {
 function body(view, d) {
   const parts = [];
 
+  /* An open decision does one of two jobs. Most propose work: settle them
+     and the tasks appear. Some are about work that already exists, and their
+     answer goes back to that task instead of making a new one. Say which. */
+  if (d.about) {
+    parts.push(`<p class="xs faint">about
+      <a href="#task/${d.about.id}" target="_blank" rel="noopener"
+        >${esc(d.about.title)}</a> — the answer goes back to that work</p>`);
+  }
   if (d.detail) parts.push(`<p class="muted">${esc(d.detail)}</p>`);
 
   if (d.revision_note) {

@@ -221,6 +221,17 @@ def _generate_work(event):
     if option is None:
         return
 
+    # A question raised about work that already exists produces nothing. Its
+    # answer *is* the outcome, and it belongs in that task's record -- which
+    # is where the interface shows it.
+    #
+    # Without this the fallback below turns the winning option into a task
+    # named after itself: settle "do we keep going, or rescope it?" and the
+    # cell quietly acquires a task called "Rescope it to the smaller service",
+    # sitting beside the work the question was about.
+    if decision.work_concerned(event["subject_id"]):
+        return
+
     titles = json.loads(option["work"]) or [option["text"]]
     cell_id = event["cell_id"]
     decision_id = event["subject_id"]

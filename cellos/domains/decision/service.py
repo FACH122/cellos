@@ -109,6 +109,14 @@ def questions_about(task_id):
     return model.many(relationships.tails(CONCERNS, task_id))
 
 
+def work_concerned(decision_id):
+    """The task this question is about, if it is about one at all."""
+    from ..task import model as task_model
+
+    about = relationships.heads(CONCERNS, decision_id)
+    return task_model.get(about[0]) if about else None
+
+
 def remark(actor_id, decision_id, body):
     d = get(decision_id)
     permission.require_member(actor_id, d["cell_id"])
@@ -226,6 +234,11 @@ def record(actor_id, decision_id):
         "decided_by_name": names.get(d["decided_by"]),
         "position": position(d["state"]),
         "lifecycle_length": len(flow.states) - 1,
+        # Which of the two jobs an open question is doing: proposing work, or
+        # settling something about work that already exists. A reader should
+        # not have to infer that from whether the options happen to carry any.
+        "about": (lambda t: {"id": t["id"], "title": t["title"]} if t else None)(
+            work_concerned(decision_id)),
         "your_vote": model.vote_of(decision_id, actor_id),
         "actions": actions(actor_id, d),
         # Casting a vote is not a state change -- the question stays in

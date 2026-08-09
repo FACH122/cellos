@@ -221,13 +221,32 @@ function evidenceForm(t) {
 */
 function work(v, t) {
   const lines = [
+    /*
+      A question about this work appears twice, because two things happened:
+      it was asked, and later it was answered. A question raised about
+      existing work produces no task -- its answer *is* the outcome -- so if
+      the answer did not land here the trail would stop at "somebody asked"
+      and never say what came of it.
+    */
     ...v.questions.map((q) => ({
       at: q.at,
-      html: `<div class="asked ${q.settled ? 'settled' : 'live'}">
-        <span class="xs faint">${q.settled ? 'asked, and settled' : 'asked, still open'}</span>
+      html: `<div class="asked ${q.settled ? 'closed' : 'live'}">
+        <span class="xs faint nowrap">${q.settled ? 'asked' : 'asked, still open'}</span>
         <button class="quiet" data-act="openq" data-cell="${q.cell_id}" data-id="${q.id}"
           >“${esc(q.question)}”</button>
         <span class="xs faint nowrap"><time datetime="${esc(q.at)}">${esc(when(q.at))}</time></span>
+      </div>`,
+    })),
+    ...v.questions.filter((q) => q.settled && q.settled_at).map((q) => ({
+      at: q.settled_at,
+      html: `<div class="answered">
+        <span class="xs faint nowrap">${q.declined ? 'dropped' : 'answered'}</span>
+        <span class="grow">${q.declined
+          ? esc(q.question)
+          : `<b>${esc(q.answer || 'settled')}</b>`}${
+          q.note ? `<span class="why">${esc(q.note)}</span>` : ''}</span>
+        <span class="xs faint nowrap">${q.by ? esc(q.by) + ' · ' : ''}<time
+          datetime="${esc(q.settled_at)}">${esc(when(q.settled_at))}</time></span>
       </div>`,
     })),
     ...v.evidence.map((e) => ({
