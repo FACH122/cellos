@@ -210,16 +210,47 @@ function questions(v) {
   </section>`;
 }
 
+/*
+  Every option gets to say what follows from it.
+
+  The form used to take the options as free lines and then ask, once, what
+  should happen "if the first option wins" -- which was never a rule, only the
+  shape of the form. The domain has always kept work per option, and a
+  question where you can only say the consequences of one answer is not really
+  offering a choice: the other options arrive at the vote with nothing
+  attached, and settling on one of them produces nothing.
+
+  So one row per option, each with its own consequences, and a quiet way to
+  add another.
+*/
+function optionRows() {
+  const rows = [];
+  for (let i = 0; i < S.optionRows; i += 1) {
+    rows.push(`<div class="opt-row">
+      <label class="field"><span>${i === 0 ? 'The options' : ''}</span>
+        <input name="option${i}" placeholder="${
+          i === 0 ? 'The garden' : i === 1 ? 'The hall' : 'another answer'}"></label>
+      <label class="field"><span>${i === 0 ? 'then, one per line' : ''}</span>
+        <textarea name="work${i}" rows="2" placeholder="${
+          i === 0 ? 'Put down the deposit&#10;Confirm the date' : ''}"></textarea></label>
+    </div>`);
+  }
+  return `<div class="opt-rows">${rows.join('')}
+    ${S.optionRows < 6
+      ? '<button type="button" class="quiet faint" data-act="moreoption">another option</button>'
+      : ''}
+    <p class="xs faint">All optional. A question with no options at all is just
+      “shall we do this?”, and becomes one.</p>
+  </div>`;
+}
+
 function proposeForm() {
   return `<form class="panel" data-form="decision">
     <label class="field"><span>What has to be decided together?</span>
       <input name="question" required autofocus placeholder="Where do we hold it?"></label>
     <label class="field"><span>Anything worth knowing first (optional)</span>
       <textarea name="detail"></textarea></label>
-    <label class="field"><span>The options, one per line (optional)</span>
-      <textarea name="options" placeholder="The garden&#10;The hall"></textarea></label>
-    <label class="field"><span>If the first option wins, what has to happen? One per line (optional)</span>
-      <textarea name="work" placeholder="Put down the deposit&#10;Confirm the date"></textarea></label>
+    ${optionRows()}
     <div class="actions"><button class="primary" type="submit">Ask it</button>
       <button type="button" class="quiet" data-act="unform" data-form="decision">cancel</button>
     </div></form>`;

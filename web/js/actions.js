@@ -9,11 +9,31 @@
 import { api, token } from './api.js';
 import { say } from './dom.js';
 import {
-  S, absorb, again, closeForm, closeMap, go, openForm, openMap, render,
+  S, absorb, again, closeForm, closeMap, go, moreOptions, openForm, openMap, render,
   signOut, toggleCard,
 } from './store.js';
 
 const lines = (s) => (s || '').split('\n').map((x) => x.trim()).filter(Boolean);
+
+/*
+  The option rows, read back.
+
+  Empty rows are dropped, and the work is keyed by the position an option ends
+  up in rather than the row it was typed in -- the server enumerates the
+  options it is given, so leaving row two blank and filling row three would
+  otherwise attach the wrong consequences to the wrong answer.
+*/
+function chosen(d) {
+  const options = [];
+  const work = {};
+  for (let i = 0; i < 6; i += 1) {
+    const text = (d['option' + i] || '').trim();
+    if (!text) continue;
+    work[String(options.length)] = lines(d['work' + i]);
+    options.push(text);
+  }
+  return { options, work };
+}
 
 async function run(work, ok) {
   try {
@@ -44,6 +64,7 @@ export function wireClicks(root) {
       /* Open the cell with that question already unfolded, rather than
          landing on a page where it is one collapsed card among several. */
       case 'openq': S.open.add(id); return go(cell);
+      case 'moreoption': return moreOptions();
       case 'map': return openMap(cell || S.cellId);
       case 'unmap': return closeMap();
       case 'expand': return toggleCard(id);
@@ -132,14 +153,13 @@ export function wireForms(root) {
           return run(() => api.admit(S.cellId, {
             name: d.name, email: d.email, role: d.role || 'member',
           }), `${d.name} is in.`);
-        case 'decision':
+        case 'decision': {
           closeForm('decision');
+          const { options, work } = chosen(d);
           return run(() => api.propose(S.cellId, {
-            question: d.question,
-            detail: d.detail,
-            options: lines(d.options),
-            work: lines(d.work).length ? { 0: lines(d.work) } : {},
+            question: d.question, detail: d.detail, options, work,
           }), 'Raised.');
+        }
         case 'task':
           closeForm('task');
           return run(() => api.addTask(S.cellId, d.title));

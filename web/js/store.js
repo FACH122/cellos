@@ -19,6 +19,7 @@ export const S = {
   open: new Set(),    // decision cards expanded
   forms: new Set(),   // inline forms showing
   focus: false,       // a form just opened and should take the cursor
+  optionRows: 2,      // how many options the propose form is offering
   keepPlace: true,    // hold the scroll position across a re-render
   log: null,
 };
@@ -34,6 +35,7 @@ export function render() {
 }
 
 export function openForm(key) {
+  if (key === 'decision' || key.startsWith('ask:')) S.optionRows = 2;
   S.forms.add(key);
   S.focus = true;
   render();
@@ -155,5 +157,13 @@ export async function signOut() {
   S.routeId = S.cellId = S.taskId = null;
   S.view = null;
   location.hash = '';
+  render();
+}
+
+
+/* One more thing the cell could choose. Bounded, because a question with nine
+   answers is not a question yet. */
+export function moreOptions() {
+  if (S.optionRows < 6) S.optionRows += 1;
   render();
 }
