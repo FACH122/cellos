@@ -354,16 +354,41 @@ form.panel .actions { display: flex; align-items: center; gap: var(--s2); margin
 
 /* The case for an answer. Indented under it, so it plainly belongs to that
    row and not to the question. */
+/*
+  The case sits a whole size below the answer it is about.
+
+  An option is the thing being chosen; the arguments are why. Setting them at
+  the same size made a long thread compete with the choice it was supporting,
+  and left a reader scanning to find the answers again. Small, but not so
+  small it stops being prose: the line height opens up as the size comes
+  down, which is what keeps it readable rather than merely quiet.
+*/
 .case-body {
   margin: var(--s2) 0 var(--s2) var(--s3);
-  padding-left: var(--s3);
+  padding-left: var(--s4);
   border-left: 2px solid var(--hairline);
+  font-size: var(--t-xs);
+  line-height: 1.65;
+  color: var(--ink-soft);
+  max-width: 58ch;
 }
 .case-body > * + * { margin-top: var(--s2); }
-.argued { font-size: var(--t-sm); }
-.argued b { font-weight: 500; margin-right: var(--s2); }
-.backed { display: flex; align-items: baseline; gap: var(--s2); font-size: var(--t-sm); }
+.argued b { font-weight: 550; color: var(--ink); margin-right: var(--s2); }
+.backed { display: flex; align-items: baseline; gap: var(--s2); }
 .backed a { color: var(--accent); }
+.backed .kind { flex: none; }
+
+/* The controls come down with it, or the block ends up with a full-size form
+   attached to two lines of small text. */
+.case-body input, .case-body select, .case-body button {
+  font-size: var(--t-xs);
+  padding: var(--s1) var(--s2);
+}
+.case-body .row { gap: var(--s2); }
+
+/* And the answer itself holds its own line, so the two are plainly a heading
+   and its footnotes. */
+.opt-line .txt { font-weight: 450; }
 .option.votable .opt-line { cursor: pointer; }
 .option.votable:hover .txt { color: var(--accent); }
 .option.votable .opt-line:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
