@@ -126,25 +126,75 @@ removable.
 
 ---
 
+## v4 — the version you work in
+
+*The task stopped being a row and became a place. The question stopped being
+one argument and became one per answer.*
+
+v3 was the version strangers drove. v4 is what those runs asked for: a task
+you can sit at, a person's own page, an argument attached to the answer it is
+for, and money that knows where it sits in the tree.
+
+Verified at the moment it was tagged:
+
+```
+235 unit tests          pass   (23 more than v3)
+ 90 end-to-end checks   pass   (14 more — the two newest pages had none)
+4691 events             replay to byte-identical projections (13 tables)
+```
+
+**What it added:**
+
+| | |
+|---|---|
+| **Notes on work** | anyone in the cell can say what they found, what is in the way, what they tried. The task domain's own table, not the decision domain's remarks — they look alike and are different acts |
+| **A question about a task** | `concerns`, a new typed edge. Its answer comes back into that task's record and produces no work, because the answer *is* the outcome |
+| **The case per answer** | a remark may name the option it argues for, and an option became a fourth thing evidence can attach to. A quote for one venue is not evidence about the question |
+| **Every option's consequences** | the form asked once, about the first option; the domain always kept work per option |
+| **Money in the tree** | spending rolls up, committing hands down. A cell says how much of its budget the cells inside have claimed; a cell four levels down says whose money it is spending |
+| **Depth you can see** | map nodes shrink with depth, edges thin to match |
+| **Voting at two** | five was a guess about when agreement stops being obvious; two is the answer |
+| **Deployable** | `$PORT`, an empty `requirements.txt` that states the absence is deliberate, `render.yaml`, and a seed that leaves one question genuinely open |
+| **Paper** | `STORAGE.md` — where file bytes will live, decided and not built |
+
+**What it fixed, all of it found by using the thing:**
+
+| | |
+|---|---|
+| **Map edges vanished** | a renderer threw on a variable name and the page looked like a design choice |
+| **`db.init` could not migrate** | first a new table, then a new column. It now compares the declared schema against the live one column by column, and replays the log when they differ |
+| **The person's page was 500ing** | and 76 end-to-end checks stayed green, because none of them opened it |
+
+The domain model gained one table and one edge. Every number is still derived
+and still never stored.
+
+Known gaps: **a Cell cannot end**; the Phase 4 health arithmetic still awaits
+`MEASUREMENT.md`; **evidence cannot hold a file** (`STORAGE.md`); every write
+still answers with the whole cell; nothing can say "this work is waiting on
+that question"; and **evidence still cannot be withdrawn**, which three
+separate groups hit and `STORAGE.md` §7 now owes an answer.
+
+---
+
 ## Going back
 
 ```bash
 git tag                          # every milestone
-git show v3 --stat               # what a milestone contains
-git diff --stat v2 v3            # what one milestone changed from the last
+git show v4 --stat               # what a milestone contains
+git diff --stat v3 v4            # what one milestone changed from the last
 ```
 
 **To look at a version without changing anything:**
 
 ```bash
-git checkout v3                  # detached; look around freely
+git checkout v4                  # detached; look around freely
 git switch -                     # come back
 ```
 
 **To work from an old version:**
 
 ```bash
-git switch -c from-v3 v3         # a branch starting there
+git switch -c from-v4 v4         # a branch starting there
 ```
 
 **To bring back one file:**
@@ -187,7 +237,7 @@ Then:
 ```bash
 git add -A
 git commit -m "what changed, and why"
-git tag -a v4 -m "v4 — <the milestone in one line>
+git tag -a v5 -m "v5 — <the milestone in one line>
 
 <what it added>
 <the verification numbers at the moment of tagging>"
